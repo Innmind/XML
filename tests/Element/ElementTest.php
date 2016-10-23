@@ -22,14 +22,6 @@ class ElementTest extends \PHPUnit_Framework_TestCase
             NodeInterface::class,
             new Element('foo')
         );
-
-        $dom = new \DOMDocument;
-        $dom->loadXML(<<<XML
-<!DOCTYPE HTML>
-<root></root>
-XML
-        );
-        dump($dom->doctype);
     }
 
     public function testName()
