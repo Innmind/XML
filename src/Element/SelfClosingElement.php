@@ -1,14 +1,15 @@
 <?php
 declare(strict_types = 1);
 
-namespace Innmind\XML;
+namespace Innmind\XML\Element;
 
+use Innmind\XML\NodeInterface;
 use Innmind\Immutable\{
     Map,
     MapInterface
 };
 
-class SelfClosingNode extends Node
+class SelfClosingElement extends Element
 {
     private $string;
 

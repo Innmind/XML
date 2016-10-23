@@ -1,10 +1,10 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\XML;
+namespace Tests\Innmind\XML\Element;
 
 use Innmind\XML\{
-    Node,
+    Element\SelfClosingElement,
     NodeInterface,
     AttributeInterface,
     Attribute
@@ -14,19 +14,19 @@ use Innmind\Immutable\{
     MapInterface
 };
 
-class NodeTest extends \PHPUnit_Framework_TestCase
+class SelfClosingElementTest extends \PHPUnit_Framework_TestCase
 {
     public function testInterface()
     {
         $this->assertInstanceOf(
             NodeInterface::class,
-            new Node('foo')
+            new SelfClosingElement('foo')
         );
     }
 
     public function testName()
     {
-        $node = new Node('foo');
+        $node = new SelfClosingElement('foo');
 
         $this->assertSame('foo', $node->name());
     }
@@ -36,12 +36,12 @@ class NodeTest extends \PHPUnit_Framework_TestCase
      */
     public function testThrowWhenEmptyName()
     {
-        new Node('');
+        new SelfClosingElement('');
     }
 
     public function testAttributes()
     {
-        $node = new Node(
+        $node = new SelfClosingElement(
             'foo',
             $expected = new Map('string', AttributeInterface::class)
         );
@@ -54,12 +54,12 @@ class NodeTest extends \PHPUnit_Framework_TestCase
      */
     public function testThrowWhenInvalidAttributes()
     {
-        new Node('foo', new Map('string', 'string'));
+        new SelfClosingElement('foo', new Map('string', 'string'));
     }
 
     public function testDefaultAttributes()
     {
-        $node = new Node('foo');
+        $node = new SelfClosingElement('foo');
 
         $this->assertInstanceOf(MapInterface::class, $node->attributes());
         $this->assertSame('string', (string) $node->attributes()->keyType());
@@ -71,13 +71,13 @@ class NodeTest extends \PHPUnit_Framework_TestCase
 
     public function testHasAttributes()
     {
-        $node = new Node(
+        $node = new SelfClosingElement(
             'foo',
             new Map('string', AttributeInterface::class)
         );
         $this->assertFalse($node->hasAttributes());
 
-        $node = new Node(
+        $node = new SelfClosingElement(
             'foo',
             (new Map('string', AttributeInterface::class))
                 ->put('foo', new Attribute('foo'))
@@ -87,7 +87,7 @@ class NodeTest extends \PHPUnit_Framework_TestCase
 
     public function testAttribute()
     {
-        $node = new Node(
+        $node = new SelfClosingElement(
             'foo',
             (new Map('string', AttributeInterface::class))
                 ->put('foo', $expected = new Attribute('foo'))
@@ -98,88 +98,44 @@ class NodeTest extends \PHPUnit_Framework_TestCase
 
     public function testChildren()
     {
-        $node = new Node(
-            'foo',
-            null,
-            $expected = new Map('int', NodeInterface::class)
-        );
+        $node = new SelfClosingElement('foo');
 
-        $this->assertSame($expected, $node->children());
-    }
-
-    public function testDefaultChildren()
-    {
-        $node = new Node('foo');
-
-        $this->assertInstanceOf(MapInterface::class, $node->children());
-        $this->assertSame('int', (string) $node->children()->keyType());
-        $this->assertSame(
-            NodeInterface::class,
-            (string) $node->children()->valueType()
+        $this->assertTrue(
+            $node
+                ->children()
+                ->equals(
+                    new Map('int', NodeInterface::class)
+                )
         );
     }
 
     public function testHasChildren()
     {
-        $node = new Node(
-            'foo',
-            null,
-            (new Map('int', NodeInterface::class))
-                ->put(0, new Node('bar'))
-        );
-        $this->assertTrue($node->hasChildren());
-
-        $this->assertFalse((new Node('foo'))->hasChildren());
+        $node = new SelfClosingElement('foo');
+        $this->assertFalse($node->hasChildren());
     }
 
-    public function testContentWithoutChildren()
+    public function testContent()
     {
         $this->assertSame(
             '',
-            (new Node('foo'))->content()
-        );
-    }
-
-    public function testContentWithChildren()
-    {
-        $node = new Node(
-            'foo',
-            null,
-            (new Map('int', NodeInterface::class))
-                ->put(0, new Node('bar'))
-        );
-
-        $this->assertSame(
-            '<bar></bar>',
-            $node->content()
+            (new SelfClosingElement('foo'))->content()
         );
     }
 
     public function testCast()
     {
         $this->assertSame(
-            '<foo></foo>',
-            (string) new Node('foo')
+            '<foo />',
+            (string) new SelfClosingElement('foo')
         );
         $this->assertSame(
-            '<foo bar="baz" baz="foo"></foo>',
-            (string) new Node(
+            '<foo bar="baz" baz="foo" />',
+            (string) new SelfClosingElement(
                 'foo',
                 (new Map('string', AttributeInterface::class))
                     ->put('bar', new Attribute('bar', 'baz'))
                     ->put('baz', new Attribute('baz', 'foo'))
-            )
-        );
-        $this->assertSame(
-            '<foo bar="baz" baz="foo"><bar></bar><baz></baz></foo>',
-            (string) new Node(
-                'foo',
-                (new Map('string', AttributeInterface::class))
-                    ->put('bar', new Attribute('bar', 'baz'))
-                    ->put('baz', new Attribute('baz', 'foo')),
-                (new Map('int', NodeInterface::class))
-                    ->put(0, new Node('bar'))
-                    ->put(1, new Node('baz'))
             )
         );
     }
