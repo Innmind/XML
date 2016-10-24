@@ -9,7 +9,8 @@ use Innmind\XML\{
     Node\Document\Type,
     Node\Document\Encoding,
     NodeInterface,
-    Element\Element
+    Element\Element,
+    Element\SelfClosingElement
 };
 use Innmind\Immutable\{
     Map,
@@ -125,8 +126,36 @@ class DocumentTest extends \PHPUnit_Framework_TestCase
     public function testCast()
     {
         $this->assertSame(
-            '<?xml version="2.1"?>',
+            '<?xml version="2.1"?>'."\n",
             (string) new Document(new Version(2, 1))
+        );
+        $this->assertSame(
+            '<?xml version="2.1" encoding="utf-8"?>'."\n",
+            (string) new Document(
+                new Version(2, 1),
+                null,
+                null,
+                new Encoding('utf-8')
+            )
+        );
+        $this->assertSame(
+            '<?xml version="2.1" encoding="utf-8"?>'."\n".'<!DOCTYPE html>'."\n",
+            (string) new Document(
+                new Version(2, 1),
+                new Type('html'),
+                null,
+                new Encoding('utf-8')
+            )
+        );
+        $this->assertSame(
+            '<?xml version="2.1" encoding="utf-8"?>'."\n".'<!DOCTYPE html>'."\n".'<foo />',
+            (string) new Document(
+                new Version(2, 1),
+                new Type('html'),
+                (new Map('int', NodeInterface::class))
+                    ->put(0, new SelfClosingElement('foo')),
+                new Encoding('utf-8')
+            )
         );
     }
 }

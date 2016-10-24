@@ -91,13 +91,13 @@ final class Document implements NodeInterface
         $string = sprintf(
             '<?xml version="%s"%s?>',
             (string) $this->version,
-            $this->encodingIsSpecified() ? ' '.$this->encoding : ''
+            $this->encodingIsSpecified() ? ' encoding="'.$this->encoding.'"' : ''
         );
 
         if ($this->hasType()) {
-            $string .= (string) $this->type;
+            $string .= "\n".(string) $this->type;
         }
 
-        return $string.$this->content();
+        return $string."\n".$this->content();
     }
 }
