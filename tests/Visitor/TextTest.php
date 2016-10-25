@@ -5,14 +5,15 @@ namespace Tests\Innmind\XML\Visitor;
 
 use Innmind\XML\{
     Visitor\Text,
-    Reader\Reader
+    Reader\Reader,
+    Translator\NodeTranslator
 };
 
 class TextTest extends \PHPUnit_Framework_TestCase
 {
     public function testInterface()
     {
-        $tree = (new Reader)->read(<<<XML
+        $tree = (new Reader(new NodeTranslator))->read(<<<XML
 <div>
     <h1>Hey</h1>
     <div>

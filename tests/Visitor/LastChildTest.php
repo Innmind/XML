@@ -6,14 +6,15 @@ namespace Tests\Innmind\XML\Visitor;
 use Innmind\XML\{
     Visitor\LastChild,
     Reader\Reader,
-    Element\Element
+    Element\Element,
+    Translator\NodeTranslator
 };
 
 class LastChildTest extends \PHPUnit_Framework_TestCase
 {
     public function testInterface()
     {
-        $tree = (new Reader)->read(<<<XML
+        $tree = (new Reader(new NodeTranslator))->read(<<<XML
 <div><foo /><baz /><bar /></div>
 XML
         );
@@ -29,7 +30,7 @@ XML
             (new LastChild)($div)
         );
 
-        $tree = (new Reader)->read(<<<XML
+        $tree = (new Reader(new NodeTranslator))->read(<<<XML
 <div><foo /></div>
 XML
         );

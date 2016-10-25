@@ -6,14 +6,15 @@ namespace Tests\Innmind\XML\Visitor;
 use Innmind\XML\{
     Visitor\NextSibling,
     Reader\Reader,
-    Element\Element
+    Element\Element,
+    Translator\NodeTranslator
 };
 
 class NextSiblingTest extends \PHPUnit_Framework_TestCase
 {
     public function testInterface()
     {
-        $tree = (new Reader)->read(<<<XML
+        $tree = (new Reader(new NodeTranslator))->read(<<<XML
 <div><foo /><baz /><bar /></div>
 XML
         );
@@ -38,7 +39,7 @@ XML
      */
     public function testThrowWhenNoNextSibling()
     {
-        $tree = (new Reader)->read(<<<XML
+        $tree = (new Reader(new NodeTranslator))->read(<<<XML
 <div><foo /><baz /><bar /></div>
 XML
         );

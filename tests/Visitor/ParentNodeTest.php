@@ -6,14 +6,15 @@ namespace Tests\Innmind\XML\Visitor;
 use Innmind\XML\{
     Visitor\ParentNode,
     Reader\Reader,
-    Element\Element
+    Element\Element,
+    Translator\NodeTranslator
 };
 
 class ParentNodeTest extends \PHPUnit_Framework_TestCase
 {
     public function testInterface()
     {
-        $tree = (new Reader)->read(<<<XML
+        $tree = (new Reader(new NodeTranslator))->read(<<<XML
 <div><div><foo /><bar /></div></div>
 XML
         );
