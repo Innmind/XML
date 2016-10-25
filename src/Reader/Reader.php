@@ -52,7 +52,7 @@ final class Reader implements ReaderInterface
 
     private function createDocument(\DOMDocument $node): Document
     {
-        list($major, $minor) = explode('.', $node->version);
+        list($major, $minor) = explode('.', $node->xmlVersion);
         $type = $children = $encoding = null;
 
         if ($node->doctype) {
