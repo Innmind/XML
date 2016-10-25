@@ -9,14 +9,17 @@ use Innmind\XML\{
     Element\Element,
     Translator\NodeTranslator
 };
+use Innmind\Filesystem\Stream\StringStream;
 
 class NextSiblingTest extends \PHPUnit_Framework_TestCase
 {
     public function testInterface()
     {
-        $tree = (new Reader(new NodeTranslator))->read(<<<XML
+        $xml = <<<XML
 <div><foo /><baz /><bar /></div>
-XML
+XML;
+        $tree = (new Reader(new NodeTranslator))->read(
+            new StringStream($xml)
         );
         $div = $tree
             ->children()
@@ -39,9 +42,11 @@ XML
      */
     public function testThrowWhenNoNextSibling()
     {
-        $tree = (new Reader(new NodeTranslator))->read(<<<XML
+        $xml = <<<XML
 <div><foo /><baz /><bar /></div>
-XML
+XML;
+        $tree = (new Reader(new NodeTranslator))->read(
+            new StringStream($xml)
         );
         $div = $tree
             ->children()

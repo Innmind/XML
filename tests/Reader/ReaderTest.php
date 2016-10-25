@@ -9,6 +9,7 @@ use Innmind\XML\{
     Element\Element,
     Translator\NodeTranslatorInterface
 };
+use Innmind\Filesystem\Stream\StringStream;
 
 class ReaderTest extends \PHPUnit_Framework_TestCase
 {
@@ -46,7 +47,7 @@ XML;
                 return $document->saveXML() === $xml."\n";
             }))
             ->willReturn($expected = new Element('foo'));
-        $node = $reader->read($xml);
+        $node = $reader->read(new StringStream($xml));
 
         $this->assertSame($expected, $node);
     }

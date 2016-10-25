@@ -3,7 +3,9 @@ declare(strict_types = 1);
 
 namespace Innmind\XML;
 
+use Innmind\Filesystem\StreamInterface;
+
 interface ReaderInterface
 {
-    public function read(string $content): NodeInterface;
+    public function read(StreamInterface $content): NodeInterface;
 }

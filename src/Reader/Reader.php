@@ -8,6 +8,7 @@ use Innmind\XML\{
     NodeInterface,
     Translator\NodeTranslatorInterface
 };
+use Innmind\Filesystem\StreamInterface;
 
 final class Reader implements ReaderInterface
 {
@@ -18,10 +19,10 @@ final class Reader implements ReaderInterface
         $this->translator = $translator;
     }
 
-    public function read(string $content): NodeInterface
+    public function read(StreamInterface $content): NodeInterface
     {
         $xml = new \DOMDocument;
-        $xml->loadXML($content);
+        $xml->loadXML((string) $content);
         $xml->normalizeDocument();
 
         return $this->translator->translate($xml);

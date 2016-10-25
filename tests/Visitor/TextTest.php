@@ -8,12 +8,13 @@ use Innmind\XML\{
     Reader\Reader,
     Translator\NodeTranslator
 };
+use Innmind\Filesystem\Stream\StringStream;
 
 class TextTest extends \PHPUnit_Framework_TestCase
 {
     public function testInterface()
     {
-        $tree = (new Reader(new NodeTranslator))->read(<<<XML
+        $xml = <<<XML
 <div>
     <h1>Hey</h1>
     <div>
@@ -23,7 +24,9 @@ class TextTest extends \PHPUnit_Framework_TestCase
     </div>
     42
 </div>
-XML
+XML;
+        $tree = (new Reader(new NodeTranslator))->read(
+            new StringStream($xml)
         );
 
         $this->assertSame(

@@ -9,14 +9,17 @@ use Innmind\XML\{
     Element\Element,
     Translator\NodeTranslator
 };
+use Innmind\Filesystem\Stream\StringStream;
 
 class ParentNodeTest extends \PHPUnit_Framework_TestCase
 {
     public function testInterface()
     {
-        $tree = (new Reader(new NodeTranslator))->read(<<<XML
+        $xml = <<<XML
 <div><div><foo /><bar /></div></div>
-XML
+XML;
+        $tree = (new Reader(new NodeTranslator))->read(
+            new StringStream($xml)
         );
         $parent = $tree
             ->children()
