@@ -22,7 +22,7 @@ final class PreviousSibling
         $parent = (new ParentNode($this->node))($tree);
         $position = $parent
             ->children()
-            ->filter(function (int $position, NodeInterface $node) {
+            ->filter(function(int $position, NodeInterface $node) {
                 return $node === $this->node;
             })
             ->key();
