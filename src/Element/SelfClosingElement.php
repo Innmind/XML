@@ -1,9 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Innmind\XML\Element;
+namespace Innmind\Xml\Element;
 
-use Innmind\XML\NodeInterface;
+use Innmind\Xml\NodeInterface;
 use Innmind\Immutable\{
     Map,
     MapInterface

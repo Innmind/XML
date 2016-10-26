@@ -1,9 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\XML\Translator;
+namespace Tests\Innmind\Xml\Translator;
 
-use Innmind\XML\{
+use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\NodeTranslatorInterface,
     Element\Element,

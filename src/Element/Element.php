@@ -1,9 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Innmind\XML\Element;
+namespace Innmind\Xml\Element;
 
-use Innmind\XML\{
+use Innmind\Xml\{
     ElementInterface,
     AttributeInterface,
     NodeInterface,

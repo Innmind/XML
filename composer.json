@@ -21,8 +21,8 @@
     },
     "autoload": {
         "psr-4": {
-            "Innmind\\XML\\": "src/",
-            "Tests\\Innmind\\XML\\": "tests/"
+            "Innmind\\Xml\\": "src/",
+            "Tests\\Innmind\\Xml\\": "tests/"
         }
     }
 }

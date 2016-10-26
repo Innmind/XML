@@ -1,9 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\XML\Node;
+namespace Tests\Innmind\Xml\Node;
 
-use Innmind\XML\{
+use Innmind\Xml\{
     Node\Text,
     NodeInterface
 };

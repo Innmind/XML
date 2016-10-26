@@ -1,9 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\XML;
+namespace Tests\Innmind\Xml;
 
-use Innmind\XML\{
+use Innmind\Xml\{
     Attribute,
     AttributeInterface
 };
@@ -19,7 +19,7 @@ class AttributeTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Innmind\XML\Exception\InvalidArgumentException
+     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
      */
     public function testThrowWhenEmptyName()
     {

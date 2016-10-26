@@ -1,9 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Innmind\XML;
+namespace Innmind\Xml;
 
-use Innmind\XML\Exception\InvalidArgumentException;
+use Innmind\Xml\Exception\InvalidArgumentException;
 
 class Attribute implements AttributeInterface
 {

@@ -1,9 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\XML\Reader;
+namespace Tests\Innmind\Xml\Reader;
 
-use Innmind\XML\{
+use Innmind\Xml\{
     Reader\Reader,
     ReaderInterface,
     Element\Element,

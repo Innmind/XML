@@ -1,9 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Innmind\XML\Node\Document;
+namespace Innmind\Xml\Node\Document;
 
-use Innmind\XML\Exception\InvalidArgumentException;
+use Innmind\Xml\Exception\InvalidArgumentException;
 
 final class Type
 {

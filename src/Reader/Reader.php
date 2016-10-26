@@ -1,9 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Innmind\XML\Reader;
+namespace Innmind\Xml\Reader;
 
-use Innmind\XML\{
+use Innmind\Xml\{
     ReaderInterface,
     NodeInterface,
     Translator\NodeTranslatorInterface

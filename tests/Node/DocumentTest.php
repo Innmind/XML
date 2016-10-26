@@ -1,9 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\XML\Node;
+namespace Tests\Innmind\Xml\Node;
 
-use Innmind\XML\{
+use Innmind\Xml\{
     Node\Document,
     Node\Document\Version,
     Node\Document\Type,
@@ -76,7 +76,7 @@ class DocumentTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Innmind\XML\Exception\InvalidArgumentException
+     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
      */
     public function testThrowWhenInvalidChildren()
     {

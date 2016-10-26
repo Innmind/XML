@@ -1,9 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\XML\Node\Document;
+namespace Tests\Innmind\Xml\Node\Document;
 
-use Innmind\XML\Node\Document\Version;
+use Innmind\Xml\Node\Document\Version;
 
 class VersionTest extends \PHPUnit_Framework_TestCase
 {
@@ -19,7 +19,7 @@ class VersionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Innmind\XML\Exception\InvalidArgumentException
+     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
      */
     public function testThrowWhenMajorTooLow()
     {
@@ -27,7 +27,7 @@ class VersionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Innmind\XML\Exception\InvalidArgumentException
+     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
      */
     public function testThrowWhenMinorTooLow()
     {

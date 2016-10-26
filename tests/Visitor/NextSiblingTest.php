@@ -1,9 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\XML\Visitor;
+namespace Tests\Innmind\Xml\Visitor;
 
-use Innmind\XML\{
+use Innmind\Xml\{
     Visitor\NextSibling,
     Reader\Reader,
     Element\Element,
@@ -38,7 +38,7 @@ XML;
     }
 
     /**
-     * @expectedException Innmind\XML\Exception\NoNextSiblingException
+     * @expectedException Innmind\Xml\Exception\NoNextSiblingException
      */
     public function testThrowWhenNoNextSibling()
     {

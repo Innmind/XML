@@ -1,9 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Innmind\XML\Visitor;
+namespace Innmind\Xml\Visitor;
 
-use Innmind\XML\NodeInterface;
+use Innmind\Xml\NodeInterface;
 
 /**
  * Extract whole text of a tree

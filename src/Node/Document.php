@@ -1,9 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Innmind\XML\Node;
+namespace Innmind\Xml\Node;
 
-use Innmind\XML\{
+use Innmind\Xml\{
     NodeInterface,
     Node\Document\Type,
     Node\Document\Version,

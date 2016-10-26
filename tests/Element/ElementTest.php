@@ -1,9 +1,9 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\XML\Element;
+namespace Tests\Innmind\Xml\Element;
 
-use Innmind\XML\{
+use Innmind\Xml\{
     Element\Element,
     NodeInterface,
     AttributeInterface,
@@ -32,7 +32,7 @@ class ElementTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Innmind\XML\Exception\InvalidArgumentException
+     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
      */
     public function testThrowWhenEmptyName()
     {
@@ -50,7 +50,7 @@ class ElementTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException Innmind\XML\Exception\InvalidArgumentException
+     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
      */
     public function testThrowWhenInvalidAttributes()
     {
