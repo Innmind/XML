@@ -31,7 +31,7 @@ class NodeTranslatorTest extends \PHPUnit_Framework_TestCase
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <foo bar="baz">
-    <foobar />
+    <foobar/>
     <div>
         <![CDATA[whatever]]>
     </div>

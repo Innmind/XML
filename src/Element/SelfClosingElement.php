@@ -38,7 +38,7 @@ class SelfClosingElement extends Element
     {
         if ($this->string === null) {
             $this->string = sprintf(
-                '<%s%s />',
+                '<%s%s/>',
                 $this->name(),
                 $this->hasAttributes() ? ' '.$this->attributes()->join(' ') : ''
             );

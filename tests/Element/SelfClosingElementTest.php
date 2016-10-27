@@ -126,11 +126,11 @@ class SelfClosingElementTest extends \PHPUnit_Framework_TestCase
     public function testCast()
     {
         $this->assertSame(
-            '<foo />',
+            '<foo/>',
             (string) new SelfClosingElement('foo')
         );
         $this->assertSame(
-            '<foo bar="baz" baz="foo" />',
+            '<foo bar="baz" baz="foo"/>',
             (string) new SelfClosingElement(
                 'foo',
                 (new Map('string', AttributeInterface::class))

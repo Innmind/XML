@@ -148,7 +148,7 @@ class DocumentTest extends \PHPUnit_Framework_TestCase
             )
         );
         $this->assertSame(
-            '<?xml version="2.1" encoding="utf-8"?>'."\n".'<!DOCTYPE html>'."\n".'<foo />',
+            '<?xml version="2.1" encoding="utf-8"?>'."\n".'<!DOCTYPE html>'."\n".'<foo/>',
             (string) new Document(
                 new Version(2, 1),
                 new Type('html'),
