@@ -6,7 +6,7 @@ namespace Innmind\Xml\Reader;
 use Innmind\Xml\{
     ReaderInterface,
     NodeInterface,
-    Translator\NodeTranslatorInterface
+    Translator\NodeTranslator
 };
 use Innmind\Filesystem\StreamInterface;
 
@@ -14,7 +14,7 @@ final class Reader implements ReaderInterface
 {
     private $translator;
 
-    public function __construct(NodeTranslatorInterface $translator)
+    public function __construct(NodeTranslator $translator)
     {
         $this->translator = $translator;
     }

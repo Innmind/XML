@@ -7,18 +7,30 @@ use Innmind\Xml\{
     Visitor\FirstChild,
     Reader\Reader,
     Element\Element,
-    Translator\NodeTranslator
+    Translator\NodeTranslator,
+    Translator\NodeTranslators
 };
 use Innmind\Filesystem\Stream\StringStream;
 
 class FirstChildTest extends \PHPUnit_Framework_TestCase
 {
+    private $reader;
+
+    public function setUp()
+    {
+        $this->reader = new Reader(
+            new NodeTranslator(
+                NodeTranslators::defaults()
+            )
+        );
+    }
+
     public function testInterface()
     {
         $xml = <<<XML
 <div><foo /><bar /></div>
 XML;
-        $tree = (new Reader(new NodeTranslator))->read(
+        $tree = $this->reader->read(
             new StringStream($xml)
         );
         $div = $tree

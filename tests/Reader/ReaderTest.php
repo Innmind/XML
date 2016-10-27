@@ -7,27 +7,34 @@ use Innmind\Xml\{
     Reader\Reader,
     ReaderInterface,
     Element\Element,
-    Translator\NodeTranslatorInterface
+    Translator\NodeTranslator,
+    Translator\NodeTranslators
 };
 use Innmind\Filesystem\Stream\StringStream;
 
 class ReaderTest extends \PHPUnit_Framework_TestCase
 {
+    private $reader;
+
+    public function setUp()
+    {
+        $this->reader = new Reader(
+            new NodeTranslator(
+                NodeTranslators::defaults()
+            )
+        );
+    }
+
     public function testInterface()
     {
         $this->assertInstanceOf(
             ReaderInterface::class,
-            new Reader(
-                $this->createMock(NodeTranslatorInterface::class)
-            )
+            $this->reader
         );
     }
 
     public function testRead()
     {
-        $reader = new Reader(
-            $translator = $this->createMock(NodeTranslatorInterface::class)
-        );
         $xml = <<<XML
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -40,15 +47,8 @@ class ReaderTest extends \PHPUnit_Framework_TestCase
     hey!
 </foo>
 XML;
-        $translator
-            ->expects($this->once())
-            ->method('translate')
-            ->with($this->callback(function(\DOMDocument $document) use ($xml) {
-                return $document->saveXML() === $xml."\n";
-            }))
-            ->willReturn($expected = new Element('foo'));
-        $node = $reader->read(new StringStream($xml));
+        $node = $this->reader->read(new StringStream($xml));
 
-        $this->assertSame($expected, $node);
+        $this->assertSame($xml, (string) $node);
     }
 }

@@ -5,6 +5,7 @@ namespace Tests\Innmind\Xml\Translator;
 
 use Innmind\Xml\{
     Translator\NodeTranslator,
+    Translator\NodeTranslators,
     Translator\NodeTranslatorInterface,
     Element\Element,
     Element\SelfClosingElement,
@@ -13,14 +14,16 @@ use Innmind\Xml\{
     Node\CharacterData,
     Node\Comment
 };
+use Innmind\Immutable\Map;
 
 class NodeTranslatorTest extends \PHPUnit_Framework_TestCase
 {
-    public function testInterface()
+    private $translator;
+
+    public function setUp()
     {
-        $this->assertInstanceOf(
-            NodeTranslatorInterface::class,
-            new NodeTranslator
+        $this->translator = new NodeTranslator(
+            NodeTranslators::defaults()
         );
     }
 
@@ -40,7 +43,7 @@ class NodeTranslatorTest extends \PHPUnit_Framework_TestCase
 </foo>
 XML
         );
-        $node = (new NodeTranslator)->translate($document);
+        $node = $this->translator->translate($document);
 
         $this->assertInstanceOf(Document::class, $node);
         $this->assertSame('1.0', (string) $node->version());
@@ -94,5 +97,15 @@ XML
         $this->assertInstanceOf(Text::class, $text);
         $this->assertSame("\n    hey!\n", $text->content());
         $this->assertSame($xml, (string) $node);
+    }
+
+    /**
+     * @expectedException Innmind\Xml\Exception\UnknownNodeTypeException
+     */
+    public function testThrowWhenNoTranslatorFoundForANodeType()
+    {
+        (new NodeTranslator(
+            new Map('int', NodeTranslatorInterface::class)
+        ))->translate(new \DOMDocument);
     }
 }
