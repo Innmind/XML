@@ -43,7 +43,7 @@ class AttributesTest extends \PHPUnit_Framework_TestCase
     public function testAttributes()
     {
         $document = new \DOMDocument;
-        $document->loadXML('<foo bar="baz"/>');
+        $document->loadXML('<hr bar="baz" foobar=""/>');
 
         $attributes = (new Attributes)($document->childNodes->item(0));
 
@@ -53,10 +53,14 @@ class AttributesTest extends \PHPUnit_Framework_TestCase
             AttributeInterface::class,
             (string) $attributes->valueType()
         );
-        $this->assertCount(1, $attributes);
+        $this->assertCount(2, $attributes);
         $this->assertSame(
             'baz',
             $attributes->get('bar')->value()
+        );
+        $this->assertSame(
+            '',
+            $attributes->get('foobar')->value()
         );
     }
 }

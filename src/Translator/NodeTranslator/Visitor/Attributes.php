@@ -31,8 +31,7 @@ final class Attributes
                 $name,
                 new Attribute(
                     $name,
-                    $attribute->childNodes->length === 1 ?
-                        $attribute->childNodes->item(0)->nodeValue : ''
+                    $node->getAttribute($name)
                 )
             );
         }
