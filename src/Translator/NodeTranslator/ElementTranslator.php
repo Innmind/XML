@@ -6,10 +6,10 @@ namespace Innmind\Xml\Translator\NodeTranslator;
 use Innmind\Xml\{
     Translator\NodeTranslatorInterface,
     Translator\NodeTranslator,
+    Translator\NodeTranslator\Visitor\Attributes,
+    Translator\NodeTranslator\Visitor\Children,
     NodeInterface,
     Exception\InvalidArgumentException,
-    Attribute,
-    AttributeInterface,
     Element\SelfClosingElement,
     Element\Element
 };
@@ -25,8 +25,7 @@ final class ElementTranslator implements NodeTranslatorInterface
             throw new InvalidArgumentException;
         }
 
-        $attributes = $node->attributes ?
-            $this->buildAttributes($node->attributes) : null;
+        $attributes = (new Attributes)($node);
 
         if (
             $node->childNodes instanceof \DOMNodeList &&
@@ -41,42 +40,7 @@ final class ElementTranslator implements NodeTranslatorInterface
         return new Element(
             $node->nodeName,
             $attributes,
-            $node->childNodes ?
-                $this->buildChildren($node->childNodes, $translator) : null
+            (new Children($translator))($node)
         );
-    }
-
-    private function buildAttributes(\DOMNamedNodeMap $map): Map
-    {
-        $attributes = new Map('string', AttributeInterface::class);
-
-        foreach ($map as $name => $attribute) {
-            $attributes = $attributes->put(
-                $name,
-                new Attribute(
-                    $name,
-                    $attribute->childNodes->length === 1 ?
-                        $attribute->childNodes->item(0)->nodeValue : ''
-                )
-            );
-        }
-
-        return $attributes;
-    }
-
-    private function buildChildren(
-        \DOMNodeList $nodes,
-        NodeTranslator $translator
-    ): Map {
-        $children = new Map('int', NodeInterface::class);
-
-        foreach ($nodes as $child) {
-            $children = $children->put(
-                $children->size(),
-                $translator->translate($child)
-            );
-        }
-
-        return $children;
     }
 }
