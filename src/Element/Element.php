@@ -69,6 +69,33 @@ class Element implements ElementInterface
         return $this->attributes->get($name);
     }
 
+    public function removeAttribute(string $name): ElementInterface
+    {
+        if (!$this->attributes->contains($name)) {
+            throw new OutOfBoundsException;
+        }
+
+        $element = clone $this;
+        $element->attributes = $this->attributes->remove($name);
+
+        return $element;
+    }
+
+    public function replaceAttribute(AttributeInterface $attribute): ElementInterface
+    {
+        if (!$this->attributes->contains($attribute->name())) {
+            throw new OutOfBoundsException;
+        }
+
+        $element = clone $this;
+        $element->attributes = $this->attributes->put(
+            $attribute->name(),
+            $attribute
+        );
+
+        return $element;
+    }
+
     /**
      * {@inheritdoc}
      */

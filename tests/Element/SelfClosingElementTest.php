@@ -96,6 +96,96 @@ class SelfClosingElementTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($expected, $node->attribute('foo'));
     }
 
+    public function testRemoveAttribute()
+    {
+        $node = new SelfClosingElement(
+            'foo',
+            (new Map('string', AttributeInterface::class))
+                ->put('foo', new Attribute('foo'))
+                ->put('bar', new Attribute('bar'))
+        );
+
+        $node2 = $node->removeAttribute('foo');
+
+        $this->assertNotSame($node, $node2);
+        $this->assertInstanceOf(SelfClosingElement::class, $node2);
+        $this->assertSame($node->name(), $node2->name());
+        $this->assertSame($node->children(), $node2->children());
+        $this->assertNotSame($node->attributes(), $node2->attributes());
+        $this->assertCount(2, $node->attributes());
+        $this->assertCount(1, $node2->attributes());
+        $this->assertTrue($node->attributes()->contains('foo'));
+        $this->assertTrue($node->attributes()->contains('bar'));
+        $this->assertFalse($node2->attributes()->contains('foo'));
+        $this->assertTrue($node2->attributes()->contains('bar'));
+        $this->assertSame(
+            $node->attributes()->get('bar'),
+            $node2->attributes()->get('bar')
+        );
+    }
+
+    /**
+     * @expectedException Innmind\Xml\Exception\OutOfBoundsException
+     */
+    public function testThrowWhenRemovingUnknownAttribute()
+    {
+        (new SelfClosingElement(
+            'foo',
+            (new Map('string', AttributeInterface::class))
+                ->put('foo', new Attribute('foo'))
+                ->put('bar', new Attribute('bar'))
+        ))->removeAttribute('baz');
+    }
+
+    public function testReplaceAttribute()
+    {
+        $node = new SelfClosingElement(
+            'foo',
+            (new Map('string', AttributeInterface::class))
+                ->put('foo', new Attribute('foo'))
+                ->put('bar', new Attribute('bar'))
+        );
+
+        $node2 = $node->replaceAttribute(
+            $attribute = new Attribute('foo', 'baz')
+        );
+
+        $this->assertNotSame($node, $node2);
+        $this->assertInstanceOf(SelfClosingElement::class, $node2);
+        $this->assertSame($node->name(), $node2->name());
+        $this->assertSame($node->children(), $node2->children());
+        $this->assertNotSame($node->attributes(), $node2->attributes());
+        $this->assertCount(2, $node->attributes());
+        $this->assertCount(2, $node2->attributes());
+        $this->assertTrue($node->attributes()->contains('foo'));
+        $this->assertTrue($node->attributes()->contains('bar'));
+        $this->assertTrue($node2->attributes()->contains('foo'));
+        $this->assertTrue($node2->attributes()->contains('bar'));
+        $this->assertSame(
+            $node->attributes()->get('bar'),
+            $node2->attributes()->get('bar')
+        );
+        $this->assertSame(
+            $attribute,
+            $node2->attributes()->get('foo')
+        );
+    }
+
+    /**
+     * @expectedException Innmind\Xml\Exception\OutOfBoundsException
+     */
+    public function testThrowWhenReplacingUnknownAttribute()
+    {
+        (new SelfClosingElement(
+            'foo',
+            (new Map('string', AttributeInterface::class))
+                ->put('foo', new Attribute('foo'))
+                ->put('bar', new Attribute('bar'))
+        ))->replaceAttribute(
+            new Attribute('baz')
+        );
+    }
+
     public function testChildren()
     {
         $node = new SelfClosingElement('foo');
