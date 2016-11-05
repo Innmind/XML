@@ -8,7 +8,8 @@ use Innmind\Xml\{
     AttributeInterface,
     NodeInterface,
     Exception\InvalidArgumentException,
-    Exception\OutOfBoundsException
+    Exception\OutOfBoundsException,
+    Exception\LogicException
 };
 use Innmind\Immutable\{
     Map,
@@ -85,6 +86,21 @@ class Element implements ElementInterface
     {
         if (!$this->attributes->contains($attribute->name())) {
             throw new OutOfBoundsException;
+        }
+
+        $element = clone $this;
+        $element->attributes = $this->attributes->put(
+            $attribute->name(),
+            $attribute
+        );
+
+        return $element;
+    }
+
+    public function addAttribute(AttributeInterface $attribute): ElementInterface
+    {
+        if ($this->attributes->contains($attribute->name())) {
+            throw new LogicException;
         }
 
         $element = clone $this;

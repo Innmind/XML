@@ -186,6 +186,57 @@ class SelfClosingElementTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testAddAttribute()
+    {
+        $node = new SelfClosingElement(
+            'foo',
+            (new Map('string', AttributeInterface::class))
+                ->put('foo', new Attribute('foo'))
+                ->put('bar', new Attribute('bar'))
+        );
+
+        $node2 = $node->addAttribute(
+            $attribute = new Attribute('baz', 'baz')
+        );
+
+        $this->assertNotSame($node, $node2);
+        $this->assertInstanceOf(SelfClosingElement::class, $node2);
+        $this->assertSame($node->name(), $node2->name());
+        $this->assertSame($node->children(), $node2->children());
+        $this->assertNotSame($node->attributes(), $node2->attributes());
+        $this->assertCount(2, $node->attributes());
+        $this->assertCount(3, $node2->attributes());
+        $this->assertTrue($node->attributes()->contains('foo'));
+        $this->assertTrue($node->attributes()->contains('bar'));
+        $this->assertTrue($node2->attributes()->contains('foo'));
+        $this->assertTrue($node2->attributes()->contains('bar'));
+        $this->assertSame(
+            $node->attributes()->get('bar'),
+            $node2->attributes()->get('bar')
+        );
+        $this->assertSame(
+            $node->attributes()->get('foo'),
+            $node2->attributes()->get('foo')
+        );
+        $this->assertSame(
+            $attribute,
+            $node2->attributes()->get('baz')
+        );
+    }
+
+    /**
+     * @expectedException Innmind\Xml\Exception\LogicException
+     */
+    public function testThrowWhenAttributeAlreadyExists()
+    {
+        (new SelfClosingElement(
+            'foo',
+            (new Map('string', AttributeInterface::class))
+                ->put('foo', new Attribute('foo'))
+                ->put('bar', new Attribute('bar'))
+        ))->addAttribute(new Attribute('foo', 'baz'));
+    }
+
     public function testChildren()
     {
         $node = new SelfClosingElement('foo');

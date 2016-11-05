@@ -17,4 +17,5 @@ interface ElementInterface extends NodeInterface
     public function attribute(string $name): AttributeInterface;
     public function removeAttribute(string $name): self;
     public function replaceAttribute(AttributeInterface $attribute): self;
+    public function addAttribute(AttributeInterface $attribute): self;
 }
