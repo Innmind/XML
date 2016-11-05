@@ -113,6 +113,36 @@ final class Document implements NodeInterface
         return $document;
     }
 
+    public function prependChild(NodeInterface $child): NodeInterface
+    {
+        $document = clone $this;
+        $document->children = $this
+            ->children
+            ->reduce(
+                (new Map('int', NodeInterface::class))
+                    ->put(0, $child),
+                function(Map $children, int $position, NodeInterface $child): Map {
+                    return $children->put(
+                        $children->size(),
+                        $child
+                    );
+                }
+            );
+
+        return $document;
+    }
+
+    public function appendChild(NodeInterface $child): NodeInterface
+    {
+        $document = clone $this;
+        $document->children = $this->children->put(
+            $this->children->size(),
+            $child
+        );
+
+        return $document;
+    }
+
     public function encoding(): Encoding
     {
         return $this->encoding;

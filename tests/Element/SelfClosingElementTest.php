@@ -224,6 +224,26 @@ class SelfClosingElementTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @expectedException Innmind\Xml\Exception\LogicException
+     */
+    public function testThrowWhenPrependingChild()
+    {
+        (new SelfClosingElement('foo'))->prependChild(
+            $this->createMock(NodeInterface::class)
+        );
+    }
+
+    /**
+     * @expectedException Innmind\Xml\Exception\LogicException
+     */
+    public function testThrowWhenAppendingChild()
+    {
+        (new SelfClosingElement('foo'))->appendChild(
+            $this->createMock(NodeInterface::class)
+        );
+    }
+
     public function testContent()
     {
         $this->assertSame(

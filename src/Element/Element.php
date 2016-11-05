@@ -150,6 +150,36 @@ class Element implements ElementInterface
         return $element;
     }
 
+    public function prependChild(NodeInterface $child): NodeInterface
+    {
+        $element = clone $this;
+        $element->children = $this
+            ->children
+            ->reduce(
+                (new Map('int', NodeInterface::class))
+                    ->put(0, $child),
+                function(Map $children, int $position, NodeInterface $child): Map {
+                    return $children->put(
+                        $children->size(),
+                        $child
+                    );
+                }
+            );
+
+        return $element;
+    }
+
+    public function appendChild(NodeInterface $child): NodeInterface
+    {
+        $element = clone $this;
+        $element->children = $this->children->put(
+            $this->children->size(),
+            $child
+        );
+
+        return $element;
+    }
+
     public function content(): string
     {
         if ($this->content === null) {

@@ -321,6 +321,86 @@ class ElementTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testPrependChild()
+    {
+        $element = new Element(
+            'foobar',
+            null,
+            (new Map('int', NodeInterface::class))
+                ->put(0, new Element('foo'))
+                ->put(1, new Element('bar'))
+                ->put(2, new Element('baz'))
+        );
+
+        $element2 = $element->prependChild(
+            $node = $this->createMock(NodeInterface::class)
+        );
+
+        $this->assertNotSame($element, $element2);
+        $this->assertInstanceOf(Element::class, $element2);
+        $this->assertSame($element->name(), $element2->name());
+        $this->assertSame($element->attributes(), $element2->attributes());
+        $this->assertNotSame($element->children(), $element2->children());
+        $this->assertCount(3, $element->children());
+        $this->assertCount(4, $element2->children());
+        $this->assertSame(
+            $node,
+            $element2->children()->get(0)
+        );
+        $this->assertSame(
+            $element->children()->get(0),
+            $element2->children()->get(1)
+        );
+        $this->assertSame(
+            $element->children()->get(1),
+            $element2->children()->get(2)
+        );
+        $this->assertSame(
+            $element->children()->get(2),
+            $element2->children()->get(3)
+        );
+    }
+
+    public function testAopendChild()
+    {
+        $element = new Element(
+            'foobar',
+            null,
+            (new Map('int', NodeInterface::class))
+                ->put(0, new Element('foo'))
+                ->put(1, new Element('bar'))
+                ->put(2, new Element('baz'))
+        );
+
+        $element2 = $element->appendChild(
+            $node = $this->createMock(NodeInterface::class)
+        );
+
+        $this->assertNotSame($element, $element2);
+        $this->assertInstanceOf(Element::class, $element2);
+        $this->assertSame($element->name(), $element2->name());
+        $this->assertSame($element->attributes(), $element2->attributes());
+        $this->assertNotSame($element->children(), $element2->children());
+        $this->assertCount(3, $element->children());
+        $this->assertCount(4, $element2->children());
+        $this->assertSame(
+            $element->children()->get(0),
+            $element2->children()->get(0)
+        );
+        $this->assertSame(
+            $element->children()->get(1),
+            $element2->children()->get(1)
+        );
+        $this->assertSame(
+            $element->children()->get(2),
+            $element2->children()->get(2)
+        );
+        $this->assertSame(
+            $node,
+            $element2->children()->get(3)
+        );
+    }
+
     public function testContentWithoutChildren()
     {
         $this->assertSame(

@@ -60,6 +60,26 @@ class CharacterDataTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @expectedException Innmind\Xml\Exception\LogicException
+     */
+    public function testThrowWhenPrependingChild()
+    {
+        (new CharacterData('foo'))->prependChild(
+            $this->createMock(NodeInterface::class)
+        );
+    }
+
+    /**
+     * @expectedException Innmind\Xml\Exception\LogicException
+     */
+    public function testThrowWhenAppendingChild()
+    {
+        (new CharacterData('foo'))->appendChild(
+            $this->createMock(NodeInterface::class)
+        );
+    }
+
     public function testCast()
     {
         $this->assertSame(

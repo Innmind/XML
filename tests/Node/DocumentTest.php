@@ -263,4 +263,88 @@ class DocumentTest extends \PHPUnit_Framework_TestCase
             $this->createMock(NodeInterface::class)
         );
     }
+
+    public function testPrependChild()
+    {
+        $document = new Document(
+            new Version(1),
+            new Type('html'),
+            (new Map('int', NodeInterface::class))
+                ->put(0, new Element('foo'))
+                ->put(1, new Element('bar'))
+                ->put(2, new Element('baz')),
+            new Encoding('utf-8')
+        );
+
+        $document2 = $document->prependChild(
+            $node = $this->createMock(NodeInterface::class)
+        );
+
+        $this->assertNotSame($document, $document2);
+        $this->assertInstanceOf(Document::class, $document2);
+        $this->assertSame($document->version(), $document2->version());
+        $this->assertSame($document->type(), $document2->type());
+        $this->assertSame($document->encoding(), $document2->encoding());
+        $this->assertNotSame($document->children(), $document2->children());
+        $this->assertCount(3, $document->children());
+        $this->assertCount(4, $document2->children());
+        $this->assertSame(
+            $node,
+            $document2->children()->get(0)
+        );
+        $this->assertSame(
+            $document->children()->get(0),
+            $document2->children()->get(1)
+        );
+        $this->assertSame(
+            $document->children()->get(1),
+            $document2->children()->get(2)
+        );
+        $this->assertSame(
+            $document->children()->get(2),
+            $document2->children()->get(3)
+        );
+    }
+
+    public function testAopendChild()
+    {
+        $document = new Document(
+            new Version(1),
+            new Type('html'),
+            (new Map('int', NodeInterface::class))
+                ->put(0, new Element('foo'))
+                ->put(1, new Element('bar'))
+                ->put(2, new Element('baz')),
+            new Encoding('utf-8')
+        );
+
+        $document2 = $document->appendChild(
+            $node = $this->createMock(NodeInterface::class)
+        );
+
+        $this->assertNotSame($document, $document2);
+        $this->assertInstanceOf(Document::class, $document2);
+        $this->assertSame($document->version(), $document2->version());
+        $this->assertSame($document->type(), $document2->type());
+        $this->assertSame($document->encoding(), $document2->encoding());
+        $this->assertNotSame($document->children(), $document2->children());
+        $this->assertCount(3, $document->children());
+        $this->assertCount(4, $document2->children());
+        $this->assertSame(
+            $document->children()->get(0),
+            $document2->children()->get(0)
+        );
+        $this->assertSame(
+            $document->children()->get(1),
+            $document2->children()->get(1)
+        );
+        $this->assertSame(
+            $document->children()->get(2),
+            $document2->children()->get(2)
+        );
+        $this->assertSame(
+            $node,
+            $document2->children()->get(3)
+        );
+    }
 }

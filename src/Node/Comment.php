@@ -46,6 +46,16 @@ final class Comment implements NodeInterface
         throw new LogicException;
     }
 
+    public function prependChild(NodeInterface $child): NodeInterface
+    {
+        throw new LogicException;
+    }
+
+    public function appendChild(NodeInterface $child): NodeInterface
+    {
+        throw new LogicException;
+    }
+
     public function content(): string
     {
         return $this->value;
