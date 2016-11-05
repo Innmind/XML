@@ -12,6 +12,10 @@ interface NodeInterface
      */
     public function children(): MapInterface;
     public function hasChildren(): bool;
+    public function removeChild(int $position): self;
+    public function replaceChild(int $position, self $child): self;
+    public function prependChild(self $child): self;
+    public function appendChild(self $child): self;
     public function content(): string;
     public function __toString(): string;
 }

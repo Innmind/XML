@@ -7,7 +7,9 @@ use Innmind\Xml\{
     ElementInterface,
     AttributeInterface,
     NodeInterface,
-    Exception\InvalidArgumentException
+    Exception\InvalidArgumentException,
+    Exception\OutOfBoundsException,
+    Exception\LogicException
 };
 use Innmind\Immutable\{
     Map,
@@ -68,6 +70,48 @@ class Element implements ElementInterface
         return $this->attributes->get($name);
     }
 
+    public function removeAttribute(string $name): ElementInterface
+    {
+        if (!$this->attributes->contains($name)) {
+            throw new OutOfBoundsException;
+        }
+
+        $element = clone $this;
+        $element->attributes = $this->attributes->remove($name);
+
+        return $element;
+    }
+
+    public function replaceAttribute(AttributeInterface $attribute): ElementInterface
+    {
+        if (!$this->attributes->contains($attribute->name())) {
+            throw new OutOfBoundsException;
+        }
+
+        $element = clone $this;
+        $element->attributes = $this->attributes->put(
+            $attribute->name(),
+            $attribute
+        );
+
+        return $element;
+    }
+
+    public function addAttribute(AttributeInterface $attribute): ElementInterface
+    {
+        if ($this->attributes->contains($attribute->name())) {
+            throw new LogicException;
+        }
+
+        $element = clone $this;
+        $element->attributes = $this->attributes->put(
+            $attribute->name(),
+            $attribute
+        );
+
+        return $element;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -79,6 +123,77 @@ class Element implements ElementInterface
     public function hasChildren(): bool
     {
         return $this->children->size() > 0;
+    }
+
+    public function removeChild(int $position): NodeInterface
+    {
+        if (!$this->children->contains($position)) {
+            throw new OutOfBoundsException;
+        }
+
+        $element = clone $this;
+        $element->children = $this
+            ->children
+            ->reduce(
+                new Map('int', NodeInterface::class),
+                function(Map $children, int $pos, NodeInterface $node) use ($position): Map {
+                    if ($pos === $position) {
+                        return $children;
+                    }
+
+                    return $children->put(
+                        $children->size(),
+                        $node
+                    );
+                }
+            );
+
+        return $element;
+    }
+
+    public function replaceChild(int $position, NodeInterface $node): NodeInterface
+    {
+        if (!$this->children->contains($position)) {
+            throw new OutOfBoundsException;
+        }
+
+        $element = clone $this;
+        $element->children = $this->children->put(
+            $position,
+            $node
+        );
+
+        return $element;
+    }
+
+    public function prependChild(NodeInterface $child): NodeInterface
+    {
+        $element = clone $this;
+        $element->children = $this
+            ->children
+            ->reduce(
+                (new Map('int', NodeInterface::class))
+                    ->put(0, $child),
+                function(Map $children, int $position, NodeInterface $child): Map {
+                    return $children->put(
+                        $children->size(),
+                        $child
+                    );
+                }
+            );
+
+        return $element;
+    }
+
+    public function appendChild(NodeInterface $child): NodeInterface
+    {
+        $element = clone $this;
+        $element->children = $this->children->put(
+            $this->children->size(),
+            $child
+        );
+
+        return $element;
     }
 
     public function content(): string

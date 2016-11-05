@@ -41,6 +41,45 @@ class CharacterDataTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @expectedException Innmind\Xml\Exception\LogicException
+     */
+    public function testThrowWhenRemovingChild()
+    {
+        (new CharacterData('foo'))->removeChild(0);
+    }
+
+    /**
+     * @expectedException Innmind\Xml\Exception\LogicException
+     */
+    public function testThrowWhenReplacingChild()
+    {
+        (new CharacterData('foo'))->replaceChild(
+            0,
+            $this->createMock(NodeInterface::class)
+        );
+    }
+
+    /**
+     * @expectedException Innmind\Xml\Exception\LogicException
+     */
+    public function testThrowWhenPrependingChild()
+    {
+        (new CharacterData('foo'))->prependChild(
+            $this->createMock(NodeInterface::class)
+        );
+    }
+
+    /**
+     * @expectedException Innmind\Xml\Exception\LogicException
+     */
+    public function testThrowWhenAppendingChild()
+    {
+        (new CharacterData('foo'))->appendChild(
+            $this->createMock(NodeInterface::class)
+        );
+    }
+
     public function testCast()
     {
         $this->assertSame(
