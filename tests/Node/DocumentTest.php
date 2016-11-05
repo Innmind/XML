@@ -158,4 +158,109 @@ class DocumentTest extends \PHPUnit_Framework_TestCase
             )
         );
     }
+
+    public function testRemoveChild()
+    {
+        $document = new Document(
+            new Version(1),
+            new Type('html'),
+            (new Map('int', NodeInterface::class))
+                ->put(0, new Element('foo'))
+                ->put(1, new Element('bar'))
+                ->put(2, new Element('baz')),
+            new Encoding('utf-8')
+        );
+
+        $document2 = $document->removeChild(1);
+
+        $this->assertNotSame($document, $document2);
+        $this->assertInstanceOf(Document::class, $document2);
+        $this->assertSame($document->version(), $document2->version());
+        $this->assertSame($document->type(), $document2->type());
+        $this->assertSame($document->encoding(), $document2->encoding());
+        $this->assertCount(3, $document->children());
+        $this->assertCount(2, $document2->children());
+        $this->assertSame(
+            $document->children()->get(0),
+            $document2->children()->get(0)
+        );
+        $this->assertSame(
+            $document->children()->get(2),
+            $document2->children()->get(1)
+        );
+    }
+
+    /**
+     * @expectedException Innmind\Xml\Exception\OutOfBoundsException
+     */
+    public function testThrowWhenRemovingUnknownChild()
+    {
+        (new Document(
+            new Version(1),
+            new Type('html'),
+            (new Map('int', NodeInterface::class))
+                ->put(0, new Element('foo'))
+                ->put(1, new Element('bar'))
+                ->put(2, new Element('baz')),
+            new Encoding('utf-8')
+        ))->removeChild(3);
+    }
+
+    public function testReplaceChild()
+    {
+        $document = new Document(
+            new Version(1),
+            new Type('html'),
+            (new Map('int', NodeInterface::class))
+                ->put(0, new Element('foo'))
+                ->put(1, new Element('bar'))
+                ->put(2, new Element('baz')),
+            new Encoding('utf-8')
+        );
+
+        $document2 = $document->replaceChild(
+            1,
+            $node = $this->createMock(NodeInterface::class)
+        );
+
+        $this->assertNotSame($document, $document2);
+        $this->assertInstanceOf(Document::class, $document2);
+        $this->assertSame($document->version(), $document2->version());
+        $this->assertSame($document->type(), $document2->type());
+        $this->assertSame($document->encoding(), $document2->encoding());
+        $this->assertCount(3, $document->children());
+        $this->assertCount(3, $document2->children());
+        $this->assertSame(
+            $document->children()->get(0),
+            $document2->children()->get(0)
+        );
+        $this->assertNotSame(
+            $document->children()->get(1),
+            $document2->children()->get(1)
+        );
+        $this->assertSame($node, $document2->children()->get(1));
+        $this->assertSame(
+            $document->children()->get(2),
+            $document2->children()->get(2)
+        );
+    }
+
+    /**
+     * @expectedException Innmind\Xml\Exception\OutOfBoundsException
+     */
+    public function testThrowWhenReplacingUnknownChild()
+    {
+        (new Document(
+            new Version(1),
+            new Type('html'),
+            (new Map('int', NodeInterface::class))
+                ->put(0, new Element('foo'))
+                ->put(1, new Element('bar'))
+                ->put(2, new Element('baz')),
+            new Encoding('utf-8')
+        ))->replaceChild(
+            3,
+            $this->createMock(NodeInterface::class)
+        );
+    }
 }

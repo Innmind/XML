@@ -3,7 +3,10 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Node;
 
-use Innmind\Xml\NodeInterface;
+use Innmind\Xml\{
+    NodeInterface,
+    Exception\LogicException
+};
 use Innmind\Immutable\{
     Map,
     MapInterface
@@ -31,6 +34,16 @@ final class CharacterData implements NodeInterface
     public function hasChildren(): bool
     {
         return false;
+    }
+
+    public function removeChild(int $position): NodeInterface
+    {
+        throw new LogicException;
+    }
+
+    public function replaceChild(int $position, NodeInterface $node): NodeInterface
+    {
+        throw new LogicException;
     }
 
     public function content(): string

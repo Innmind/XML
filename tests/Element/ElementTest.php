@@ -132,6 +132,105 @@ class ElementTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse((new Element('foo'))->hasChildren());
     }
 
+    public function testRemoveChild()
+    {
+        $element = new Element(
+            'foobar',
+            null,
+            (new Map('int', NodeInterface::class))
+                ->put(0, new Element('foo'))
+                ->put(1, new Element('bar'))
+                ->put(2, new Element('baz'))
+        );
+
+        $element2 = $element->removeChild(1);
+
+        $this->assertNotSame($element, $element2);
+        $this->assertInstanceOf(Element::class, $element2);
+        $this->assertSame($element->name(), $element2->name());
+        $this->assertSame($element->attributes(), $element2->attributes());
+        $this->assertCount(3, $element->children());
+        $this->assertCount(2, $element2->children());
+        $this->assertSame(
+            $element->children()->get(0),
+            $element2->children()->get(0)
+        );
+        $this->assertSame(
+            $element->children()->get(2),
+            $element2->children()->get(1)
+        );
+    }
+
+    /**
+     * @expectedException Innmind\Xml\Exception\OutOfBoundsException
+     */
+    public function testThrowWhenRemovingUnknownChild()
+    {
+        (new Element(
+            'foobar',
+            null,
+            (new Map('int', NodeInterface::class))
+                ->put(0, new Element('foo'))
+                ->put(1, new Element('bar'))
+                ->put(2, new Element('baz'))
+        ))->removeChild(3);
+    }
+
+    public function testReplaceChild()
+    {
+        $element = new Element(
+            'foobar',
+            null,
+            (new Map('int', NodeInterface::class))
+                ->put(0, new Element('foo'))
+                ->put(1, new Element('bar'))
+                ->put(2, new Element('baz'))
+        );
+
+        $element2 = $element->replaceChild(
+            1,
+            $node = $this->createMock(NodeInterface::class)
+        );
+
+        $this->assertNotSame($element, $element2);
+        $this->assertInstanceOf(Element::class, $element2);
+        $this->assertSame($element->name(), $element2->name());
+        $this->assertSame($element->attributes(), $element2->attributes());
+        $this->assertCount(3, $element->children());
+        $this->assertCount(3, $element2->children());
+        $this->assertSame(
+            $element->children()->get(0),
+            $element2->children()->get(0)
+        );
+        $this->assertNotSame(
+            $element->children()->get(1),
+            $element2->children()->get(1)
+        );
+        $this->assertSame($node, $element2->children()->get(1));
+        $this->assertSame(
+            $element->children()->get(2),
+            $element2->children()->get(2)
+        );
+    }
+
+    /**
+     * @expectedException Innmind\Xml\Exception\OutOfBoundsException
+     */
+    public function testThrowWhenReplacingUnknownChild()
+    {
+        (new Element(
+            'foobar',
+            null,
+            (new Map('int', NodeInterface::class))
+                ->put(0, new Element('foo'))
+                ->put(1, new Element('bar'))
+                ->put(2, new Element('baz'))
+        ))->replaceChild(
+            3,
+            $this->createMock(NodeInterface::class)
+        );
+    }
+
     public function testContentWithoutChildren()
     {
         $this->assertSame(

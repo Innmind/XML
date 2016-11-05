@@ -41,6 +41,25 @@ class TextTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    /**
+     * @expectedException Innmind\Xml\Exception\LogicException
+     */
+    public function testThrowWhenRemovingChild()
+    {
+        (new Text('foo'))->removeChild(0);
+    }
+
+    /**
+     * @expectedException Innmind\Xml\Exception\LogicException
+     */
+    public function testThrowWhenReplacingChild()
+    {
+        (new Text('foo'))->replaceChild(
+            0,
+            $this->createMock(NodeInterface::class)
+        );
+    }
+
     public function testCast()
     {
         $this->assertSame(

@@ -115,6 +115,25 @@ class SelfClosingElementTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($node->hasChildren());
     }
 
+    /**
+     * @expectedException Innmind\Xml\Exception\LogicException
+     */
+    public function testThrowWhenRemovingChild()
+    {
+        (new SelfClosingElement('foo'))->removeChild(0);
+    }
+
+    /**
+     * @expectedException Innmind\Xml\Exception\LogicException
+     */
+    public function testThrowWhenReplacingChild()
+    {
+        (new SelfClosingElement('foo'))->replaceChild(
+            0,
+            $this->createMock(NodeInterface::class)
+        );
+    }
+
     public function testContent()
     {
         $this->assertSame(

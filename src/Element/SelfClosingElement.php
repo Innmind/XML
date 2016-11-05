@@ -3,7 +3,10 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Element;
 
-use Innmind\Xml\NodeInterface;
+use Innmind\Xml\{
+    NodeInterface,
+    Exception\LogicException
+};
 use Innmind\Immutable\{
     Map,
     MapInterface
@@ -27,6 +30,16 @@ class SelfClosingElement extends Element
     public function hasChildren(): bool
     {
         return false;
+    }
+
+    public function removeChild(int $position): NodeInterface
+    {
+        throw new LogicException;
+    }
+
+    public function replaceChild(int $position, NodeInterface $node): NodeInterface
+    {
+        throw new LogicException;
     }
 
     public function content(): string

@@ -8,7 +8,8 @@ use Innmind\Xml\{
     Node\Document\Type,
     Node\Document\Version,
     Node\Document\Encoding,
-    Exception\InvalidArgumentException
+    Exception\InvalidArgumentException,
+    Exception\OutOfBoundsException
 };
 use Innmind\Immutable\{
     Map,
@@ -69,6 +70,47 @@ final class Document implements NodeInterface
     public function hasChildren(): bool
     {
         return $this->children->size() > 0;
+    }
+
+    public function removeChild(int $position): NodeInterface
+    {
+        if (!$this->children->contains($position)) {
+            throw new OutOfBoundsException;
+        }
+
+        $document = clone $this;
+        $document->children = $this
+            ->children
+            ->reduce(
+                new Map('int', NodeInterface::class),
+                function(Map $children, int $pos, NodeInterface $node) use ($position): Map {
+                    if ($pos === $position) {
+                        return $children;
+                    }
+
+                    return $children->put(
+                        $children->size(),
+                        $node
+                    );
+                }
+            );
+
+        return $document;
+    }
+
+    public function replaceChild(int $position, NodeInterface $node): NodeInterface
+    {
+        if (!$this->children->contains($position)) {
+            throw new OutOfBoundsException;
+        }
+
+        $document = clone $this;
+        $document->children = $this->children->put(
+            $position,
+            $node
+        );
+
+        return $document;
     }
 
     public function encoding(): Encoding
