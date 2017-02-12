@@ -11,8 +11,9 @@ use Innmind\Xml\{
     Translator\NodeTranslators
 };
 use Innmind\Filesystem\Stream\StringStream;
+use PHPUnit\Framework\TestCase;
 
-class NextSiblingTest extends \PHPUnit_Framework_TestCase
+class NextSiblingTest extends TestCase
 {
     private $reader;
 

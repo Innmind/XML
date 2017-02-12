@@ -10,8 +10,9 @@ use Innmind\Xml\{
     Node\Text
 };
 use Innmind\Immutable\Map;
+use PHPUnit\Framework\TestCase;
 
-class TextTranslatorTest extends \PHPUnit_Framework_TestCase
+class TextTranslatorTest extends TestCase
 {
     public function testInterface()
     {

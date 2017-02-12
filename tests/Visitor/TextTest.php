@@ -10,8 +10,9 @@ use Innmind\Xml\{
     Translator\NodeTranslators
 };
 use Innmind\Filesystem\Stream\StringStream;
+use PHPUnit\Framework\TestCase;
 
-class TextTest extends \PHPUnit_Framework_TestCase
+class TextTest extends TestCase
 {
     private $reader;
 

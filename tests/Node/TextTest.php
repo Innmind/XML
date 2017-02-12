@@ -8,8 +8,9 @@ use Innmind\Xml\{
     NodeInterface
 };
 use Innmind\Immutable\MapInterface;
+use PHPUnit\Framework\TestCase;
 
-class TextTest extends \PHPUnit_Framework_TestCase
+class TextTest extends TestCase
 {
     public function testInterface()
     {
