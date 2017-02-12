@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Node\Document;
 
 use Innmind\Xml\Exception\InvalidArgumentException;
-use Innmind\Immutable\StringPrimitive as Str;
+use Innmind\Immutable\Str;
 
 final class Encoding
 {
@@ -12,7 +12,7 @@ final class Encoding
 
     public function __construct(string $string)
     {
-        if (!(new Str($string))->match('~^[a-zA-Z0-9\-_:\(\)]+$~')) {
+        if (!(new Str($string))->matches('~^[a-zA-Z0-9\-_:\(\)]+$~')) {
             throw new InvalidArgumentException;
         }
 
