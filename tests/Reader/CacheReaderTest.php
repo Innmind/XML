@@ -9,8 +9,9 @@ use Innmind\Xml\{
     NodeInterface
 };
 use Innmind\Filesystem\StreamInterface;
+use PHPUnit\Framework\TestCase;
 
-class CacheReaderTest extends \PHPUnit_Framework_TestCase
+class CacheReaderTest extends TestCase
 {
     public function testInterface()
     {

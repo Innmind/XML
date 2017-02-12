@@ -13,8 +13,9 @@ use Innmind\Xml\Translator\{
     NodeTranslator\TextTranslator
 };
 use Innmind\Immutable\MapInterface;
+use PHPUnit\Framework\TestCase;
 
-class NodeTranslatorsTest extends \PHPUnit_Framework_TestCase
+class NodeTranslatorsTest extends TestCase
 {
     public function testDefaults()
     {

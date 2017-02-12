@@ -15,8 +15,9 @@ use Innmind\Xml\{
     Node\Comment
 };
 use Innmind\Immutable\Map;
+use PHPUnit\Framework\TestCase;
 
-class NodeTranslatorTest extends \PHPUnit_Framework_TestCase
+class NodeTranslatorTest extends TestCase
 {
     private $translator;
 

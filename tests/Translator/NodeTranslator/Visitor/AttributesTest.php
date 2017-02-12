@@ -8,8 +8,9 @@ use Innmind\Xml\{
     AttributeInterface
 };
 use Innmind\Immutable\MapInterface;
+use PHPUnit\Framework\TestCase;
 
-class AttributesTest extends \PHPUnit_Framework_TestCase
+class AttributesTest extends TestCase
 {
     public function testSimpleNode()
     {

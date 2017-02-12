@@ -4,8 +4,9 @@ declare(strict_types = 1);
 namespace Tests\Innmind\Xml\Node\Document;
 
 use Innmind\Xml\Node\Document\Type;
+use PHPUnit\Framework\TestCase;
 
-class TypeTest extends \PHPUnit_Framework_TestCase
+class TypeTest extends TestCase
 {
     /**
      * @dataProvider cases

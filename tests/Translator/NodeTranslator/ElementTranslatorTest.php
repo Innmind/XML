@@ -12,8 +12,9 @@ use Innmind\Xml\{
     Element\SelfClosingElement
 };
 use Innmind\Immutable\Map;
+use PHPUnit\Framework\TestCase;
 
-class ElementTranslatorTest extends \PHPUnit_Framework_TestCase
+class ElementTranslatorTest extends TestCase
 {
     public function testInterface()
     {

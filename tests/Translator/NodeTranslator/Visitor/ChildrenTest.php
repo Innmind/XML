@@ -10,8 +10,9 @@ use Innmind\Xml\{
     NodeInterface
 };
 use Innmind\Immutable\MapInterface;
+use PHPUnit\Framework\TestCase;
 
-class ChildrenTest extends \PHPUnit_Framework_TestCase
+class ChildrenTest extends TestCase
 {
     public function testNoChildren()
     {

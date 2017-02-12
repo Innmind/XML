@@ -13,8 +13,9 @@ use Innmind\Immutable\{
     Map,
     MapInterface
 };
+use PHPUnit\Framework\TestCase;
 
-class SelfClosingElementTest extends \PHPUnit_Framework_TestCase
+class SelfClosingElementTest extends TestCase
 {
     public function testInterface()
     {

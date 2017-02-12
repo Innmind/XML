@@ -10,8 +10,9 @@ use Innmind\Xml\{
     Node\CharacterData
 };
 use Innmind\Immutable\Map;
+use PHPUnit\Framework\TestCase;
 
-class CharacterDataTranslatorTest extends \PHPUnit_Framework_TestCase
+class CharacterDataTranslatorTest extends TestCase
 {
     public function testInterface()
     {
