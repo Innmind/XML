@@ -10,7 +10,7 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\NodeTranslators
 };
-use Innmind\Filesystem\Stream\StringStream;
+use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
 
 class ReaderTest extends TestCase
@@ -48,7 +48,9 @@ class ReaderTest extends TestCase
     hey!
 </foo>
 XML;
-        $node = $this->reader->read(new StringStream($xml));
+        $res = fopen('php://temp', 'r+');
+        fwrite($res, $xml);
+        $node = $this->reader->read(new Stream($res));
 
         $this->assertSame($xml, (string) $node);
     }
