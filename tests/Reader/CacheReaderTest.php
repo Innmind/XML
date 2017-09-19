@@ -8,7 +8,7 @@ use Innmind\Xml\{
     ReaderInterface,
     NodeInterface
 };
-use Innmind\Filesystem\StreamInterface;
+use Innmind\Stream\Readable;
 use PHPUnit\Framework\TestCase;
 
 class CacheReaderTest extends TestCase
@@ -25,7 +25,7 @@ class CacheReaderTest extends TestCase
 
     public function testCache()
     {
-        $stream = $this->createMock(StreamInterface::class);
+        $stream = $this->createMock(Readable::class);
         $cache = new CacheReader(
             $reader = $this->createMock(ReaderInterface::class)
         );

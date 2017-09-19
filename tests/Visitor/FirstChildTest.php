@@ -10,7 +10,7 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\NodeTranslators
 };
-use Innmind\Filesystem\Stream\StringStream;
+use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
 
 class FirstChildTest extends TestCase
@@ -31,8 +31,10 @@ class FirstChildTest extends TestCase
         $xml = <<<XML
 <div><foo /><bar /></div>
 XML;
+        $res = fopen('php://temp', 'r+');
+        fwrite($res, $xml);
         $tree = $this->reader->read(
-            new StringStream($xml)
+            new Stream($res)
         );
         $div = $tree
             ->children()

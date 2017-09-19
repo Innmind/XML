@@ -7,7 +7,7 @@ use Innmind\Xml\{
     ReaderInterface,
     NodeInterface
 };
-use Innmind\Filesystem\StreamInterface;
+use Innmind\Stream\Readable;
 use Innmind\Immutable\Map;
 
 final class CacheReader implements ReaderInterface
@@ -18,10 +18,10 @@ final class CacheReader implements ReaderInterface
     public function __construct(ReaderInterface $reader)
     {
         $this->reader = $reader;
-        $this->cache = new Map(StreamInterface::class, NodeInterface::class);
+        $this->cache = new Map(Readable::class, NodeInterface::class);
     }
 
-    public function read(StreamInterface $xml): NodeInterface
+    public function read(Readable $xml): NodeInterface
     {
         if ($this->cache->contains($xml)) {
             return $this->cache->get($xml);
@@ -33,7 +33,7 @@ final class CacheReader implements ReaderInterface
         return $node;
     }
 
-    public function detach(StreamInterface $xml): self
+    public function detach(Readable $xml): self
     {
         $this->cache = $this->cache->remove($xml);
 
