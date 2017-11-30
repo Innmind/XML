@@ -28,7 +28,7 @@ class TextTest extends TestCase
         $this->assertSame('int', (string) $text->children()->keyType());
         $this->assertSame(
             NodeInterface::class,
-            (string) $text->children()->ValueType()
+            (string) $text->children()->valueType()
         );
         $this->assertCount(0, $text->children());
         $this->assertFalse($text->hasChildren());
