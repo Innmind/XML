@@ -8,7 +8,8 @@ use Innmind\Xml\Translator\NodeTranslator\{
     ElementTranslator,
     CharacterDataTranslator,
     CommentTranslator,
-    TextTranslator
+    TextTranslator,
+    EntityReferenceTranslator
 };
 use Innmind\Immutable\{
     Map,
@@ -30,7 +31,8 @@ final class NodeTranslators
                 ->put(XML_ELEMENT_NODE, new ElementTranslator)
                 ->put(XML_CDATA_SECTION_NODE, new CharacterDataTranslator)
                 ->put(XML_TEXT_NODE, new TextTranslator)
-                ->put(XML_COMMENT_NODE, new CommentTranslator);
+                ->put(XML_COMMENT_NODE, new CommentTranslator)
+                ->put(XML_ENTITY_REF_NODE, new EntityReferenceTranslator);
         }
 
         return self::$defaults;

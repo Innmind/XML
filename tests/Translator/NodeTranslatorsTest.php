@@ -10,7 +10,8 @@ use Innmind\Xml\Translator\{
     NodeTranslator\ElementTranslator,
     NodeTranslator\CharacterDataTranslator,
     NodeTranslator\CommentTranslator,
-    NodeTranslator\TextTranslator
+    NodeTranslator\TextTranslator,
+    NodeTranslator\EntityReferenceTranslator
 };
 use Innmind\Immutable\MapInterface;
 use PHPUnit\Framework\TestCase;
@@ -27,7 +28,7 @@ class NodeTranslatorsTest extends TestCase
             NodeTranslatorInterface::class,
             (string) $defaults->valueType()
         );
-        $this->assertCount(5, $defaults);
+        $this->assertCount(6, $defaults);
         $this->assertInstanceOf(
             DocumentTranslator::class,
             $defaults->get(XML_DOCUMENT_NODE)
@@ -47,6 +48,10 @@ class NodeTranslatorsTest extends TestCase
         $this->assertInstanceOf(
             TextTranslator::class,
             $defaults->get(XML_TEXT_NODE)
+        );
+        $this->assertInstanceOf(
+            EntityReferenceTranslator::class,
+            $defaults->get(XML_ENTITY_REF_NODE)
         );
     }
 }

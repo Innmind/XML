@@ -4,41 +4,41 @@ declare(strict_types = 1);
 namespace Tests\Innmind\Xml\Node;
 
 use Innmind\Xml\{
-    Node\Text,
+    Node\EntityReference,
     NodeInterface
 };
 use Innmind\Immutable\MapInterface;
 use PHPUnit\Framework\TestCase;
 
-class TextTest extends TestCase
+class EntityReferenceTest extends TestCase
 {
     public function testInterface()
     {
         $this->assertInstanceOf(
             NodeInterface::class,
-            new Text('foo')
+            new EntityReference('foo')
         );
     }
 
     public function testChildren()
     {
-        $text = new Text('foo');
+        $node = new EntityReference('foo');
 
-        $this->assertInstanceOf(MapInterface::class, $text->children());
-        $this->assertSame('int', (string) $text->children()->keyType());
+        $this->assertInstanceOf(MapInterface::class, $node->children());
+        $this->assertSame('int', (string) $node->children()->keyType());
         $this->assertSame(
             NodeInterface::class,
-            (string) $text->children()->valueType()
+            (string) $node->children()->valueType()
         );
-        $this->assertCount(0, $text->children());
-        $this->assertFalse($text->hasChildren());
+        $this->assertCount(0, $node->children());
+        $this->assertFalse($node->hasChildren());
     }
 
     public function testContent()
     {
         $this->assertSame(
             ' foo ',
-            (new Text(' foo '))->content()
+            (new EntityReference(' foo '))->content()
         );
     }
 
@@ -47,7 +47,7 @@ class TextTest extends TestCase
      */
     public function testThrowWhenRemovingChild()
     {
-        (new Text('foo'))->removeChild(0);
+        (new EntityReference('foo'))->removeChild(0);
     }
 
     /**
@@ -55,7 +55,7 @@ class TextTest extends TestCase
      */
     public function testThrowWhenReplacingChild()
     {
-        (new Text('foo'))->replaceChild(
+        (new EntityReference('foo'))->replaceChild(
             0,
             $this->createMock(NodeInterface::class)
         );
@@ -66,7 +66,7 @@ class TextTest extends TestCase
      */
     public function testThrowWhenPrependingChild()
     {
-        (new Text('foo'))->prependChild(
+        (new EntityReference('foo'))->prependChild(
             $this->createMock(NodeInterface::class)
         );
     }
@@ -76,7 +76,7 @@ class TextTest extends TestCase
      */
     public function testThrowWhenAppendingChild()
     {
-        (new Text('foo'))->appendChild(
+        (new EntityReference('foo'))->appendChild(
             $this->createMock(NodeInterface::class)
         );
     }
@@ -84,8 +84,8 @@ class TextTest extends TestCase
     public function testCast()
     {
         $this->assertSame(
-            'foo',
-            (string) new Text('foo')
+            '&foo;',
+            (string) new EntityReference('foo')
         );
     }
 }
