@@ -1,0 +1,18 @@
+arguments:
+    nodeTranslators: map<int, Innmind\Xml\Translator\NodeTranslatorInterface> ?? $defaultNodeTranslators
+
+expose:
+    reader: $reader
+    cacheReader: $cacheReader
+
+services:
+    reader Innmind\Xml\Reader\Reader:
+        - '$nodeTranslator'
+
+    cacheReader Innmind\Xml\Reader\CacheReader:
+        - '$reader'
+
+    nodeTranslator Innmind\Xml\Translator\NodeTranslator:
+        - '$nodeTranslators'
+
+    defaultNodeTranslators Innmind\Xml\Translator\NodeTranslators::defaults: []
