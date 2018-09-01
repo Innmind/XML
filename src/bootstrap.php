@@ -4,7 +4,6 @@ declare(strict_types = 1);
 namespace Innmind\Xml;
 
 use Innmind\Xml\{
-    ReaderInterface,
     Reader\Reader,
     Reader\CacheReader,
     Translator\NodeTranslator,
