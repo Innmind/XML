@@ -19,18 +19,10 @@ composer require innmind/xml
 ## Usage
 
 ```php
-use Innmind\Xml\{
-    Reader\Reader,
-    Translator\NodeTranslator,
-    Translator\NodeTranslators
-};
+use function Innmind\Xml\bootstrap;
 use Innmind\Filesystem\Stream\Stream;
 
-$reader = new Reader(
-    new NodeTranslator(
-        NodeTranslators::defaults()
-    )
-);
+$reader = bootstrap()['reader'];
 
 $tree = $reader->read(
     new StringStream('<root><foo some="attribute"/></root>')
@@ -68,9 +60,8 @@ Here is the full list of visitors you have access to by default:
 If for some reason your code call the reader multiple times for the same stream object, you may want to cache the parsed tree in order to save some time. You can do so as shown below:
 
 ```php
-use Innmind\Xml\Reader\CacheReader;
-
-$cache = new CacheReader($reader);
+$readers = bootstrap();
+$cache = $readers['cache']($readers['reader']);
 $xml = '<root><foo some="attribute"/></root>';
 $tree = $cache->read(
     $stream = new StringStream($xml)

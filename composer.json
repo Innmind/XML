@@ -17,13 +17,13 @@
     "require": {
         "php": "~7.2",
         "innmind/immutable": "~2.0",
-        "innmind/stream": "^1.3",
-        "innmind/compose": "^1.0"
+        "innmind/stream": "^1.3"
     },
     "autoload": {
         "psr-4": {
             "Innmind\\Xml\\": "src/"
-        }
+        },
+        "files": ["src/bootstrap.php"]
     },
     "autoload-dev": {
         "psr-4": {
@@ -34,6 +34,7 @@
         "test": "vendor/bin/phpunit --colors=always"
     },
     "require-dev": {
-        "phpunit/phpunit": "~6.0"
+        "phpunit/phpunit": "~6.0",
+        "innmind/compose": "^1.0"
     }
 }
