@@ -23,7 +23,8 @@
     "autoload": {
         "psr-4": {
             "Innmind\\Xml\\": "src/"
-        }
+        },
+        "files": ["src/bootstrap.php"]
     },
     "autoload-dev": {
         "psr-4": {
