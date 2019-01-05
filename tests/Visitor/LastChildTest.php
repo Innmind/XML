@@ -7,20 +7,21 @@ use Innmind\Xml\{
     Visitor\LastChild,
     Reader\Reader,
     Element\Element,
-    Translator\NodeTranslator,
-    Translator\NodeTranslators
+    Translator\Translator,
+    Translator\NodeTranslators,
+    Exception\NodeDoesntHaveChildren,
 };
 use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
 
 class LastChildTest extends TestCase
 {
-    private $reader;
+    private $read;
 
     public function setUp()
     {
-        $this->reader = new Reader(
-            new NodeTranslator(
+        $this->read = new Reader(
+            new Translator(
                 NodeTranslators::defaults()
             )
         );
@@ -33,7 +34,7 @@ class LastChildTest extends TestCase
 XML;
         $res = fopen('php://temp', 'r+');
         fwrite($res, $xml);
-        $tree = $this->reader->read(
+        $tree = ($this->read)(
             new Stream($res)
         );
         $div = $tree
@@ -53,7 +54,7 @@ XML;
 XML;
         $res = fopen('php://temp', 'r+');
         fwrite($res, $xml);
-        $tree = $this->reader->read(
+        $tree = ($this->read)(
             new Stream($res)
         );
         $div = $tree
@@ -69,11 +70,10 @@ XML;
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\NodeDoesntHaveChildrenException
-     */
     public function testThrowWhenNoLastChild()
     {
+        $this->expectException(NodeDoesntHaveChildren::class);
+
         (new LastChild)(new Element('foo'));
     }
 }

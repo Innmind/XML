@@ -5,11 +5,12 @@ namespace Tests\Innmind\Xml\Translator\NodeTranslator;
 
 use Innmind\Xml\{
     Translator\NodeTranslator\DocumentTranslator,
-    Translator\NodeTranslatorInterface,
     Translator\NodeTranslator,
+    Translator\Translator,
     Node\Document,
-    NodeInterface,
-    Element\SelfClosingElement
+    Node,
+    Element\SelfClosingElement,
+    Exception\InvalidArgumentException,
 };
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +20,7 @@ class DocumentTranslatorTest extends TestCase
     public function testInterface()
     {
         $this->assertInstanceOf(
-            NodeTranslatorInterface::class,
+            NodeTranslator::class,
             new DocumentTranslator
         );
     }
@@ -34,24 +35,24 @@ class DocumentTranslatorTest extends TestCase
 XML
         );
 
-        $translator = new DocumentTranslator;
+        $translate = new DocumentTranslator;
         $foo = new SelfClosingElement('foo');
-        $node = $translator->translate(
+        $node = $translate(
             $document,
-            new NodeTranslator(
-                (new Map('int', NodeTranslatorInterface::class))
-                    ->put(
+            new Translator(
+                Map::of('int', NodeTranslator::class)
+                    (
                         XML_ELEMENT_NODE,
-                        new class($foo) implements NodeTranslatorInterface
+                        new class($foo) implements NodeTranslator
                         {
                             private $foo;
 
-                            public function __construct(NodeInterface $foo)
+                            public function __construct(Node $foo)
                             {
                                 $this->foo = $foo;
                             }
 
-                            public function translate(\DOMNode $node, NodeTranslator $translator): NodeInterface
+                            public function __invoke(\DOMNode $node, Translator $translate): Node
                             {
                                 return $this->foo;
                             }
@@ -64,15 +65,14 @@ XML
         $this->assertSame($xml, (string) $node);
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
-     */
     public function testThrowWhenInvalidNode()
     {
-        (new DocumentTranslator)->translate(
+        $this->expectException(InvalidArgumentException::class);
+
+        (new DocumentTranslator)(
             new \DOMNode,
-            new NodeTranslator(
-                new Map('int', NodeTranslatorInterface::class)
+            new Translator(
+                new Map('int', NodeTranslator::class)
             )
         );
     }

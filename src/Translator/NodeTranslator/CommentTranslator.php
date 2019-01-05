@@ -4,19 +4,19 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Translator\NodeTranslator;
 
 use Innmind\Xml\{
-    Translator\NodeTranslatorInterface,
     Translator\NodeTranslator,
-    NodeInterface,
+    Translator\Translator,
+    Node,
     Exception\InvalidArgumentException,
-    Node\Comment
+    Node\Comment,
 };
 
-final class CommentTranslator implements NodeTranslatorInterface
+final class CommentTranslator implements NodeTranslator
 {
-    public function translate(
+    public function __invoke(
         \DOMNode $node,
-        NodeTranslator $translator
-    ): NodeInterface {
+        Translator $translate
+    ): Node {
         if (!$node instanceof \DOMComment) {
             throw new InvalidArgumentException;
         }

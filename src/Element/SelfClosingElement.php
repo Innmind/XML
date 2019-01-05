@@ -4,12 +4,12 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Element;
 
 use Innmind\Xml\{
-    NodeInterface,
-    Exception\LogicException
+    Node,
+    Exception\LogicException,
 };
 use Innmind\Immutable\{
+    MapInterface,
     Map,
-    MapInterface
 };
 
 class SelfClosingElement extends Element
@@ -23,7 +23,7 @@ class SelfClosingElement extends Element
         parent::__construct(
             $name,
             $attributes,
-            new Map('int', NodeInterface::class)
+            new Map('int', Node::class)
         );
     }
 
@@ -32,22 +32,22 @@ class SelfClosingElement extends Element
         return false;
     }
 
-    public function removeChild(int $position): NodeInterface
+    public function removeChild(int $position): Node
     {
         throw new LogicException;
     }
 
-    public function replaceChild(int $position, NodeInterface $node): NodeInterface
+    public function replaceChild(int $position, Node $node): Node
     {
         throw new LogicException;
     }
 
-    public function prependChild(NodeInterface $child): NodeInterface
+    public function prependChild(Node $child): Node
     {
         throw new LogicException;
     }
 
-    public function appendChild(NodeInterface $child): NodeInterface
+    public function appendChild(Node $child): Node
     {
         throw new LogicException;
     }

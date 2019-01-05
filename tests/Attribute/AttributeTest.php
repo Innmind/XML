@@ -1,11 +1,12 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\Xml;
+namespace Tests\Innmind\Xml\Attribute;
 
 use Innmind\Xml\{
-    Attribute,
-    AttributeInterface
+    Attribute\Attribute,
+    Attribute as AttributeInterface,
+    Exception\DomainException,
 };
 use PHPUnit\Framework\TestCase;
 
@@ -19,11 +20,10 @@ class AttributeTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
-     */
     public function testThrowWhenEmptyName()
     {
+        $this->expectException(DomainException::class);
+
         new Attribute('');
     }
 

@@ -6,20 +6,20 @@ namespace Tests\Innmind\Xml\Visitor;
 use Innmind\Xml\{
     Visitor\Text,
     Reader\Reader,
-    Translator\NodeTranslator,
-    Translator\NodeTranslators
+    Translator\Translator,
+    Translator\NodeTranslators,
 };
 use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
 
 class TextTest extends TestCase
 {
-    private $reader;
+    private $read;
 
     public function setUp()
     {
-        $this->reader = new Reader(
-            new NodeTranslator(
+        $this->read = new Reader(
+            new Translator(
                 NodeTranslators::defaults()
             )
         );
@@ -40,7 +40,7 @@ class TextTest extends TestCase
 XML;
         $res = fopen('php://temp', 'r+');
         fwrite($res, $xml);
-        $tree = $this->reader->read(
+        $tree = ($this->read)(
             new Stream($res)
         );
 

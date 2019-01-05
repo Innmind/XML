@@ -5,9 +5,9 @@ namespace Tests\Innmind\Xml\Translator\NodeTranslator\Visitor;
 
 use Innmind\Xml\{
     Translator\NodeTranslator\Visitor\Children,
-    Translator\NodeTranslator,
+    Translator\Translator,
     Translator\NodeTranslators,
-    NodeInterface
+    Node,
 };
 use Innmind\Immutable\MapInterface;
 use PHPUnit\Framework\TestCase;
@@ -20,14 +20,14 @@ class ChildrenTest extends TestCase
         $document->loadXML('<root></root>');
 
         $children = (new Children(
-            new NodeTranslator(
+            new Translator(
                 NodeTranslators::defaults()
             )
         ))($document->childNodes->item(0));
 
         $this->assertInstanceOf(MapInterface::class, $children);
         $this->assertSame('int', (string) $children->keyType());
-        $this->assertSame(NodeInterface::class, (string) $children->valueType());
+        $this->assertSame(Node::class, (string) $children->valueType());
         $this->assertCount(0, $children);
     }
 
@@ -37,14 +37,14 @@ class ChildrenTest extends TestCase
         $document->loadXML('<root><foo/><bar/></root>');
 
         $children = (new Children(
-            new NodeTranslator(
+            new Translator(
                 NodeTranslators::defaults()
             )
         ))($document->childNodes->item(0));
 
         $this->assertInstanceOf(MapInterface::class, $children);
         $this->assertSame('int', (string) $children->keyType());
-        $this->assertSame(NodeInterface::class, (string) $children->valueType());
+        $this->assertSame(Node::class, (string) $children->valueType());
         $this->assertCount(2, $children);
     }
 }

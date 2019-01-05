@@ -5,22 +5,22 @@ namespace Tests\Innmind\Xml\Reader;
 
 use Innmind\Xml\{
     Reader\Reader,
-    ReaderInterface,
+    Reader as ReaderInterface,
     Element\Element,
-    Translator\NodeTranslator,
-    Translator\NodeTranslators
+    Translator\Translator,
+    Translator\NodeTranslators,
 };
 use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
 
 class ReaderTest extends TestCase
 {
-    private $reader;
+    private $read;
 
     public function setUp()
     {
-        $this->reader = new Reader(
-            new NodeTranslator(
+        $this->read = new Reader(
+            new Translator(
                 NodeTranslators::defaults()
             )
         );
@@ -30,7 +30,7 @@ class ReaderTest extends TestCase
     {
         $this->assertInstanceOf(
             ReaderInterface::class,
-            $this->reader
+            $this->read
         );
     }
 
@@ -50,7 +50,7 @@ class ReaderTest extends TestCase
 XML;
         $res = fopen('php://temp', 'r+');
         fwrite($res, $xml);
-        $node = $this->reader->read(new Stream($res));
+        $node = ($this->read)(new Stream($res));
 
         $this->assertSame($xml, (string) $node);
     }

@@ -3,6 +3,6 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Exception;
 
-final class NoNextSiblingException extends NodeNotFoundException
+final class NodeDoesntHaveChildren extends NodeNotFound
 {
 }

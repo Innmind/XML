@@ -7,20 +7,21 @@ use Innmind\Xml\{
     Visitor\PreviousSibling,
     Reader\Reader,
     Element\Element,
-    Translator\NodeTranslator,
-    Translator\NodeTranslators
+    Translator\Translator,
+    Translator\NodeTranslators,
+    Exception\NoPreviousSibling,
 };
 use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
 
 class PreviousSiblingTest extends TestCase
 {
-    private $reader;
+    private $read;
 
     public function setUp()
     {
-        $this->reader = new Reader(
-            new NodeTranslator(
+        $this->read = new Reader(
+            new Translator(
                 NodeTranslators::defaults()
             )
         );
@@ -33,7 +34,7 @@ class PreviousSiblingTest extends TestCase
 XML;
         $res = fopen('php://temp', 'r+');
         fwrite($res, $xml);
-        $tree = $this->reader->read(
+        $tree = ($this->read)(
             new Stream($res)
         );
         $div = $tree
@@ -52,9 +53,6 @@ XML;
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\NoPreviousSiblingException
-     */
     public function testThrowWhenNoPreviousSibling()
     {
         $xml = <<<XML
@@ -62,7 +60,7 @@ XML;
 XML;
         $res = fopen('php://temp', 'r+');
         fwrite($res, $xml);
-        $tree = $this->reader->read(
+        $tree = ($this->read)(
             new Stream($res)
         );
         $div = $tree
@@ -71,6 +69,8 @@ XML;
         $foo = $div
             ->children()
             ->get(0);
+
+        $this->expectException(NoPreviousSibling::class);
 
         (new PreviousSibling($foo))($tree);
     }

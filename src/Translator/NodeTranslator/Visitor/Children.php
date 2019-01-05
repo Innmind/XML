@@ -4,26 +4,26 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Translator\NodeTranslator\Visitor;
 
 use Innmind\Xml\{
-    Translator\NodeTranslator,
-    NodeInterface
+    Translator\Translator,
+    Node,
 };
 use Innmind\Immutable\{
+    MapInterface,
     Map,
-    MapInterface
 };
 
 final class Children
 {
-    private $translator;
+    private $translate;
 
-    public function __construct(NodeTranslator $translator)
+    public function __construct(Translator $translate)
     {
-        $this->translator = $translator;
+        $this->translate = $translate;
     }
 
     public function __invoke(\DOMNode $node): MapInterface
     {
-        $children = new Map('int', NodeInterface::class);
+        $children = new Map('int', Node::class);
 
         if (!$node->childNodes instanceof \DOMNodeList) {
             return $children;
@@ -32,7 +32,7 @@ final class Children
         foreach ($node->childNodes as $child) {
             $children = $children->put(
                 $children->size(),
-                $this->translator->translate($child)
+                ($this->translate)($child)
             );
         }
 

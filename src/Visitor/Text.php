@@ -3,21 +3,21 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Visitor;
 
-use Innmind\Xml\NodeInterface;
+use Innmind\Xml\Node;
 
 /**
  * Extract whole text of a tree
  */
 final class Text
 {
-    public function __invoke(NodeInterface $tree): string
+    public function __invoke(Node $tree): string
     {
         if ($tree->hasChildren()) {
             return $tree
                 ->children()
                 ->reduce(
                     '',
-                    function(string $string, int $position, NodeInterface $node): string {
+                    function(string $string, int $position, Node $node): string {
                         return $string.$this($node);
                     }
                 );

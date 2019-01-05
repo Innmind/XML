@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Node\Document;
 
-use Innmind\Xml\Exception\InvalidArgumentException;
+use Innmind\Xml\Exception\DomainException;
 
 final class Version
 {
@@ -14,7 +14,7 @@ final class Version
     public function __construct(int $major, int $minor = 0)
     {
         if ($major < 0 || $minor < 0) {
-            throw new InvalidArgumentException;
+            throw new DomainException;
         }
 
         $this->major = $major;

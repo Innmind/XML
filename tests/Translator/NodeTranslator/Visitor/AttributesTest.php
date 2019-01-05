@@ -5,7 +5,7 @@ namespace Tests\Innmind\Xml\Translator\NodeTranslator\Visitor;
 
 use Innmind\Xml\{
     Translator\NodeTranslator\Visitor\Attributes,
-    AttributeInterface
+    Attribute,
 };
 use Innmind\Immutable\MapInterface;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +19,7 @@ class AttributesTest extends TestCase
         $this->assertInstanceOf(MapInterface::class, $attributes);
         $this->assertSame('string', (string) $attributes->keyType());
         $this->assertSame(
-            AttributeInterface::class,
+            Attribute::class,
             (string) $attributes->valueType()
         );
         $this->assertCount(0, $attributes);
@@ -35,7 +35,7 @@ class AttributesTest extends TestCase
         $this->assertInstanceOf(MapInterface::class, $attributes);
         $this->assertSame('string', (string) $attributes->keyType());
         $this->assertSame(
-            AttributeInterface::class,
+            Attribute::class,
             (string) $attributes->valueType()
         );
         $this->assertCount(0, $attributes);
@@ -51,7 +51,7 @@ class AttributesTest extends TestCase
         $this->assertInstanceOf(MapInterface::class, $attributes);
         $this->assertSame('string', (string) $attributes->keyType());
         $this->assertSame(
-            AttributeInterface::class,
+            Attribute::class,
             (string) $attributes->valueType()
         );
         $this->assertCount(2, $attributes);

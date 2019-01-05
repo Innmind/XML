@@ -4,28 +4,37 @@ declare(strict_types = 1);
 namespace Tests\Innmind\Xml\Translator;
 
 use Innmind\Xml\{
-    Translator\NodeTranslator,
+    Translator\Translator,
     Translator\NodeTranslators,
-    Translator\NodeTranslatorInterface,
+    Translator\NodeTranslator,
     Element\Element,
     Element\SelfClosingElement,
     Node\Document,
     Node\Text,
     Node\CharacterData,
-    Node\Comment
+    Node\Comment,
+    Exception\UnknownNodeType,
 };
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
 
-class NodeTranslatorTest extends TestCase
+class TranslatorTest extends TestCase
 {
-    private $translator;
+    private $translate;
 
     public function setUp()
     {
-        $this->translator = new NodeTranslator(
+        $this->translate = new Translator(
             NodeTranslators::defaults()
         );
+    }
+
+    public function testThrowWhenInvalidTranslators()
+    {
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('Argument 1 must be of type MapInterface<int, Innmind\Xml\Translator\NodeTranslator>');
+
+        new Translator(new Map('string', 'string'));
     }
 
     public function testTranslate()
@@ -44,7 +53,7 @@ class NodeTranslatorTest extends TestCase
 </foo>
 XML
         );
-        $node = $this->translator->translate($document);
+        $node = ($this->translate)($document);
 
         $this->assertInstanceOf(Document::class, $node);
         $this->assertSame('1.0', (string) $node->version());
@@ -100,13 +109,12 @@ XML
         $this->assertSame($xml, (string) $node);
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\UnknownNodeTypeException
-     */
     public function testThrowWhenNoTranslatorFoundForANodeType()
     {
-        (new NodeTranslator(
-            new Map('int', NodeTranslatorInterface::class)
-        ))->translate(new \DOMDocument);
+        $this->expectException(UnknownNodeType::class);
+
+        (new Translator(
+            new Map('int', NodeTranslator::class)
+        ))(new \DOMDocument);
     }
 }

@@ -7,20 +7,21 @@ use Innmind\Xml\{
     Visitor\ParentNode,
     Reader\Reader,
     Element\Element,
-    Translator\NodeTranslator,
-    Translator\NodeTranslators
+    Translator\Translator,
+    Translator\NodeTranslators,
+    Exception\NodeHasNoParent,
 };
 use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
 
 class ParentNodeTest extends TestCase
 {
-    private $reader;
+    private $read;
 
     public function setUp()
     {
-        $this->reader = new Reader(
-            new NodeTranslator(
+        $this->read = new Reader(
+            new Translator(
                 NodeTranslators::defaults()
             )
         );
@@ -33,7 +34,7 @@ class ParentNodeTest extends TestCase
 XML;
         $res = fopen('php://temp', 'r+');
         fwrite($res, $xml);
-        $tree = $this->reader->read(
+        $tree = ($this->read)(
             new Stream($res)
         );
         $parent = $tree
@@ -51,11 +52,10 @@ XML;
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\NodeHasNoParentException
-     */
     public function testThrowWhenNoParentFound()
     {
+        $this->expectException(NodeHasNoParent::class);
+
         (new ParentNode(new Element('foo')))(new Element('bar'));
     }
 }

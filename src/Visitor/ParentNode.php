@@ -4,20 +4,20 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Visitor;
 
 use Innmind\Xml\{
-    NodeInterface,
-    Exception\NodeHasNoParentException
+    Node,
+    Exception\NodeHasNoParent,
 };
 
 final class ParentNode
 {
     private $node;
 
-    public function __construct(NodeInterface $node)
+    public function __construct(Node $node)
     {
         $this->node = $node;
     }
 
-    public function __invoke(NodeInterface $tree): NodeInterface
+    public function __invoke(Node $tree): Node
     {
         if ($tree->hasChildren()) {
             foreach ($tree->children() as $child) {
@@ -27,12 +27,12 @@ final class ParentNode
 
                 try {
                     return $this($child);
-                } catch (NodeHasNoParentException $e) {
+                } catch (NodeHasNoParent $e) {
                     //pass
                 }
             }
         }
 
-        throw new NodeHasNoParentException;
+        throw new NodeHasNoParent;
     }
 }

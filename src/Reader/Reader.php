@@ -4,27 +4,27 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Reader;
 
 use Innmind\Xml\{
-    ReaderInterface,
-    NodeInterface,
-    Translator\NodeTranslator
+    Reader as ReaderInterface,
+    Node,
+    Translator\Translator,
 };
 use Innmind\Stream\Readable;
 
 final class Reader implements ReaderInterface
 {
-    private $translator;
+    private $translate;
 
-    public function __construct(NodeTranslator $translator)
+    public function __construct(Translator $translate)
     {
-        $this->translator = $translator;
+        $this->translate = $translate;
     }
 
-    public function read(Readable $content): NodeInterface
+    public function __invoke(Readable $content): Node
     {
         $xml = new \DOMDocument;
         $xml->loadXML((string) $content);
         $xml->normalizeDocument();
 
-        return $this->translator->translate($xml);
+        return ($this->translate)($xml);
     }
 }

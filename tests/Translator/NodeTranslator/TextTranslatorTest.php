@@ -5,9 +5,10 @@ namespace Tests\Innmind\Xml\Translator\NodeTranslator;
 
 use Innmind\Xml\{
     Translator\NodeTranslator\TextTranslator,
-    Translator\NodeTranslatorInterface,
     Translator\NodeTranslator,
-    Node\Text
+    Translator\Translator,
+    Node\Text,
+    Exception\InvalidArgumentException,
 };
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +18,7 @@ class TextTranslatorTest extends TestCase
     public function testInterface()
     {
         $this->assertInstanceOf(
-            NodeTranslatorInterface::class,
+            NodeTranslator::class,
             new TextTranslator
         );
     }
@@ -30,15 +31,15 @@ class TextTranslatorTest extends TestCase
 XML
         );
 
-        $translator = new TextTranslator;
-        $node = $translator->translate(
+        $translate = new TextTranslator;
+        $node = $translate(
             $document
                 ->childNodes
                 ->item(0)
                 ->childNodes
                 ->item(0),
-            new NodeTranslator(
-                new Map('int', NodeTranslatorInterface::class)
+            new Translator(
+                new Map('int', NodeTranslator::class)
             )
         );
 
@@ -46,15 +47,14 @@ XML
         $this->assertSame('foo', $node->content());
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
-     */
     public function testThrowWhenInvalidNode()
     {
-        (new TextTranslator)->translate(
+        $this->expectException(InvalidArgumentException::class);
+
+        (new TextTranslator)(
             new \DOMNode,
-            new NodeTranslator(
-                new Map('int', NodeTranslatorInterface::class)
+            new Translator(
+                new Map('int', NodeTranslator::class)
             )
         );
     }

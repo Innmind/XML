@@ -5,7 +5,7 @@ namespace Innmind\Xml;
 
 use Innmind\Stream\Readable;
 
-interface ReaderInterface
+interface Reader
 {
-    public function read(Readable $content): NodeInterface;
+    public function __invoke(Readable $content): Node;
 }

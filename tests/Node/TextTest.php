@@ -5,7 +5,8 @@ namespace Tests\Innmind\Xml\Node;
 
 use Innmind\Xml\{
     Node\Text,
-    NodeInterface
+    Node,
+    Exception\LogicException,
 };
 use Innmind\Immutable\MapInterface;
 use PHPUnit\Framework\TestCase;
@@ -15,7 +16,7 @@ class TextTest extends TestCase
     public function testInterface()
     {
         $this->assertInstanceOf(
-            NodeInterface::class,
+            Node::class,
             new Text('foo')
         );
     }
@@ -27,7 +28,7 @@ class TextTest extends TestCase
         $this->assertInstanceOf(MapInterface::class, $text->children());
         $this->assertSame('int', (string) $text->children()->keyType());
         $this->assertSame(
-            NodeInterface::class,
+            Node::class,
             (string) $text->children()->valueType()
         );
         $this->assertCount(0, $text->children());
@@ -42,42 +43,38 @@ class TextTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\LogicException
-     */
     public function testThrowWhenRemovingChild()
     {
+        $this->expectException(LogicException::class);
+
         (new Text('foo'))->removeChild(0);
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\LogicException
-     */
     public function testThrowWhenReplacingChild()
     {
+        $this->expectException(LogicException::class);
+
         (new Text('foo'))->replaceChild(
             0,
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\LogicException
-     */
     public function testThrowWhenPrependingChild()
     {
+        $this->expectException(LogicException::class);
+
         (new Text('foo'))->prependChild(
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\LogicException
-     */
     public function testThrowWhenAppendingChild()
     {
+        $this->expectException(LogicException::class);
+
         (new Text('foo'))->appendChild(
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 

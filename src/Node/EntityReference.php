@@ -4,15 +4,15 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Node;
 
 use Innmind\Xml\{
-    NodeInterface,
-    Exception\LogicException
+    Node,
+    Exception\LogicException,
 };
 use Innmind\Immutable\{
     MapInterface,
-    Map
+    Map,
 };
 
-final class EntityReference implements NodeInterface
+final class EntityReference implements Node
 {
     private $data;
     private $children;
@@ -20,7 +20,7 @@ final class EntityReference implements NodeInterface
     public function __construct(string $data)
     {
         $this->data = $data;
-        $this->children = new Map('int', NodeInterface::class);
+        $this->children = new Map('int', Node::class);
     }
 
     /**
@@ -36,22 +36,22 @@ final class EntityReference implements NodeInterface
         return false;
     }
 
-    public function removeChild(int $position): NodeInterface
+    public function removeChild(int $position): Node
     {
         throw new LogicException;
     }
 
-    public function replaceChild(int $position, NodeInterface $node): NodeInterface
+    public function replaceChild(int $position, Node $node): Node
     {
         throw new LogicException;
     }
 
-    public function prependChild(NodeInterface $child): NodeInterface
+    public function prependChild(Node $child): Node
     {
         throw new LogicException;
     }
 
-    public function appendChild(NodeInterface $child): NodeInterface
+    public function appendChild(Node $child): Node
     {
         throw new LogicException;
     }

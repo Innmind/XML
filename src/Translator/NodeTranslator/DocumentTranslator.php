@@ -4,23 +4,23 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Translator\NodeTranslator;
 
 use Innmind\Xml\{
-    Translator\NodeTranslatorInterface,
     Translator\NodeTranslator,
-    NodeInterface,
+    Translator\Translator,
+    Node,
     Exception\InvalidArgumentException,
     Node\Document\Type,
     Node\Document\Version,
     Node\Document\Encoding,
-    Node\Document
+    Node\Document,
 };
 use Innmind\Immutable\Map;
 
-final class DocumentTranslator implements NodeTranslatorInterface
+final class DocumentTranslator implements NodeTranslator
 {
-    public function translate(
+    public function __invoke(
         \DOMNode $node,
-        NodeTranslator $translator
-    ): NodeInterface {
+        Translator $translate
+    ): Node {
         if (!$node instanceof \DOMDocument) {
             throw new InvalidArgumentException;
         }
@@ -29,7 +29,7 @@ final class DocumentTranslator implements NodeTranslatorInterface
             $this->buildVersion($node),
             $node->doctype ? $this->buildDoctype($node->doctype) : null,
             $node->childNodes ?
-                $this->buildChildren($node->childNodes, $translator) : null,
+                $this->buildChildren($node->childNodes, $translate) : null,
             $node->encoding ? $this->buildEncoding($node->encoding) : null
         );
     }
@@ -55,9 +55,9 @@ final class DocumentTranslator implements NodeTranslatorInterface
 
     private function buildChildren(
         \DOMNodeList $nodes,
-        NodeTranslator $translator
+        Translator $translate
     ): Map {
-        $children = new Map('int', NodeInterface::class);
+        $children = new Map('int', Node::class);
 
         foreach ($nodes as $child) {
             if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {
@@ -66,7 +66,7 @@ final class DocumentTranslator implements NodeTranslatorInterface
 
             $children = $children->put(
                 $children->size(),
-                $translator->translate($child)
+                $translate($child)
             );
         }
 

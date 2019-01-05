@@ -3,7 +3,10 @@ declare(strict_types = 1);
 
 namespace Tests\Innmind\Xml\Node\Document;
 
-use Innmind\Xml\Node\Document\Encoding;
+use Innmind\Xml\{
+    Node\Document\Encoding,
+    Exception\DomainException,
+};
 use PHPUnit\Framework\TestCase;
 
 class EncodingTest extends TestCase
@@ -19,11 +22,12 @@ class EncodingTest extends TestCase
     }
 
     /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
      * @dataProvider invalid
      */
     public function testThrowWhenInvalidName($name)
     {
+        $this->expectException(DomainException::class);
+
         new Encoding($name);
     }
 

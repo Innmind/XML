@@ -5,13 +5,15 @@ namespace Tests\Innmind\Xml\Element;
 
 use Innmind\Xml\{
     Element\SelfClosingElement,
-    NodeInterface,
-    AttributeInterface,
-    Attribute
+    Node,
+    Attribute,
+    Exception\DomainException,
+    Exception\LogicException,
+    Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
+    MapInterface,
     Map,
-    MapInterface
 };
 use PHPUnit\Framework\TestCase;
 
@@ -20,7 +22,7 @@ class SelfClosingElementTest extends TestCase
     public function testInterface()
     {
         $this->assertInstanceOf(
-            NodeInterface::class,
+            Node::class,
             new SelfClosingElement('foo')
         );
     }
@@ -32,11 +34,10 @@ class SelfClosingElementTest extends TestCase
         $this->assertSame('foo', $node->name());
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
-     */
     public function testThrowWhenEmptyName()
     {
+        $this->expectException(DomainException::class);
+
         new SelfClosingElement('');
     }
 
@@ -44,17 +45,17 @@ class SelfClosingElementTest extends TestCase
     {
         $node = new SelfClosingElement(
             'foo',
-            $expected = new Map('string', AttributeInterface::class)
+            $expected = new Map('string', Attribute::class)
         );
 
         $this->assertSame($expected, $node->attributes());
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
-     */
     public function testThrowWhenInvalidAttributes()
     {
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('Argument 2 must be of type MapInterface<string, Innmind\Xml\Attribute>');
+
         new SelfClosingElement('foo', new Map('string', 'string'));
     }
 
@@ -65,7 +66,7 @@ class SelfClosingElementTest extends TestCase
         $this->assertInstanceOf(MapInterface::class, $node->attributes());
         $this->assertSame('string', (string) $node->attributes()->keyType());
         $this->assertSame(
-            AttributeInterface::class,
+            Attribute::class,
             (string) $node->attributes()->valueType()
         );
     }
@@ -74,14 +75,14 @@ class SelfClosingElementTest extends TestCase
     {
         $node = new SelfClosingElement(
             'foo',
-            new Map('string', AttributeInterface::class)
+            new Map('string', Attribute::class)
         );
         $this->assertFalse($node->hasAttributes());
 
         $node = new SelfClosingElement(
             'foo',
-            (new Map('string', AttributeInterface::class))
-                ->put('foo', new Attribute('foo'))
+            Map::of('string', Attribute::class)
+                ('foo', new Attribute\Attribute('foo'))
         );
         $this->assertTrue($node->hasAttributes());
     }
@@ -90,8 +91,8 @@ class SelfClosingElementTest extends TestCase
     {
         $node = new SelfClosingElement(
             'foo',
-            (new Map('string', AttributeInterface::class))
-                ->put('foo', $expected = new Attribute('foo'))
+            Map::of('string', Attribute::class)
+                ('foo', $expected = new Attribute\Attribute('foo'))
         );
 
         $this->assertSame($expected, $node->attribute('foo'));
@@ -101,9 +102,9 @@ class SelfClosingElementTest extends TestCase
     {
         $node = new SelfClosingElement(
             'foo',
-            (new Map('string', AttributeInterface::class))
-                ->put('foo', new Attribute('foo'))
-                ->put('bar', new Attribute('bar'))
+            Map::of('string', Attribute::class)
+                ('foo', new Attribute\Attribute('foo'))
+                ('bar', new Attribute\Attribute('bar'))
         );
 
         $node2 = $node->removeAttribute('foo');
@@ -125,16 +126,15 @@ class SelfClosingElementTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\OutOfBoundsException
-     */
     public function testThrowWhenRemovingUnknownAttribute()
     {
+        $this->expectException(OutOfBoundsException::class);
+
         (new SelfClosingElement(
             'foo',
-            (new Map('string', AttributeInterface::class))
-                ->put('foo', new Attribute('foo'))
-                ->put('bar', new Attribute('bar'))
+            Map::of('string', Attribute::class)
+                ('foo', new Attribute\Attribute('foo'))
+                ('bar', new Attribute\Attribute('bar'))
         ))->removeAttribute('baz');
     }
 
@@ -142,13 +142,13 @@ class SelfClosingElementTest extends TestCase
     {
         $node = new SelfClosingElement(
             'foo',
-            (new Map('string', AttributeInterface::class))
-                ->put('foo', new Attribute('foo'))
-                ->put('bar', new Attribute('bar'))
+            Map::of('string', Attribute::class)
+                ('foo', new Attribute\Attribute('foo'))
+                ('bar', new Attribute\Attribute('bar'))
         );
 
         $node2 = $node->replaceAttribute(
-            $attribute = new Attribute('foo', 'baz')
+            $attribute = new Attribute\Attribute('foo', 'baz')
         );
 
         $this->assertNotSame($node, $node2);
@@ -172,18 +172,17 @@ class SelfClosingElementTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\OutOfBoundsException
-     */
     public function testThrowWhenReplacingUnknownAttribute()
     {
+        $this->expectException(OutOfBoundsException::class);
+
         (new SelfClosingElement(
             'foo',
-            (new Map('string', AttributeInterface::class))
-                ->put('foo', new Attribute('foo'))
-                ->put('bar', new Attribute('bar'))
+            Map::of('string', Attribute::class)
+                ('foo', new Attribute\Attribute('foo'))
+                ('bar', new Attribute\Attribute('bar'))
         ))->replaceAttribute(
-            new Attribute('baz')
+            new Attribute\Attribute('baz')
         );
     }
 
@@ -191,13 +190,13 @@ class SelfClosingElementTest extends TestCase
     {
         $node = new SelfClosingElement(
             'foo',
-            (new Map('string', AttributeInterface::class))
-                ->put('foo', new Attribute('foo'))
-                ->put('bar', new Attribute('bar'))
+            Map::of('string', Attribute::class)
+                ('foo', new Attribute\Attribute('foo'))
+                ('bar', new Attribute\Attribute('bar'))
         );
 
         $node2 = $node->addAttribute(
-            $attribute = new Attribute('baz', 'baz')
+            $attribute = new Attribute\Attribute('baz', 'baz')
         );
 
         $this->assertNotSame($node, $node2);
@@ -225,17 +224,16 @@ class SelfClosingElementTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\LogicException
-     */
     public function testThrowWhenAttributeAlreadyExists()
     {
+        $this->expectException(LogicException::class);
+
         (new SelfClosingElement(
             'foo',
-            (new Map('string', AttributeInterface::class))
-                ->put('foo', new Attribute('foo'))
-                ->put('bar', new Attribute('bar'))
-        ))->addAttribute(new Attribute('foo', 'baz'));
+            Map::of('string', Attribute::class)
+                ('foo', new Attribute\Attribute('foo'))
+                ('bar', new Attribute\Attribute('bar'))
+        ))->addAttribute(new Attribute\Attribute('foo', 'baz'));
     }
 
     public function testChildren()
@@ -246,7 +244,7 @@ class SelfClosingElementTest extends TestCase
             $node
                 ->children()
                 ->equals(
-                    new Map('int', NodeInterface::class)
+                    new Map('int', Node::class)
                 )
         );
     }
@@ -257,42 +255,38 @@ class SelfClosingElementTest extends TestCase
         $this->assertFalse($node->hasChildren());
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\LogicException
-     */
     public function testThrowWhenRemovingChild()
     {
+        $this->expectException(LogicException::class);
+
         (new SelfClosingElement('foo'))->removeChild(0);
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\LogicException
-     */
     public function testThrowWhenReplacingChild()
     {
+        $this->expectException(LogicException::class);
+
         (new SelfClosingElement('foo'))->replaceChild(
             0,
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\LogicException
-     */
     public function testThrowWhenPrependingChild()
     {
+        $this->expectException(LogicException::class);
+
         (new SelfClosingElement('foo'))->prependChild(
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\LogicException
-     */
     public function testThrowWhenAppendingChild()
     {
+        $this->expectException(LogicException::class);
+
         (new SelfClosingElement('foo'))->appendChild(
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 
@@ -314,9 +308,9 @@ class SelfClosingElementTest extends TestCase
             '<foo bar="baz" baz="foo"/>',
             (string) new SelfClosingElement(
                 'foo',
-                (new Map('string', AttributeInterface::class))
-                    ->put('bar', new Attribute('bar', 'baz'))
-                    ->put('baz', new Attribute('baz', 'foo'))
+                Map::of('string', Attribute::class)
+                    ('bar', new Attribute\Attribute('bar', 'baz'))
+                    ('baz', new Attribute\Attribute('baz', 'foo'))
             )
         );
     }

@@ -3,20 +3,17 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Translator\NodeTranslator\Visitor;
 
-use Innmind\Xml\{
-    AttributeInterface,
-    Attribute
-};
+use Innmind\Xml\Attribute;
 use Innmind\Immutable\{
+    MapInterface,
     Map,
-    MapInterface
 };
 
 final class Attributes
 {
     public function __invoke(\DOMNode $node): MapInterface
     {
-        $attributes = new Map('string', AttributeInterface::class);
+        $attributes = new Map('string', Attribute::class);
 
         if (!$node instanceof \DOMElement) {
             return $attributes;
@@ -29,7 +26,7 @@ final class Attributes
         foreach ($node->attributes as $name => $attribute) {
             $attributes = $attributes->put(
                 $name,
-                new Attribute(
+                new Attribute\Attribute(
                     $name,
                     $node->getAttribute($name)
                 )

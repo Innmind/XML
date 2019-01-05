@@ -4,23 +4,23 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Translator\NodeTranslator;
 
 use Innmind\Xml\{
-    Translator\NodeTranslatorInterface,
     Translator\NodeTranslator,
+    Translator\Translator,
     Translator\NodeTranslator\Visitor\Attributes,
     Translator\NodeTranslator\Visitor\Children,
-    NodeInterface,
+    Node,
     Exception\InvalidArgumentException,
     Element\SelfClosingElement,
-    Element\Element
+    Element\Element,
 };
 use Innmind\Immutable\Map;
 
-final class ElementTranslator implements NodeTranslatorInterface
+final class ElementTranslator implements NodeTranslator
 {
-    public function translate(
+    public function __invoke(
         \DOMNode $node,
-        NodeTranslator $translator
-    ): NodeInterface {
+        Translator $translate
+    ): Node {
         if (!$node instanceof \DOMElement) {
             throw new InvalidArgumentException;
         }
@@ -40,7 +40,7 @@ final class ElementTranslator implements NodeTranslatorInterface
         return new Element(
             $node->nodeName,
             $attributes,
-            (new Children($translator))($node)
+            (new Children($translate))($node)
         );
     }
 }

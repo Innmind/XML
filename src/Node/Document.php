@@ -4,19 +4,18 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Node;
 
 use Innmind\Xml\{
-    NodeInterface,
+    Node,
     Node\Document\Type,
     Node\Document\Version,
     Node\Document\Encoding,
-    Exception\InvalidArgumentException,
-    Exception\OutOfBoundsException
+    Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
+    MapInterface,
     Map,
-    MapInterface
 };
 
-final class Document implements NodeInterface
+final class Document implements Node
 {
     private $version;
     private $type;
@@ -29,13 +28,16 @@ final class Document implements NodeInterface
         MapInterface $children = null,
         Encoding $encoding = null
     ) {
-        $children = $children ?? new Map('int', NodeInterface::class);
+        $children = $children ?? new Map('int', Node::class);
 
         if (
             (string) $children->keyType() !== 'int' ||
-            (string) $children->valueType() !== NodeInterface::class
+            (string) $children->valueType() !== Node::class
         ) {
-            throw new InvalidArgumentException;
+            throw new \TypeError(sprintf(
+                'Argument 3 must be of type MapInterface<int, %s>',
+                Node::class
+            ));
         }
 
         $this->version = $version;
@@ -72,7 +74,7 @@ final class Document implements NodeInterface
         return $this->children->size() > 0;
     }
 
-    public function removeChild(int $position): NodeInterface
+    public function removeChild(int $position): Node
     {
         if (!$this->children->contains($position)) {
             throw new OutOfBoundsException;
@@ -82,8 +84,8 @@ final class Document implements NodeInterface
         $document->children = $this
             ->children
             ->reduce(
-                new Map('int', NodeInterface::class),
-                function(Map $children, int $pos, NodeInterface $node) use ($position): Map {
+                new Map('int', Node::class),
+                function(Map $children, int $pos, Node $node) use ($position): Map {
                     if ($pos === $position) {
                         return $children;
                     }
@@ -98,7 +100,7 @@ final class Document implements NodeInterface
         return $document;
     }
 
-    public function replaceChild(int $position, NodeInterface $node): NodeInterface
+    public function replaceChild(int $position, Node $node): Node
     {
         if (!$this->children->contains($position)) {
             throw new OutOfBoundsException;
@@ -113,15 +115,15 @@ final class Document implements NodeInterface
         return $document;
     }
 
-    public function prependChild(NodeInterface $child): NodeInterface
+    public function prependChild(Node $child): Node
     {
         $document = clone $this;
         $document->children = $this
             ->children
             ->reduce(
-                (new Map('int', NodeInterface::class))
-                    ->put(0, $child),
-                function(Map $children, int $position, NodeInterface $child): Map {
+                Map::of('int', Node::class)
+                    (0, $child),
+                function(Map $children, int $position, Node $child): Map {
                     return $children->put(
                         $children->size(),
                         $child
@@ -132,7 +134,7 @@ final class Document implements NodeInterface
         return $document;
     }
 
-    public function appendChild(NodeInterface $child): NodeInterface
+    public function appendChild(Node $child): Node
     {
         $document = clone $this;
         $document->children = $this->children->put(
