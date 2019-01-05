@@ -7,6 +7,7 @@ use Innmind\Xml\{
     Attribute as AttributeInterface,
     Exception\InvalidArgumentException,
 };
+use Innmind\Immutable\Str;
 
 class Attribute implements AttributeInterface
 {
@@ -16,7 +17,7 @@ class Attribute implements AttributeInterface
 
     public function __construct(string $name, string $value = '')
     {
-        if (empty($name)) {
+        if (Str::of($name)->empty()) {
             throw new InvalidArgumentException;
         }
 
@@ -39,7 +40,7 @@ class Attribute implements AttributeInterface
         if ($this->string === null) {
             $this->string = $this->name;
 
-            if (!empty($this->value)) {
+            if (!Str::of($this->value)->empty()) {
                 $this->string .= sprintf(
                     '="%s"',
                     $this->value

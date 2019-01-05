@@ -12,8 +12,9 @@ use Innmind\Xml\{
     Exception\LogicException,
 };
 use Innmind\Immutable\{
+    MapInterface,
     Map,
-    MapInterface
+    Str,
 };
 
 class Element implements ElementInterface
@@ -33,7 +34,7 @@ class Element implements ElementInterface
         $children = $children ?? new Map('int', Node::class);
 
         if (
-            empty($name) ||
+            Str::of($name)->empty() ||
             (string) $attributes->keyType() !== 'string' ||
             (string) $attributes->valueType() !== Attribute::class ||
             (string) $children->keyType() !== 'int' ||

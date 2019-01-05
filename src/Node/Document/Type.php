@@ -4,6 +4,7 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Node\Document;
 
 use Innmind\Xml\Exception\InvalidArgumentException;
+use Innmind\Immutable\Str;
 
 final class Type
 {
@@ -17,7 +18,7 @@ final class Type
         string $publicId = '',
         string $systemId = ''
     ) {
-        if (empty($name)) {
+        if (Str::of($name)->empty()) {
             throw new InvalidArgumentException;
         }
 
