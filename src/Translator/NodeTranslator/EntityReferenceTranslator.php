@@ -8,7 +8,7 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     NodeInterface,
     Exception\InvalidArgumentException,
-    Node\EntityReference
+    Node\EntityReference,
 };
 
 final class EntityReferenceTranslator implements NodeTranslatorInterface

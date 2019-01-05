@@ -7,7 +7,7 @@ use Innmind\Xml\{
     Translator\NodeTranslator\EntityReferenceTranslator,
     Translator\NodeTranslatorInterface,
     Translator\NodeTranslator,
-    Node\EntityReference
+    Node\EntityReference,
 };
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;

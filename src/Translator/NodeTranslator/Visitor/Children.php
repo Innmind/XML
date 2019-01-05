@@ -5,11 +5,11 @@ namespace Innmind\Xml\Translator\NodeTranslator\Visitor;
 
 use Innmind\Xml\{
     Translator\NodeTranslator,
-    NodeInterface
+    NodeInterface,
 };
 use Innmind\Immutable\{
+    MapInterface,
     Map,
-    MapInterface
 };
 
 final class Children

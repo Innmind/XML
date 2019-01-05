@@ -11,7 +11,7 @@ use Innmind\Xml\Translator\{
     NodeTranslator\CharacterDataTranslator,
     NodeTranslator\CommentTranslator,
     NodeTranslator\TextTranslator,
-    NodeTranslator\EntityReferenceTranslator
+    NodeTranslator\EntityReferenceTranslator,
 };
 use Innmind\Immutable\MapInterface;
 use PHPUnit\Framework\TestCase;

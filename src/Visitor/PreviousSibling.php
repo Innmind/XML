@@ -5,7 +5,7 @@ namespace Innmind\Xml\Visitor;
 
 use Innmind\Xml\{
     NodeInterface,
-    Exception\NoPreviousSiblingException
+    Exception\NoPreviousSiblingException,
 };
 
 final class PreviousSibling

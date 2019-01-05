@@ -5,11 +5,11 @@ namespace Innmind\Xml\Element;
 
 use Innmind\Xml\{
     NodeInterface,
-    Exception\LogicException
+    Exception\LogicException,
 };
 use Innmind\Immutable\{
+    MapInterface,
     Map,
-    MapInterface
 };
 
 class SelfClosingElement extends Element

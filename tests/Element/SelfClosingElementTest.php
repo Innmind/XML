@@ -7,11 +7,11 @@ use Innmind\Xml\{
     Element\SelfClosingElement,
     NodeInterface,
     AttributeInterface,
-    Attribute
+    Attribute,
 };
 use Innmind\Immutable\{
+    MapInterface,
     Map,
-    MapInterface
 };
 use PHPUnit\Framework\TestCase;
 

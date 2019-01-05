@@ -10,11 +10,11 @@ use Innmind\Xml\{
     Node\Document\Encoding,
     NodeInterface,
     Element\Element,
-    Element\SelfClosingElement
+    Element\SelfClosingElement,
 };
 use Innmind\Immutable\{
+    MapInterface,
     Map,
-    MapInterface
 };
 use PHPUnit\Framework\TestCase;
 

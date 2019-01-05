@@ -9,11 +9,11 @@ use Innmind\Xml\Translator\NodeTranslator\{
     CharacterDataTranslator,
     CommentTranslator,
     TextTranslator,
-    EntityReferenceTranslator
+    EntityReferenceTranslator,
 };
 use Innmind\Immutable\{
+    MapInterface,
     Map,
-    MapInterface
 };
 
 final class NodeTranslators

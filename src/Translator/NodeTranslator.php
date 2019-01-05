@@ -5,7 +5,7 @@ namespace Innmind\Xml\Translator;
 
 use Innmind\Xml\{
     NodeInterface,
-    Exception\UnknownNodeTypeException
+    Exception\UnknownNodeTypeException,
 };
 use Innmind\Immutable\MapInterface;
 

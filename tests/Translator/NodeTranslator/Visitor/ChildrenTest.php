@@ -7,7 +7,7 @@ use Innmind\Xml\{
     Translator\NodeTranslator\Visitor\Children,
     Translator\NodeTranslator,
     Translator\NodeTranslators,
-    NodeInterface
+    NodeInterface,
 };
 use Innmind\Immutable\MapInterface;
 use PHPUnit\Framework\TestCase;

@@ -12,7 +12,7 @@ use Innmind\Xml\{
     Node\Document,
     Node\Text,
     Node\CharacterData,
-    Node\Comment
+    Node\Comment,
 };
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;

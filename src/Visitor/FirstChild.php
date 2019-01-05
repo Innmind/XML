@@ -5,7 +5,7 @@ namespace Innmind\Xml\Visitor;
 
 use Innmind\Xml\{
     NodeInterface,
-    Exception\NodeDoesntHaveChildrenException
+    Exception\NodeDoesntHaveChildrenException,
 };
 
 final class FirstChild

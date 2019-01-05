@@ -5,7 +5,7 @@ namespace Tests\Innmind\Xml\Node;
 
 use Innmind\Xml\{
     Node\EntityReference,
-    NodeInterface
+    NodeInterface,
 };
 use Innmind\Immutable\MapInterface;
 use PHPUnit\Framework\TestCase;

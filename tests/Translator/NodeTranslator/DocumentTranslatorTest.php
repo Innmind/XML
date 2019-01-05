@@ -9,7 +9,7 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Node\Document,
     NodeInterface,
-    Element\SelfClosingElement
+    Element\SelfClosingElement,
 };
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;

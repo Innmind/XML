@@ -8,7 +8,7 @@ use Innmind\Xml\{
     Reader\Reader,
     Element\Element,
     Translator\NodeTranslator,
-    Translator\NodeTranslators
+    Translator\NodeTranslators,
 };
 use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;

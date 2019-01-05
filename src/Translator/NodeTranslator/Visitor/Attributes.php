@@ -5,11 +5,11 @@ namespace Innmind\Xml\Translator\NodeTranslator\Visitor;
 
 use Innmind\Xml\{
     AttributeInterface,
-    Attribute
+    Attribute,
 };
 use Innmind\Immutable\{
+    MapInterface,
     Map,
-    MapInterface
 };
 
 final class Attributes

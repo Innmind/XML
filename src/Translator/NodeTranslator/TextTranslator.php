@@ -8,7 +8,7 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     NodeInterface,
     Exception\InvalidArgumentException,
-    Node\Text
+    Node\Text,
 };
 
 final class TextTranslator implements NodeTranslatorInterface

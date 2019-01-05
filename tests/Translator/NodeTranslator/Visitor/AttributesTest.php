@@ -5,7 +5,7 @@ namespace Tests\Innmind\Xml\Translator\NodeTranslator\Visitor;
 
 use Innmind\Xml\{
     Translator\NodeTranslator\Visitor\Attributes,
-    AttributeInterface
+    AttributeInterface,
 };
 use Innmind\Immutable\MapInterface;
 use PHPUnit\Framework\TestCase;

@@ -9,7 +9,7 @@ use Innmind\Xml\{
     NodeInterface,
     Exception\InvalidArgumentException,
     Exception\OutOfBoundsException,
-    Exception\LogicException
+    Exception\LogicException,
 };
 use Innmind\Immutable\{
     Map,

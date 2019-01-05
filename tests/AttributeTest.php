@@ -5,7 +5,7 @@ namespace Tests\Innmind\Xml;
 
 use Innmind\Xml\{
     Attribute,
-    AttributeInterface
+    AttributeInterface,
 };
 use PHPUnit\Framework\TestCase;
 

@@ -11,7 +11,7 @@ use Innmind\Xml\{
     Node\Document\Type,
     Node\Document\Version,
     Node\Document\Encoding,
-    Node\Document
+    Node\Document,
 };
 use Innmind\Immutable\Map;
 

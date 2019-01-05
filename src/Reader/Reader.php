@@ -6,7 +6,7 @@ namespace Innmind\Xml\Reader;
 use Innmind\Xml\{
     ReaderInterface,
     NodeInterface,
-    Translator\NodeTranslator
+    Translator\NodeTranslator,
 };
 use Innmind\Stream\Readable;
 

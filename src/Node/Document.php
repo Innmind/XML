@@ -9,11 +9,11 @@ use Innmind\Xml\{
     Node\Document\Version,
     Node\Document\Encoding,
     Exception\InvalidArgumentException,
-    Exception\OutOfBoundsException
+    Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
+    MapInterface,
     Map,
-    MapInterface
 };
 
 final class Document implements NodeInterface

@@ -5,7 +5,7 @@ namespace Innmind\Xml\Node;
 
 use Innmind\Xml\{
     NodeInterface,
-    Exception\LogicException
+    Exception\LogicException,
 };
 use Innmind\Immutable\MapInterface;
 

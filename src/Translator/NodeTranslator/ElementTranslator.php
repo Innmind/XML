@@ -11,7 +11,7 @@ use Innmind\Xml\{
     NodeInterface,
     Exception\InvalidArgumentException,
     Element\SelfClosingElement,
-    Element\Element
+    Element\Element,
 };
 use Innmind\Immutable\Map;
 
