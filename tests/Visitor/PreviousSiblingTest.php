@@ -53,7 +53,7 @@ XML;
     }
 
     /**
-     * @expectedException Innmind\Xml\Exception\NoPreviousSiblingException
+     * @expectedException Innmind\Xml\Exception\NoPreviousSibling
      */
     public function testThrowWhenNoPreviousSibling()
     {

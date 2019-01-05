@@ -101,7 +101,7 @@ XML
     }
 
     /**
-     * @expectedException Innmind\Xml\Exception\UnknownNodeTypeException
+     * @expectedException Innmind\Xml\Exception\UnknownNodeType
      */
     public function testThrowWhenNoTranslatorFoundForANodeType()
     {

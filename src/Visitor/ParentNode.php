@@ -5,7 +5,7 @@ namespace Innmind\Xml\Visitor;
 
 use Innmind\Xml\{
     Node,
-    Exception\NodeHasNoParentException,
+    Exception\NodeHasNoParent,
 };
 
 final class ParentNode
@@ -27,12 +27,12 @@ final class ParentNode
 
                 try {
                     return $this($child);
-                } catch (NodeHasNoParentException $e) {
+                } catch (NodeHasNoParent $e) {
                     //pass
                 }
             }
         }
 
-        throw new NodeHasNoParentException;
+        throw new NodeHasNoParent;
     }
 }

@@ -70,7 +70,7 @@ XML;
     }
 
     /**
-     * @expectedException Innmind\Xml\Exception\NodeDoesntHaveChildrenException
+     * @expectedException Innmind\Xml\Exception\NodeDoesntHaveChildren
      */
     public function testThrowWhenNoLastChild()
     {

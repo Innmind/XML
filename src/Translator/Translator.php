@@ -5,7 +5,7 @@ namespace Innmind\Xml\Translator;
 
 use Innmind\Xml\{
     Node,
-    Exception\UnknownNodeTypeException,
+    Exception\UnknownNodeType,
 };
 use Innmind\Immutable\MapInterface;
 
@@ -28,7 +28,7 @@ final class Translator
     public function translate(\DOMNode $node): Node
     {
         if (!$this->translators->contains($node->nodeType)) {
-            throw new UnknownNodeTypeException;
+            throw new UnknownNodeType;
         }
 
         return $this

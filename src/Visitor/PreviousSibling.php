@@ -5,7 +5,7 @@ namespace Innmind\Xml\Visitor;
 
 use Innmind\Xml\{
     Node,
-    Exception\NoPreviousSiblingException,
+    Exception\NoPreviousSibling,
 };
 
 final class PreviousSibling
@@ -28,7 +28,7 @@ final class PreviousSibling
             ->key();
 
         if ($position === 0) {
-            throw new NoPreviousSiblingException;
+            throw new NoPreviousSibling;
         }
 
         return $parent->children()->get($position - 1);

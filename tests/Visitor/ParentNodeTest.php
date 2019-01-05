@@ -52,7 +52,7 @@ XML;
     }
 
     /**
-     * @expectedException Innmind\Xml\Exception\NodeHasNoParentException
+     * @expectedException Innmind\Xml\Exception\NodeHasNoParent
      */
     public function testThrowWhenNoParentFound()
     {

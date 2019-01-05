@@ -5,7 +5,7 @@ namespace Innmind\Xml\Visitor;
 
 use Innmind\Xml\{
     Node,
-    Exception\NodeDoesntHaveChildrenException,
+    Exception\NodeDoesntHaveChildren,
 };
 
 final class FirstChild
@@ -13,7 +13,7 @@ final class FirstChild
     public function __invoke(Node $node): Node
     {
         if (!$node->hasChildren()) {
-            throw new NodeDoesntHaveChildrenException;
+            throw new NodeDoesntHaveChildren;
         }
 
         return $node->children()->get(0);

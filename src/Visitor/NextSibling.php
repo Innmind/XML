@@ -5,7 +5,7 @@ namespace Innmind\Xml\Visitor;
 
 use Innmind\Xml\{
     Node,
-    Exception\NoNextSiblingException,
+    Exception\NoNextSibling,
 };
 
 final class NextSibling
@@ -28,7 +28,7 @@ final class NextSibling
             ->key();
 
         if ($position === ($parent->children()->size() - 1)) {
-            throw new NoNextSiblingException;
+            throw new NoNextSibling;
         }
 
         return $parent->children()->get($position + 1);
