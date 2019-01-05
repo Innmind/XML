@@ -17,8 +17,9 @@ function bootstrap(): array {
                 NodeTranslators::defaults()
             )
         ),
-        'cache' => static function(ReaderInterface $reader): ReaderInterface {
-            return new Cache($reader);
+        'cache_storage' => $storage = new Cache\Storage,
+        'cache' => static function(ReaderInterface $reader) use ($storage): ReaderInterface {
+            return new Cache($reader, $storage);
         },
     ];
 }

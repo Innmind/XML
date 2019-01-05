@@ -17,9 +17,11 @@ class BootstrapTest extends TestCase
         $services = bootstrap();
         $reader = $services['reader'];
         $cache = $services['cache'];
+        $storage = $services['cache_storage'];
 
         $this->assertInstanceOf(Reader::class, $reader);
         $this->assertInternalType('callable', $cache);
         $this->assertInstanceOf(Cache::class, $cache($reader));
+        $this->assertInstanceOf(Cache\Storage::class, $storage);
     }
 }

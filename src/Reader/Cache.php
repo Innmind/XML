@@ -5,7 +5,8 @@ namespace Innmind\Xml\Reader;
 
 use Innmind\Xml\{
     ReaderInterface,
-    NodeInterface
+    Reader\Cache\Storage,
+    NodeInterface,
 };
 use Innmind\Stream\Readable;
 use Innmind\Immutable\Map;
@@ -15,10 +16,10 @@ final class Cache implements ReaderInterface
     private $reader;
     private $cache;
 
-    public function __construct(ReaderInterface $reader)
+    public function __construct(ReaderInterface $reader, Storage $cache)
     {
         $this->reader = $reader;
-        $this->cache = new Map(Readable::class, NodeInterface::class);
+        $this->cache = $cache;
     }
 
     public function read(Readable $xml): NodeInterface
@@ -28,15 +29,8 @@ final class Cache implements ReaderInterface
         }
 
         $node = $this->reader->read($xml);
-        $this->cache = $this->cache->put($xml, $node);
+        $this->cache->add($xml, $node);
 
         return $node;
-    }
-
-    public function detach(Readable $xml): self
-    {
-        $this->cache = $this->cache->remove($xml);
-
-        return $this;
     }
 }
