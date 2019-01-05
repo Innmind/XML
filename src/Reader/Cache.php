@@ -10,7 +10,7 @@ use Innmind\Xml\{
 use Innmind\Stream\Readable;
 use Innmind\Immutable\Map;
 
-final class CacheReader implements ReaderInterface
+final class Cache implements ReaderInterface
 {
     private $reader;
     private $cache;

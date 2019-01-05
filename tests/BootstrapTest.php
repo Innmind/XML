@@ -6,7 +6,7 @@ namespace Tests\Innmind\Xml;
 use function Innmind\Xml\bootstrap;
 use Innmind\Xml\{
     Reader\Reader,
-    Reader\CacheReader,
+    Reader\Cache,
 };
 use PHPUnit\Framework\TestCase;
 
@@ -20,6 +20,6 @@ class BootstrapTest extends TestCase
 
         $this->assertInstanceOf(Reader::class, $reader);
         $this->assertInternalType('callable', $cache);
-        $this->assertInstanceOf(CacheReader::class, $cache($reader));
+        $this->assertInstanceOf(Cache::class, $cache($reader));
     }
 }

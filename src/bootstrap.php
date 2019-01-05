@@ -5,7 +5,7 @@ namespace Innmind\Xml;
 
 use Innmind\Xml\{
     Reader\Reader,
-    Reader\CacheReader,
+    Reader\Cache,
     Translator\NodeTranslator,
     Translator\NodeTranslators,
 };
@@ -18,7 +18,7 @@ function bootstrap(): array {
             )
         ),
         'cache' => static function(ReaderInterface $reader): ReaderInterface {
-            return new CacheReader($reader);
+            return new Cache($reader);
         },
     ];
 }

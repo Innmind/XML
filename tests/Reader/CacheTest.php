@@ -4,20 +4,20 @@ declare(strict_types = 1);
 namespace Tests\Innmind\Xml\Reader;
 
 use Innmind\Xml\{
-    Reader\CacheReader,
+    Reader\Cache,
     ReaderInterface,
     NodeInterface
 };
 use Innmind\Stream\Readable;
 use PHPUnit\Framework\TestCase;
 
-class CacheReaderTest extends TestCase
+class CacheTest extends TestCase
 {
     public function testInterface()
     {
         $this->assertInstanceOf(
             ReaderInterface::class,
-            new CacheReader(
+            new Cache(
                 $this->createMock(ReaderInterface::class)
             )
         );
@@ -26,7 +26,7 @@ class CacheReaderTest extends TestCase
     public function testCache()
     {
         $stream = $this->createMock(Readable::class);
-        $cache = new CacheReader(
+        $cache = new Cache(
             $reader = $this->createMock(ReaderInterface::class)
         );
         $reader
