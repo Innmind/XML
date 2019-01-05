@@ -3,7 +3,10 @@ declare(strict_types = 1);
 
 namespace Tests\Innmind\Xml\Node\Document;
 
-use Innmind\Xml\Node\Document\Type;
+use Innmind\Xml\{
+    Node\Document\Type,
+    Exception\DomainException,
+};
 use PHPUnit\Framework\TestCase;
 
 class TypeTest extends TestCase
@@ -21,11 +24,10 @@ class TypeTest extends TestCase
         $this->assertSame($string, (string) $type);
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\DomainException
-     */
     public function testThrowWhenEmptyName()
     {
+        $this->expectException(DomainException::class);
+
         new Type('');
     }
 

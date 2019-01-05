@@ -9,6 +9,7 @@ use Innmind\Xml\{
     Element\Element,
     Translator\Translator,
     Translator\NodeTranslators,
+    Exception\NodeHasNoParent,
 };
 use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
@@ -51,11 +52,10 @@ XML;
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\NodeHasNoParent
-     */
     public function testThrowWhenNoParentFound()
     {
+        $this->expectException(NodeHasNoParent::class);
+
         (new ParentNode(new Element('foo')))(new Element('bar'));
     }
 }

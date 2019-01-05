@@ -9,6 +9,7 @@ use Innmind\Xml\{
     Element\Element,
     Translator\Translator,
     Translator\NodeTranslators,
+    Exception\NodeDoesntHaveChildren,
 };
 use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
@@ -49,11 +50,10 @@ XML;
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\NodeDoesntHaveChildren
-     */
     public function testThrowWhenNoFirstChild()
     {
+        $this->expectException(NodeDoesntHaveChildren::class);
+
         (new FirstChild)(new Element('foo'));
     }
 }

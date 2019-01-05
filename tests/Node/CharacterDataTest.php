@@ -6,6 +6,7 @@ namespace Tests\Innmind\Xml\Node;
 use Innmind\Xml\{
     Node\CharacterData,
     Node,
+    Exception\LogicException,
 };
 use Innmind\Immutable\MapInterface;
 use PHPUnit\Framework\TestCase;
@@ -42,40 +43,36 @@ class CharacterDataTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\LogicException
-     */
     public function testThrowWhenRemovingChild()
     {
+        $this->expectException(LogicException::class);
+
         (new CharacterData('foo'))->removeChild(0);
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\LogicException
-     */
     public function testThrowWhenReplacingChild()
     {
+        $this->expectException(LogicException::class);
+
         (new CharacterData('foo'))->replaceChild(
             0,
             $this->createMock(Node::class)
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\LogicException
-     */
     public function testThrowWhenPrependingChild()
     {
+        $this->expectException(LogicException::class);
+
         (new CharacterData('foo'))->prependChild(
             $this->createMock(Node::class)
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\LogicException
-     */
     public function testThrowWhenAppendingChild()
     {
+        $this->expectException(LogicException::class);
+
         (new CharacterData('foo'))->appendChild(
             $this->createMock(Node::class)
         );

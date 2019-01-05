@@ -7,6 +7,9 @@ use Innmind\Xml\{
     Element\Element,
     Node,
     Attribute,
+    Exception\DomainException,
+    Exception\LogicException,
+    Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
     MapInterface,
@@ -31,11 +34,10 @@ class ElementTest extends TestCase
         $this->assertSame('foo', $node->name());
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\DomainException
-     */
     public function testThrowWhenEmptyName()
     {
+        $this->expectException(DomainException::class);
+
         new Element('');
     }
 
@@ -49,12 +51,11 @@ class ElementTest extends TestCase
         $this->assertSame($expected, $node->attributes());
     }
 
-    /**
-     * @expectedException TypeError
-     * @expectedExceptionMessage Argument 2 must be of type MapInterface<string, Innmind\Xml\Attribute>
-     */
     public function testThrowWhenInvalidAttributes()
     {
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('Argument 2 must be of type MapInterface<string, Innmind\Xml\Attribute>');
+
         new Element('foo', new Map('string', 'string'));
     }
 
@@ -125,11 +126,10 @@ class ElementTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\OutOfBoundsException
-     */
     public function testThrowWhenRemovingUnknownAttribute()
     {
+        $this->expectException(OutOfBoundsException::class);
+
         (new Element(
             'foo',
             Map::of('string', Attribute::class)
@@ -172,11 +172,10 @@ class ElementTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\OutOfBoundsException
-     */
     public function testThrowWhenReplacingUnknownAttribute()
     {
+        $this->expectException(OutOfBoundsException::class);
+
         (new Element(
             'foo',
             Map::of('string', Attribute::class)
@@ -225,11 +224,10 @@ class ElementTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\LogicException
-     */
     public function testThrowWhenAttributeAlreadyExists()
     {
+        $this->expectException(LogicException::class);
+
         (new Element(
             'foo',
             Map::of('string', Attribute::class)
@@ -303,11 +301,10 @@ class ElementTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\OutOfBoundsException
-     */
     public function testThrowWhenRemovingUnknownChild()
     {
+        $this->expectException(OutOfBoundsException::class);
+
         (new Element(
             'foobar',
             null,
@@ -355,11 +352,10 @@ class ElementTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\OutOfBoundsException
-     */
     public function testThrowWhenReplacingUnknownChild()
     {
+        $this->expectException(OutOfBoundsException::class);
+
         (new Element(
             'foobar',
             null,

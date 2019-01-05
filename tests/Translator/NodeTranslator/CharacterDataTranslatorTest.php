@@ -8,6 +8,7 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
     Node\CharacterData,
+    Exception\InvalidArgumentException,
 };
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
@@ -46,11 +47,10 @@ XML
         $this->assertSame('foo', $node->content());
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
-     */
     public function testThrowWhenInvalidNode()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         (new CharacterDataTranslator)->translate(
             new \DOMNode,
             new Translator(

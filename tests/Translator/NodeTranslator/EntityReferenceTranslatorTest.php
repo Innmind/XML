@@ -8,6 +8,7 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
     Node\EntityReference,
+    Exception\InvalidArgumentException,
 };
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
@@ -36,11 +37,10 @@ class EntityReferenceTranslatorTest extends TestCase
         $this->assertSame('gt', $node->content());
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
-     */
     public function testThrowWhenInvalidNode()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         (new EntityReferenceTranslator)->translate(
             new \DOMNode,
             new Translator(

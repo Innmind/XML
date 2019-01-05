@@ -13,6 +13,7 @@ use Innmind\Xml\{
     Node\Text,
     Node\CharacterData,
     Node\Comment,
+    Exception\UnknownNodeType,
 };
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
@@ -100,11 +101,10 @@ XML
         $this->assertSame($xml, (string) $node);
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\UnknownNodeType
-     */
     public function testThrowWhenNoTranslatorFoundForANodeType()
     {
+        $this->expectException(UnknownNodeType::class);
+
         (new Translator(
             new Map('int', NodeTranslator::class)
         ))->translate(new \DOMDocument);

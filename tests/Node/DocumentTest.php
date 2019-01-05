@@ -11,6 +11,7 @@ use Innmind\Xml\{
     Node,
     Element\Element,
     Element\SelfClosingElement,
+    Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
     MapInterface,
@@ -76,12 +77,11 @@ class DocumentTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException TypeError
-     * @expectedExceptionMessage Argument 3 must be of type MapInterface<int, Innmind\Xml\Node>
-     */
     public function testThrowWhenInvalidChildren()
     {
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('Argument 3 must be of type MapInterface<int, Innmind\Xml\Node>');
+
         new Document(
             new Version(1),
             null,
@@ -192,11 +192,10 @@ class DocumentTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\OutOfBoundsException
-     */
     public function testThrowWhenRemovingUnknownChild()
     {
+        $this->expectException(OutOfBoundsException::class);
+
         (new Document(
             new Version(1),
             new Type('html'),
@@ -247,11 +246,10 @@ class DocumentTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\OutOfBoundsException
-     */
     public function testThrowWhenReplacingUnknownChild()
     {
+        $this->expectException(OutOfBoundsException::class);
+
         (new Document(
             new Version(1),
             new Type('html'),

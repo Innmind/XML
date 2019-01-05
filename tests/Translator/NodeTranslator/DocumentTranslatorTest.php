@@ -10,6 +10,7 @@ use Innmind\Xml\{
     Node\Document,
     Node,
     Element\SelfClosingElement,
+    Exception\InvalidArgumentException,
 };
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
@@ -64,11 +65,10 @@ XML
         $this->assertSame($xml, (string) $node);
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
-     */
     public function testThrowWhenInvalidNode()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         (new DocumentTranslator)->translate(
             new \DOMNode,
             new Translator(

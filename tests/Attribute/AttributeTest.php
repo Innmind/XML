@@ -6,6 +6,7 @@ namespace Tests\Innmind\Xml\Attribute;
 use Innmind\Xml\{
     Attribute\Attribute,
     Attribute as AttributeInterface,
+    Exception\DomainException,
 };
 use PHPUnit\Framework\TestCase;
 
@@ -19,11 +20,10 @@ class AttributeTest extends TestCase
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\DomainException
-     */
     public function testThrowWhenEmptyName()
     {
+        $this->expectException(DomainException::class);
+
         new Attribute('');
     }
 

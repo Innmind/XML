@@ -9,6 +9,7 @@ use Innmind\Xml\{
     Element\Element,
     Translator\Translator,
     Translator\NodeTranslators,
+    Exception\NoPreviousSibling,
 };
 use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
@@ -52,9 +53,6 @@ XML;
         );
     }
 
-    /**
-     * @expectedException Innmind\Xml\Exception\NoPreviousSibling
-     */
     public function testThrowWhenNoPreviousSibling()
     {
         $xml = <<<XML
@@ -71,6 +69,8 @@ XML;
         $foo = $div
             ->children()
             ->get(0);
+
+        $this->expectException(NoPreviousSibling::class);
 
         (new PreviousSibling($foo))($tree);
     }
