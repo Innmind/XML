@@ -79,8 +79,8 @@ class ElementTest extends TestCase
 
         $node = new Element(
             'foo',
-            (new Map('string', Attribute::class))
-                ->put('foo', new Attribute\Attribute('foo'))
+            Map::of('string', Attribute::class)
+                ('foo', new Attribute\Attribute('foo'))
         );
         $this->assertTrue($node->hasAttributes());
     }
@@ -89,8 +89,8 @@ class ElementTest extends TestCase
     {
         $node = new Element(
             'foo',
-            (new Map('string', Attribute::class))
-                ->put('foo', $expected = new Attribute\Attribute('foo'))
+            Map::of('string', Attribute::class)
+                ('foo', $expected = new Attribute\Attribute('foo'))
         );
 
         $this->assertSame($expected, $node->attribute('foo'));
@@ -100,9 +100,9 @@ class ElementTest extends TestCase
     {
         $node = new Element(
             'foo',
-            (new Map('string', Attribute::class))
-                ->put('foo', new Attribute\Attribute('foo'))
-                ->put('bar', new Attribute\Attribute('bar'))
+            Map::of('string', Attribute::class)
+                ('foo', new Attribute\Attribute('foo'))
+                ('bar', new Attribute\Attribute('bar'))
         );
 
         $node2 = $node->removeAttribute('foo');
@@ -131,9 +131,9 @@ class ElementTest extends TestCase
     {
         (new Element(
             'foo',
-            (new Map('string', Attribute::class))
-                ->put('foo', new Attribute\Attribute('foo'))
-                ->put('bar', new Attribute\Attribute('bar'))
+            Map::of('string', Attribute::class)
+                ('foo', new Attribute\Attribute('foo'))
+                ('bar', new Attribute\Attribute('bar'))
         ))->removeAttribute('baz');
     }
 
@@ -141,9 +141,9 @@ class ElementTest extends TestCase
     {
         $node = new Element(
             'foo',
-            (new Map('string', Attribute::class))
-                ->put('foo', new Attribute\Attribute('foo'))
-                ->put('bar', new Attribute\Attribute('bar'))
+            Map::of('string', Attribute::class)
+                ('foo', new Attribute\Attribute('foo'))
+                ('bar', new Attribute\Attribute('bar'))
         );
 
         $node2 = $node->replaceAttribute(
@@ -178,9 +178,9 @@ class ElementTest extends TestCase
     {
         (new Element(
             'foo',
-            (new Map('string', Attribute::class))
-                ->put('foo', new Attribute\Attribute('foo'))
-                ->put('bar', new Attribute\Attribute('bar'))
+            Map::of('string', Attribute::class)
+                ('foo', new Attribute\Attribute('foo'))
+                ('bar', new Attribute\Attribute('bar'))
         ))->replaceAttribute(
             new Attribute\Attribute('baz')
         );
@@ -190,9 +190,9 @@ class ElementTest extends TestCase
     {
         $node = new Element(
             'foo',
-            (new Map('string', Attribute::class))
-                ->put('foo', new Attribute\Attribute('foo'))
-                ->put('bar', new Attribute\Attribute('bar'))
+            Map::of('string', Attribute::class)
+                ('foo', new Attribute\Attribute('foo'))
+                ('bar', new Attribute\Attribute('bar'))
         );
 
         $node2 = $node->addAttribute(
@@ -231,9 +231,9 @@ class ElementTest extends TestCase
     {
         (new Element(
             'foo',
-            (new Map('string', Attribute::class))
-                ->put('foo', new Attribute\Attribute('foo'))
-                ->put('bar', new Attribute\Attribute('bar'))
+            Map::of('string', Attribute::class)
+                ('foo', new Attribute\Attribute('foo'))
+                ('bar', new Attribute\Attribute('bar'))
         ))->addAttribute(new Attribute\Attribute('foo', 'baz'));
     }
 
@@ -265,8 +265,8 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             null,
-            (new Map('int', Node::class))
-                ->put(0, new Element('bar'))
+            Map::of('int', Node::class)
+                (0, new Element('bar'))
         );
         $this->assertTrue($node->hasChildren());
 
@@ -278,10 +278,10 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            (new Map('int', Node::class))
-                ->put(0, new Element('foo'))
-                ->put(1, new Element('bar'))
-                ->put(2, new Element('baz'))
+            Map::of('int', Node::class)
+                (0, new Element('foo'))
+                (1, new Element('bar'))
+                (2, new Element('baz'))
         );
 
         $element2 = $element->removeChild(1);
@@ -310,10 +310,10 @@ class ElementTest extends TestCase
         (new Element(
             'foobar',
             null,
-            (new Map('int', Node::class))
-                ->put(0, new Element('foo'))
-                ->put(1, new Element('bar'))
-                ->put(2, new Element('baz'))
+            Map::of('int', Node::class)
+                (0, new Element('foo'))
+                (1, new Element('bar'))
+                (2, new Element('baz'))
         ))->removeChild(3);
     }
 
@@ -322,10 +322,10 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            (new Map('int', Node::class))
-                ->put(0, new Element('foo'))
-                ->put(1, new Element('bar'))
-                ->put(2, new Element('baz'))
+            Map::of('int', Node::class)
+                (0, new Element('foo'))
+                (1, new Element('bar'))
+                (2, new Element('baz'))
         );
 
         $element2 = $element->replaceChild(
@@ -362,10 +362,10 @@ class ElementTest extends TestCase
         (new Element(
             'foobar',
             null,
-            (new Map('int', Node::class))
-                ->put(0, new Element('foo'))
-                ->put(1, new Element('bar'))
-                ->put(2, new Element('baz'))
+            Map::of('int', Node::class)
+                (0, new Element('foo'))
+                (1, new Element('bar'))
+                (2, new Element('baz'))
         ))->replaceChild(
             3,
             $this->createMock(Node::class)
@@ -377,10 +377,10 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            (new Map('int', Node::class))
-                ->put(0, new Element('foo'))
-                ->put(1, new Element('bar'))
-                ->put(2, new Element('baz'))
+            Map::of('int', Node::class)
+                (0, new Element('foo'))
+                (1, new Element('bar'))
+                (2, new Element('baz'))
         );
 
         $element2 = $element->prependChild(
@@ -417,10 +417,10 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            (new Map('int', Node::class))
-                ->put(0, new Element('foo'))
-                ->put(1, new Element('bar'))
-                ->put(2, new Element('baz'))
+            Map::of('int', Node::class)
+                (0, new Element('foo'))
+                (1, new Element('bar'))
+                (2, new Element('baz'))
         );
 
         $element2 = $element->appendChild(
@@ -465,8 +465,8 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             null,
-            (new Map('int', Node::class))
-                ->put(0, new Element('bar'))
+            Map::of('int', Node::class)
+                (0, new Element('bar'))
         );
 
         $this->assertSame(
@@ -485,21 +485,21 @@ class ElementTest extends TestCase
             '<foo bar="baz" baz="foo"></foo>',
             (string) new Element(
                 'foo',
-                (new Map('string', Attribute::class))
-                    ->put('bar', new Attribute\Attribute('bar', 'baz'))
-                    ->put('baz', new Attribute\Attribute('baz', 'foo'))
+                Map::of('string', Attribute::class)
+                    ('bar', new Attribute\Attribute('bar', 'baz'))
+                    ('baz', new Attribute\Attribute('baz', 'foo'))
             )
         );
         $this->assertSame(
             '<foo bar="baz" baz="foo"><bar></bar><baz></baz></foo>',
             (string) new Element(
                 'foo',
-                (new Map('string', Attribute::class))
-                    ->put('bar', new Attribute\Attribute('bar', 'baz'))
-                    ->put('baz', new Attribute\Attribute('baz', 'foo')),
-                (new Map('int', Node::class))
-                    ->put(0, new Element('bar'))
-                    ->put(1, new Element('baz'))
+                Map::of('string', Attribute::class)
+                    ('bar', new Attribute\Attribute('bar', 'baz'))
+                    ('baz', new Attribute\Attribute('baz', 'foo')),
+                Map::of('int', Node::class)
+                    (0, new Element('bar'))
+                    (1, new Element('baz'))
             )
         );
     }

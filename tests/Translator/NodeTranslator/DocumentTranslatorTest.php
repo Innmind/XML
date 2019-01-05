@@ -39,8 +39,8 @@ XML
         $node = $translator->translate(
             $document,
             new Translator(
-                (new Map('int', NodeTranslator::class))
-                    ->put(
+                Map::of('int', NodeTranslator::class)
+                    (
                         XML_ELEMENT_NODE,
                         new class($foo) implements NodeTranslator
                         {

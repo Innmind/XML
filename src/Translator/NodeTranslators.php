@@ -26,13 +26,13 @@ final class NodeTranslators
     public static function defaults(): MapInterface
     {
         if (!self::$defaults) {
-            self::$defaults = (new Map('int', NodeTranslator::class))
-                ->put(XML_DOCUMENT_NODE, new DocumentTranslator)
-                ->put(XML_ELEMENT_NODE, new ElementTranslator)
-                ->put(XML_CDATA_SECTION_NODE, new CharacterDataTranslator)
-                ->put(XML_TEXT_NODE, new TextTranslator)
-                ->put(XML_COMMENT_NODE, new CommentTranslator)
-                ->put(XML_ENTITY_REF_NODE, new EntityReferenceTranslator);
+            self::$defaults = Map::of('int', NodeTranslator::class)
+                (XML_DOCUMENT_NODE, new DocumentTranslator)
+                (XML_ELEMENT_NODE, new ElementTranslator)
+                (XML_CDATA_SECTION_NODE, new CharacterDataTranslator)
+                (XML_TEXT_NODE, new TextTranslator)
+                (XML_COMMENT_NODE, new CommentTranslator)
+                (XML_ENTITY_REF_NODE, new EntityReferenceTranslator);
         }
 
         return self::$defaults;

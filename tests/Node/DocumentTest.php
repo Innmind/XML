@@ -153,8 +153,8 @@ class DocumentTest extends TestCase
             (string) new Document(
                 new Version(2, 1),
                 new Type('html'),
-                (new Map('int', Node::class))
-                    ->put(0, new SelfClosingElement('foo')),
+                Map::of('int', Node::class)
+                    (0, new SelfClosingElement('foo')),
                 new Encoding('utf-8')
             )
         );
@@ -165,10 +165,10 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            (new Map('int', Node::class))
-                ->put(0, new Element('foo'))
-                ->put(1, new Element('bar'))
-                ->put(2, new Element('baz')),
+            Map::of('int', Node::class)
+                (0, new Element('foo'))
+                (1, new Element('bar'))
+                (2, new Element('baz')),
             new Encoding('utf-8')
         );
 
@@ -199,10 +199,10 @@ class DocumentTest extends TestCase
         (new Document(
             new Version(1),
             new Type('html'),
-            (new Map('int', Node::class))
-                ->put(0, new Element('foo'))
-                ->put(1, new Element('bar'))
-                ->put(2, new Element('baz')),
+            Map::of('int', Node::class)
+                (0, new Element('foo'))
+                (1, new Element('bar'))
+                (2, new Element('baz')),
             new Encoding('utf-8')
         ))->removeChild(3);
     }
@@ -212,10 +212,10 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            (new Map('int', Node::class))
-                ->put(0, new Element('foo'))
-                ->put(1, new Element('bar'))
-                ->put(2, new Element('baz')),
+            Map::of('int', Node::class)
+                (0, new Element('foo'))
+                (1, new Element('bar'))
+                (2, new Element('baz')),
             new Encoding('utf-8')
         );
 
@@ -254,10 +254,10 @@ class DocumentTest extends TestCase
         (new Document(
             new Version(1),
             new Type('html'),
-            (new Map('int', Node::class))
-                ->put(0, new Element('foo'))
-                ->put(1, new Element('bar'))
-                ->put(2, new Element('baz')),
+            Map::of('int', Node::class)
+                (0, new Element('foo'))
+                (1, new Element('bar'))
+                (2, new Element('baz')),
             new Encoding('utf-8')
         ))->replaceChild(
             3,
@@ -270,10 +270,10 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            (new Map('int', Node::class))
-                ->put(0, new Element('foo'))
-                ->put(1, new Element('bar'))
-                ->put(2, new Element('baz')),
+            Map::of('int', Node::class)
+                (0, new Element('foo'))
+                (1, new Element('bar'))
+                (2, new Element('baz')),
             new Encoding('utf-8')
         );
 
@@ -307,15 +307,15 @@ class DocumentTest extends TestCase
         );
     }
 
-    public function testAopendChild()
+    public function testAppendChild()
     {
         $document = new Document(
             new Version(1),
             new Type('html'),
-            (new Map('int', Node::class))
-                ->put(0, new Element('foo'))
-                ->put(1, new Element('bar'))
-                ->put(2, new Element('baz')),
+            Map::of('int', Node::class)
+                (0, new Element('foo'))
+                (1, new Element('bar'))
+                (2, new Element('baz')),
             new Encoding('utf-8')
         );
 

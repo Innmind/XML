@@ -12,7 +12,7 @@ final class Encoding
 
     public function __construct(string $string)
     {
-        if (!(new Str($string))->matches('~^[a-zA-Z0-9\-_:\(\)]+$~')) {
+        if (!Str::of($string)->matches('~^[a-zA-Z0-9\-_:\(\)]+$~')) {
             throw new InvalidArgumentException;
         }
 
