@@ -3,6 +3,6 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Exception;
 
-interface ExceptionInterface
+interface ExceptionInterface extends \Throwable
 {
 }
