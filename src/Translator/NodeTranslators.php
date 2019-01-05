@@ -21,7 +21,7 @@ final class NodeTranslators
     private static $defaults;
 
     /**
-     * @return MapInterface<int, NodeTranslatorInterface>
+     * @return MapInterface<int, NodeTranslator>
      */
     public static function defaults(): MapInterface
     {
