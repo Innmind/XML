@@ -22,14 +22,14 @@ composer require innmind/xml
 use function Innmind\Xml\bootstrap;
 use Innmind\Filesystem\Stream\Stream;
 
-$reader = bootstrap()['reader'];
+$read = bootstrap()['reader'];
 
-$tree = $reader->read(
+$tree = $read(
     new StringStream('<root><foo some="attribute"/></root>')
 );
 ```
 
-Here you have `$tree` which is an instance of [`NodeInterface`](src/NodeInterface.php). In this tree you'll find `root` and `foo` which fulfill [`ElementInterface`](src/ElementInterface.php).
+Here you have `$tree` which is an instance of [`Node`](src/Node.php). In this tree you'll find `root` and `foo` which fulfill [`Element`](src/Element.php).
 
 ## Extract informations out of a node
 
@@ -41,7 +41,7 @@ use Innmind\Xml\Visitor\ParentNode;
 $parent = (new ParentNode($childNode))($treeToSearchIn);
 ```
 
-Here `$parent` will always be an instance of `NodeInterface`, in case the parent is not found an exception will be thrown.
+Here `$parent` will always be an instance of `Node`, in case the parent is not found an exception will be thrown.
 
 Here is the full list of visitors you have access to by default:
 
@@ -60,18 +60,18 @@ Here is the full list of visitors you have access to by default:
 If for some reason your code call the reader multiple times for the same stream object, you may want to cache the parsed tree in order to save some time. You can do so as shown below:
 
 ```php
-$readers = bootstrap();
-$cache = $readers['cache']($readers['reader']);
+$services = bootstrap();
+$cache = $services['cache']($services['reader']);
 $xml = '<root><foo some="attribute"/></root>';
-$tree = $cache->read(
+$tree = $cache(
     $stream = new StringStream($xml)
 );
-$tree2 = $cache->read($stream);
-$tree3 = $cache->read(
+$tree2 = $cache($stream);
+$tree3 = $cache(
     new StringStream($xml)
 );
 ```
 
 Here `$tree` and `$tree2` are the exact same node instance, however `$tree3` doesn't represent the same instance as, even though it's the same xml, it's not the same stream object instance.
 
-When you know you no longer need a tree to be kept in the cache you can call `$cache->detach($stream)` in order to remove the internal reference to both the stream and the associated tree.
+When you know you no longer need a tree to be kept in the cache you can call `$services['cache_storage']->remove($stream)` in order to remove the internal reference to both the stream and the associated tree.
