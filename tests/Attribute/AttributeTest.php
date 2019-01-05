@@ -1,11 +1,11 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\Xml;
+namespace Tests\Innmind\Xml\Attribute;
 
 use Innmind\Xml\{
-    Attribute,
-    AttributeInterface,
+    Attribute\Attribute,
+    Attribute as AttributeInterface,
 };
 use PHPUnit\Framework\TestCase;
 

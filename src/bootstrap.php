@@ -4,22 +4,20 @@ declare(strict_types = 1);
 namespace Innmind\Xml;
 
 use Innmind\Xml\{
-    Reader\Reader,
-    Reader\Cache,
-    Translator\NodeTranslator,
+    Translator\Translator,
     Translator\NodeTranslators,
 };
 
 function bootstrap(): array {
     return [
-        'reader' => new Reader(
-            new NodeTranslator(
+        'reader' => new Reader\Reader(
+            new Translator(
                 NodeTranslators::defaults()
             )
         ),
-        'cache_storage' => $storage = new Cache\Storage,
-        'cache' => static function(ReaderInterface $reader) use ($storage): ReaderInterface {
-            return new Cache($reader, $storage);
+        'cache_storage' => $storage = new Reader\Cache\Storage,
+        'cache' => static function(Reader $reader) use ($storage): Reader {
+            return new Reader\Cache($reader, $storage);
         },
     ];
 }

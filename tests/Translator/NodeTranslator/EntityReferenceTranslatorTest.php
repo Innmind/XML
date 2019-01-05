@@ -5,8 +5,8 @@ namespace Tests\Innmind\Xml\Translator\NodeTranslator;
 
 use Innmind\Xml\{
     Translator\NodeTranslator\EntityReferenceTranslator,
-    Translator\NodeTranslatorInterface,
     Translator\NodeTranslator,
+    Translator\Translator,
     Node\EntityReference,
 };
 use Innmind\Immutable\Map;
@@ -17,7 +17,7 @@ class EntityReferenceTranslatorTest extends TestCase
     public function testInterface()
     {
         $this->assertInstanceOf(
-            NodeTranslatorInterface::class,
+            NodeTranslator::class,
             new EntityReferenceTranslator
         );
     }
@@ -27,8 +27,8 @@ class EntityReferenceTranslatorTest extends TestCase
         $translator = new EntityReferenceTranslator;
         $node = $translator->translate(
             new \DOMEntityReference('gt'),
-            new NodeTranslator(
-                new Map('int', NodeTranslatorInterface::class)
+            new Translator(
+                new Map('int', NodeTranslator::class)
             )
         );
 
@@ -43,8 +43,8 @@ class EntityReferenceTranslatorTest extends TestCase
     {
         (new EntityReferenceTranslator)->translate(
             new \DOMNode,
-            new NodeTranslator(
-                new Map('int', NodeTranslatorInterface::class)
+            new Translator(
+                new Map('int', NodeTranslator::class)
             )
         );
     }

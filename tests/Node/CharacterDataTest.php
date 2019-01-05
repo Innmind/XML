@@ -5,7 +5,7 @@ namespace Tests\Innmind\Xml\Node;
 
 use Innmind\Xml\{
     Node\CharacterData,
-    NodeInterface,
+    Node,
 };
 use Innmind\Immutable\MapInterface;
 use PHPUnit\Framework\TestCase;
@@ -15,7 +15,7 @@ class CharacterDataTest extends TestCase
     public function testInterface()
     {
         $this->assertInstanceOf(
-            NodeInterface::class,
+            Node::class,
             new CharacterData('foo')
         );
     }
@@ -27,7 +27,7 @@ class CharacterDataTest extends TestCase
         $this->assertInstanceOf(MapInterface::class, $characterData->children());
         $this->assertSame('int', (string) $characterData->children()->keyType());
         $this->assertSame(
-            NodeInterface::class,
+            Node::class,
             (string) $characterData->children()->ValueType()
         );
         $this->assertCount(0, $characterData->children());
@@ -57,7 +57,7 @@ class CharacterDataTest extends TestCase
     {
         (new CharacterData('foo'))->replaceChild(
             0,
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 
@@ -67,7 +67,7 @@ class CharacterDataTest extends TestCase
     public function testThrowWhenPrependingChild()
     {
         (new CharacterData('foo'))->prependChild(
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 
@@ -77,7 +77,7 @@ class CharacterDataTest extends TestCase
     public function testThrowWhenAppendingChild()
     {
         (new CharacterData('foo'))->appendChild(
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 

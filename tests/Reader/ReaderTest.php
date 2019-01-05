@@ -5,9 +5,9 @@ namespace Tests\Innmind\Xml\Reader;
 
 use Innmind\Xml\{
     Reader\Reader,
-    ReaderInterface,
+    Reader as ReaderInterface,
     Element\Element,
-    Translator\NodeTranslator,
+    Translator\Translator,
     Translator\NodeTranslators,
 };
 use Innmind\Stream\Readable\Stream;
@@ -20,7 +20,7 @@ class ReaderTest extends TestCase
     public function setUp()
     {
         $this->reader = new Reader(
-            new NodeTranslator(
+            new Translator(
                 NodeTranslators::defaults()
             )
         );

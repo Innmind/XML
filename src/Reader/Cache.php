@@ -4,25 +4,25 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Reader;
 
 use Innmind\Xml\{
-    ReaderInterface,
+    Reader,
     Reader\Cache\Storage,
-    NodeInterface,
+    Node,
 };
 use Innmind\Stream\Readable;
 use Innmind\Immutable\Map;
 
-final class Cache implements ReaderInterface
+final class Cache implements Reader
 {
     private $reader;
     private $cache;
 
-    public function __construct(ReaderInterface $reader, Storage $cache)
+    public function __construct(Reader $reader, Storage $cache)
     {
         $this->reader = $reader;
         $this->cache = $cache;
     }
 
-    public function read(Readable $xml): NodeInterface
+    public function read(Readable $xml): Node
     {
         if ($this->cache->contains($xml)) {
             return $this->cache->get($xml);

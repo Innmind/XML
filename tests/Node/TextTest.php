@@ -5,7 +5,7 @@ namespace Tests\Innmind\Xml\Node;
 
 use Innmind\Xml\{
     Node\Text,
-    NodeInterface,
+    Node,
 };
 use Innmind\Immutable\MapInterface;
 use PHPUnit\Framework\TestCase;
@@ -15,7 +15,7 @@ class TextTest extends TestCase
     public function testInterface()
     {
         $this->assertInstanceOf(
-            NodeInterface::class,
+            Node::class,
             new Text('foo')
         );
     }
@@ -27,7 +27,7 @@ class TextTest extends TestCase
         $this->assertInstanceOf(MapInterface::class, $text->children());
         $this->assertSame('int', (string) $text->children()->keyType());
         $this->assertSame(
-            NodeInterface::class,
+            Node::class,
             (string) $text->children()->valueType()
         );
         $this->assertCount(0, $text->children());
@@ -57,7 +57,7 @@ class TextTest extends TestCase
     {
         (new Text('foo'))->replaceChild(
             0,
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 
@@ -67,7 +67,7 @@ class TextTest extends TestCase
     public function testThrowWhenPrependingChild()
     {
         (new Text('foo'))->prependChild(
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 
@@ -77,7 +77,7 @@ class TextTest extends TestCase
     public function testThrowWhenAppendingChild()
     {
         (new Text('foo'))->appendChild(
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 

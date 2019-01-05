@@ -4,23 +4,23 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Translator\NodeTranslator;
 
 use Innmind\Xml\{
-    Translator\NodeTranslatorInterface,
     Translator\NodeTranslator,
+    Translator\Translator,
     Translator\NodeTranslator\Visitor\Attributes,
     Translator\NodeTranslator\Visitor\Children,
-    NodeInterface,
+    Node,
     Exception\InvalidArgumentException,
     Element\SelfClosingElement,
     Element\Element,
 };
 use Innmind\Immutable\Map;
 
-final class ElementTranslator implements NodeTranslatorInterface
+final class ElementTranslator implements NodeTranslator
 {
     public function translate(
         \DOMNode $node,
-        NodeTranslator $translator
-    ): NodeInterface {
+        Translator $translator
+    ): Node {
         if (!$node instanceof \DOMElement) {
             throw new InvalidArgumentException;
         }

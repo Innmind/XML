@@ -6,8 +6,8 @@ namespace Tests\Innmind\Xml\Reader;
 use Innmind\Xml\{
     Reader\Cache,
     Reader\Cache\Storage,
-    ReaderInterface,
-    NodeInterface,
+    Reader,
+    Node,
 };
 use Innmind\Stream\Readable;
 use PHPUnit\Framework\TestCase;
@@ -17,9 +17,9 @@ class CacheTest extends TestCase
     public function testInterface()
     {
         $this->assertInstanceOf(
-            ReaderInterface::class,
+            Reader::class,
             new Cache(
-                $this->createMock(ReaderInterface::class),
+                $this->createMock(Reader::class),
                 new Storage
             )
         );
@@ -29,18 +29,18 @@ class CacheTest extends TestCase
     {
         $stream = $this->createMock(Readable::class);
         $cache = new Cache(
-            $reader = $this->createMock(ReaderInterface::class),
+            $reader = $this->createMock(Reader::class),
             $storage = new Storage
         );
         $reader
             ->method('read')
             ->with($stream)
             ->willReturnCallback(function($xml) {
-                return $this->createMock(NodeInterface::class);
+                return $this->createMock(Node::class);
             });
 
         $node = $cache->read($stream);
-        $this->assertInstanceOf(NodeInterface::class, $node);
+        $this->assertInstanceOf(Node::class, $node);
         $this->assertSame($node, $cache->read($stream));
         $storage->remove($stream);
         $this->assertNotSame($node, $cache->read($stream));

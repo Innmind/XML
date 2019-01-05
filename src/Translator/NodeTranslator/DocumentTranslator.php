@@ -4,9 +4,9 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Translator\NodeTranslator;
 
 use Innmind\Xml\{
-    Translator\NodeTranslatorInterface,
     Translator\NodeTranslator,
-    NodeInterface,
+    Translator\Translator,
+    Node,
     Exception\InvalidArgumentException,
     Node\Document\Type,
     Node\Document\Version,
@@ -15,12 +15,12 @@ use Innmind\Xml\{
 };
 use Innmind\Immutable\Map;
 
-final class DocumentTranslator implements NodeTranslatorInterface
+final class DocumentTranslator implements NodeTranslator
 {
     public function translate(
         \DOMNode $node,
-        NodeTranslator $translator
-    ): NodeInterface {
+        Translator $translator
+    ): Node {
         if (!$node instanceof \DOMDocument) {
             throw new InvalidArgumentException;
         }
@@ -55,9 +55,9 @@ final class DocumentTranslator implements NodeTranslatorInterface
 
     private function buildChildren(
         \DOMNodeList $nodes,
-        NodeTranslator $translator
+        Translator $translator
     ): Map {
-        $children = new Map('int', NodeInterface::class);
+        $children = new Map('int', Node::class);
 
         foreach ($nodes as $child) {
             if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {

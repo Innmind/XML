@@ -5,7 +5,7 @@ namespace Innmind\Xml;
 
 use Innmind\Immutable\MapInterface;
 
-interface NodeInterface
+interface Node
 {
     /**
      * @return MapInterface<int, NodeInterface> The int represent the position

@@ -5,7 +5,7 @@ namespace Tests\Innmind\Xml\Translator;
 
 use Innmind\Xml\Translator\{
     NodeTranslators,
-    NodeTranslatorInterface,
+    NodeTranslator,
     NodeTranslator\DocumentTranslator,
     NodeTranslator\ElementTranslator,
     NodeTranslator\CharacterDataTranslator,
@@ -25,7 +25,7 @@ class NodeTranslatorsTest extends TestCase
         $this->assertInstanceOf(MapInterface::class, $defaults);
         $this->assertSame('int', (string) $defaults->keyType());
         $this->assertSame(
-            NodeTranslatorInterface::class,
+            NodeTranslator::class,
             (string) $defaults->valueType()
         );
         $this->assertCount(6, $defaults);

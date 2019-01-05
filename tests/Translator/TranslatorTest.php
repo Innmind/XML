@@ -4,9 +4,9 @@ declare(strict_types = 1);
 namespace Tests\Innmind\Xml\Translator;
 
 use Innmind\Xml\{
-    Translator\NodeTranslator,
+    Translator\Translator,
     Translator\NodeTranslators,
-    Translator\NodeTranslatorInterface,
+    Translator\NodeTranslator,
     Element\Element,
     Element\SelfClosingElement,
     Node\Document,
@@ -17,13 +17,13 @@ use Innmind\Xml\{
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
 
-class NodeTranslatorTest extends TestCase
+class TranslatorTest extends TestCase
 {
     private $translator;
 
     public function setUp()
     {
-        $this->translator = new NodeTranslator(
+        $this->translator = new Translator(
             NodeTranslators::defaults()
         );
     }
@@ -105,8 +105,8 @@ XML
      */
     public function testThrowWhenNoTranslatorFoundForANodeType()
     {
-        (new NodeTranslator(
-            new Map('int', NodeTranslatorInterface::class)
+        (new Translator(
+            new Map('int', NodeTranslator::class)
         ))->translate(new \DOMDocument);
     }
 }

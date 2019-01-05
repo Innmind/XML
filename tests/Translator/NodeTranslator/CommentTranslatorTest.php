@@ -5,8 +5,8 @@ namespace Tests\Innmind\Xml\Translator\NodeTranslator;
 
 use Innmind\Xml\{
     Translator\NodeTranslator\CommentTranslator,
-    Translator\NodeTranslatorInterface,
     Translator\NodeTranslator,
+    Translator\Translator,
     Node\Comment,
 };
 use Innmind\Immutable\Map;
@@ -17,7 +17,7 @@ class CommentTranslatorTest extends TestCase
     public function testInterface()
     {
         $this->assertInstanceOf(
-            NodeTranslatorInterface::class,
+            NodeTranslator::class,
             new CommentTranslator
         );
     }
@@ -37,8 +37,8 @@ XML
                 ->item(0)
                 ->childNodes
                 ->item(0),
-            new NodeTranslator(
-                new Map('int', NodeTranslatorInterface::class)
+            new Translator(
+                new Map('int', NodeTranslator::class)
             )
         );
 
@@ -53,8 +53,8 @@ XML
     {
         (new CommentTranslator)->translate(
             new \DOMNode,
-            new NodeTranslator(
-                new Map('int', NodeTranslatorInterface::class)
+            new Translator(
+                new Map('int', NodeTranslator::class)
             )
         );
     }

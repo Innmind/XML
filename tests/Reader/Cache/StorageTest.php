@@ -5,7 +5,7 @@ namespace Tests\Innmind\Xml\Reader\Cache;
 
 use Innmind\Xml\{
     Reader\Cache\Storage,
-    NodeInterface,
+    Node,
 };
 use Innmind\Stream\Readable;
 use PHPUnit\Framework\TestCase;
@@ -17,7 +17,7 @@ class StorageTest extends TestCase
         $storage = new Storage;
 
         $xml = $this->createMock(Readable::class);
-        $node = $this->createMock(NodeInterface::class);
+        $node = $this->createMock(Node::class);
 
         $this->assertFalse($storage->contains($xml));
         $this->assertNull($storage->add($xml, $node));

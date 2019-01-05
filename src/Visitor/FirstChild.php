@@ -4,13 +4,13 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Visitor;
 
 use Innmind\Xml\{
-    NodeInterface,
+    Node,
     Exception\NodeDoesntHaveChildrenException,
 };
 
 final class FirstChild
 {
-    public function __invoke(NodeInterface $node): NodeInterface
+    public function __invoke(Node $node): Node
     {
         if (!$node->hasChildren()) {
             throw new NodeDoesntHaveChildrenException;

@@ -5,10 +5,10 @@ namespace Tests\Innmind\Xml\Translator\NodeTranslator;
 
 use Innmind\Xml\{
     Translator\NodeTranslator\DocumentTranslator,
-    Translator\NodeTranslatorInterface,
     Translator\NodeTranslator,
+    Translator\Translator,
     Node\Document,
-    NodeInterface,
+    Node,
     Element\SelfClosingElement,
 };
 use Innmind\Immutable\Map;
@@ -19,7 +19,7 @@ class DocumentTranslatorTest extends TestCase
     public function testInterface()
     {
         $this->assertInstanceOf(
-            NodeTranslatorInterface::class,
+            NodeTranslator::class,
             new DocumentTranslator
         );
     }
@@ -38,20 +38,20 @@ XML
         $foo = new SelfClosingElement('foo');
         $node = $translator->translate(
             $document,
-            new NodeTranslator(
-                (new Map('int', NodeTranslatorInterface::class))
+            new Translator(
+                (new Map('int', NodeTranslator::class))
                     ->put(
                         XML_ELEMENT_NODE,
-                        new class($foo) implements NodeTranslatorInterface
+                        new class($foo) implements NodeTranslator
                         {
                             private $foo;
 
-                            public function __construct(NodeInterface $foo)
+                            public function __construct(Node $foo)
                             {
                                 $this->foo = $foo;
                             }
 
-                            public function translate(\DOMNode $node, NodeTranslator $translator): NodeInterface
+                            public function translate(\DOMNode $node, Translator $translator): Node
                             {
                                 return $this->foo;
                             }
@@ -71,8 +71,8 @@ XML
     {
         (new DocumentTranslator)->translate(
             new \DOMNode,
-            new NodeTranslator(
-                new Map('int', NodeTranslatorInterface::class)
+            new Translator(
+                new Map('int', NodeTranslator::class)
             )
         );
     }

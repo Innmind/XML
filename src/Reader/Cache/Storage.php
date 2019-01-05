@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Reader\Cache;
 
-use Innmind\Xml\NodeInterface;
+use Innmind\Xml\Node;
 use Innmind\Stream\Readable;
 use Innmind\Immutable\Map;
 
@@ -13,10 +13,10 @@ final class Storage
 
     public function __construct()
     {
-        $this->map = new Map(Readable::class, NodeInterface::class);
+        $this->map = new Map(Readable::class, Node::class);
     }
 
-    public function add(Readable $xml, NodeInterface $node): void
+    public function add(Readable $xml, Node $node): void
     {
         $this->map = $this->map->put($xml, $node);
     }
@@ -26,7 +26,7 @@ final class Storage
         return $this->map->contains($xml);
     }
 
-    public function get(Readable $xml): NodeInterface
+    public function get(Readable $xml): Node
     {
         return $this->map->get($xml);
     }

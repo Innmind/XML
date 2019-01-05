@@ -7,7 +7,7 @@ use Innmind\Xml\{
     Visitor\NextSibling,
     Reader\Reader,
     Element\Element,
-    Translator\NodeTranslator,
+    Translator\Translator,
     Translator\NodeTranslators,
 };
 use Innmind\Stream\Readable\Stream;
@@ -20,7 +20,7 @@ class NextSiblingTest extends TestCase
     public function setUp()
     {
         $this->reader = new Reader(
-            new NodeTranslator(
+            new Translator(
                 NodeTranslators::defaults()
             )
         );

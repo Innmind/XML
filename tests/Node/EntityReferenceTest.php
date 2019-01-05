@@ -5,7 +5,7 @@ namespace Tests\Innmind\Xml\Node;
 
 use Innmind\Xml\{
     Node\EntityReference,
-    NodeInterface,
+    Node,
 };
 use Innmind\Immutable\MapInterface;
 use PHPUnit\Framework\TestCase;
@@ -15,7 +15,7 @@ class EntityReferenceTest extends TestCase
     public function testInterface()
     {
         $this->assertInstanceOf(
-            NodeInterface::class,
+            Node::class,
             new EntityReference('foo')
         );
     }
@@ -27,7 +27,7 @@ class EntityReferenceTest extends TestCase
         $this->assertInstanceOf(MapInterface::class, $node->children());
         $this->assertSame('int', (string) $node->children()->keyType());
         $this->assertSame(
-            NodeInterface::class,
+            Node::class,
             (string) $node->children()->valueType()
         );
         $this->assertCount(0, $node->children());
@@ -57,7 +57,7 @@ class EntityReferenceTest extends TestCase
     {
         (new EntityReference('foo'))->replaceChild(
             0,
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 
@@ -67,7 +67,7 @@ class EntityReferenceTest extends TestCase
     public function testThrowWhenPrependingChild()
     {
         (new EntityReference('foo'))->prependChild(
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 
@@ -77,7 +77,7 @@ class EntityReferenceTest extends TestCase
     public function testThrowWhenAppendingChild()
     {
         (new EntityReference('foo'))->appendChild(
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 

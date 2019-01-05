@@ -4,9 +4,9 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Element;
 
 use Innmind\Xml\{
-    ElementInterface,
-    AttributeInterface,
-    NodeInterface,
+    Element as ElementInterface,
+    Attribute,
+    Node,
     Exception\InvalidArgumentException,
     Exception\OutOfBoundsException,
     Exception\LogicException,
@@ -29,15 +29,15 @@ class Element implements ElementInterface
         MapInterface $attributes = null,
         MapInterface $children = null
     ) {
-        $attributes = $attributes ?? new Map('string', AttributeInterface::class);
-        $children = $children ?? new Map('int', NodeInterface::class);
+        $attributes = $attributes ?? new Map('string', Attribute::class);
+        $children = $children ?? new Map('int', Node::class);
 
         if (
             empty($name) ||
             (string) $attributes->keyType() !== 'string' ||
-            (string) $attributes->valueType() !== AttributeInterface::class ||
+            (string) $attributes->valueType() !== Attribute::class ||
             (string) $children->keyType() !== 'int' ||
-            (string) $children->valueType() !== NodeInterface::class
+            (string) $children->valueType() !== Node::class
         ) {
             throw new InvalidArgumentException;
         }
@@ -65,7 +65,7 @@ class Element implements ElementInterface
         return $this->attributes->size() > 0;
     }
 
-    public function attribute(string $name): AttributeInterface
+    public function attribute(string $name): Attribute
     {
         return $this->attributes->get($name);
     }
@@ -82,7 +82,7 @@ class Element implements ElementInterface
         return $element;
     }
 
-    public function replaceAttribute(AttributeInterface $attribute): ElementInterface
+    public function replaceAttribute(Attribute $attribute): ElementInterface
     {
         if (!$this->attributes->contains($attribute->name())) {
             throw new OutOfBoundsException;
@@ -97,7 +97,7 @@ class Element implements ElementInterface
         return $element;
     }
 
-    public function addAttribute(AttributeInterface $attribute): ElementInterface
+    public function addAttribute(Attribute $attribute): ElementInterface
     {
         if ($this->attributes->contains($attribute->name())) {
             throw new LogicException;
@@ -125,7 +125,7 @@ class Element implements ElementInterface
         return $this->children->size() > 0;
     }
 
-    public function removeChild(int $position): NodeInterface
+    public function removeChild(int $position): Node
     {
         if (!$this->children->contains($position)) {
             throw new OutOfBoundsException;
@@ -135,8 +135,8 @@ class Element implements ElementInterface
         $element->children = $this
             ->children
             ->reduce(
-                new Map('int', NodeInterface::class),
-                function(Map $children, int $pos, NodeInterface $node) use ($position): Map {
+                new Map('int', Node::class),
+                function(Map $children, int $pos, Node $node) use ($position): Map {
                     if ($pos === $position) {
                         return $children;
                     }
@@ -151,7 +151,7 @@ class Element implements ElementInterface
         return $element;
     }
 
-    public function replaceChild(int $position, NodeInterface $node): NodeInterface
+    public function replaceChild(int $position, Node $node): Node
     {
         if (!$this->children->contains($position)) {
             throw new OutOfBoundsException;
@@ -166,15 +166,15 @@ class Element implements ElementInterface
         return $element;
     }
 
-    public function prependChild(NodeInterface $child): NodeInterface
+    public function prependChild(Node $child): Node
     {
         $element = clone $this;
         $element->children = $this
             ->children
             ->reduce(
-                (new Map('int', NodeInterface::class))
+                (new Map('int', Node::class))
                     ->put(0, $child),
-                function(Map $children, int $position, NodeInterface $child): Map {
+                function(Map $children, int $position, Node $child): Map {
                     return $children->put(
                         $children->size(),
                         $child
@@ -185,7 +185,7 @@ class Element implements ElementInterface
         return $element;
     }
 
-    public function appendChild(NodeInterface $child): NodeInterface
+    public function appendChild(Node $child): Node
     {
         $element = clone $this;
         $element->children = $this->children->put(

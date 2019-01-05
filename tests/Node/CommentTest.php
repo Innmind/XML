@@ -5,7 +5,7 @@ namespace Tests\Innmind\Xml\Node;
 
 use Innmind\Xml\{
     Node\Comment,
-    NodeInterface,
+    Node,
 };
 use Innmind\Immutable\MapInterface;
 use PHPUnit\Framework\TestCase;
@@ -15,7 +15,7 @@ class CommentTest extends TestCase
     public function testInterface()
     {
         $this->assertInstanceOf(
-            NodeInterface::class,
+            Node::class,
             new Comment('foo')
         );
     }
@@ -27,7 +27,7 @@ class CommentTest extends TestCase
         $this->assertInstanceOf(MapInterface::class, $comment->children());
         $this->assertSame('int', (string) $comment->children()->keyType());
         $this->assertSame(
-            NodeInterface::class,
+            Node::class,
             (string) $comment->children()->ValueType()
         );
         $this->assertCount(0, $comment->children());
@@ -57,7 +57,7 @@ class CommentTest extends TestCase
     {
         (new Comment('foo'))->replaceChild(
             0,
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 
@@ -67,7 +67,7 @@ class CommentTest extends TestCase
     public function testThrowWhenPrependingChild()
     {
         (new Comment('foo'))->prependChild(
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 
@@ -77,7 +77,7 @@ class CommentTest extends TestCase
     public function testThrowWhenAppendingChild()
     {
         (new Comment('foo'))->appendChild(
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 

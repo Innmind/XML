@@ -8,7 +8,7 @@ use Innmind\Xml\{
     Node\Document\Version,
     Node\Document\Type,
     Node\Document\Encoding,
-    NodeInterface,
+    Node,
     Element\Element,
     Element\SelfClosingElement,
 };
@@ -23,7 +23,7 @@ class DocumentTest extends TestCase
     public function testInterface()
     {
         $this->assertInstanceOf(
-            NodeInterface::class,
+            Node::class,
             new Document(new Version(1))
         );
     }
@@ -55,7 +55,7 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             null,
-            $children = new Map('int', NodeInterface::class)
+            $children = new Map('int', Node::class)
         );
 
         $this->assertSame($children, $document->children());
@@ -71,7 +71,7 @@ class DocumentTest extends TestCase
         );
         $this->assertSame('int', (string) $document->children()->keyType());
         $this->assertSame(
-            NodeInterface::class,
+            Node::class,
             (string) $document->children()->valueType()
         );
     }
@@ -118,7 +118,7 @@ class DocumentTest extends TestCase
             (new Document(
                 new Version(1),
                 null,
-                (new Map('int', NodeInterface::class))
+                (new Map('int', Node::class))
                     ->put(0, new Element('foo'))
             ))->content()
         );
@@ -153,7 +153,7 @@ class DocumentTest extends TestCase
             (string) new Document(
                 new Version(2, 1),
                 new Type('html'),
-                (new Map('int', NodeInterface::class))
+                (new Map('int', Node::class))
                     ->put(0, new SelfClosingElement('foo')),
                 new Encoding('utf-8')
             )
@@ -165,7 +165,7 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            (new Map('int', NodeInterface::class))
+            (new Map('int', Node::class))
                 ->put(0, new Element('foo'))
                 ->put(1, new Element('bar'))
                 ->put(2, new Element('baz')),
@@ -199,7 +199,7 @@ class DocumentTest extends TestCase
         (new Document(
             new Version(1),
             new Type('html'),
-            (new Map('int', NodeInterface::class))
+            (new Map('int', Node::class))
                 ->put(0, new Element('foo'))
                 ->put(1, new Element('bar'))
                 ->put(2, new Element('baz')),
@@ -212,7 +212,7 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            (new Map('int', NodeInterface::class))
+            (new Map('int', Node::class))
                 ->put(0, new Element('foo'))
                 ->put(1, new Element('bar'))
                 ->put(2, new Element('baz')),
@@ -221,7 +221,7 @@ class DocumentTest extends TestCase
 
         $document2 = $document->replaceChild(
             1,
-            $node = $this->createMock(NodeInterface::class)
+            $node = $this->createMock(Node::class)
         );
 
         $this->assertNotSame($document, $document2);
@@ -254,14 +254,14 @@ class DocumentTest extends TestCase
         (new Document(
             new Version(1),
             new Type('html'),
-            (new Map('int', NodeInterface::class))
+            (new Map('int', Node::class))
                 ->put(0, new Element('foo'))
                 ->put(1, new Element('bar'))
                 ->put(2, new Element('baz')),
             new Encoding('utf-8')
         ))->replaceChild(
             3,
-            $this->createMock(NodeInterface::class)
+            $this->createMock(Node::class)
         );
     }
 
@@ -270,7 +270,7 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            (new Map('int', NodeInterface::class))
+            (new Map('int', Node::class))
                 ->put(0, new Element('foo'))
                 ->put(1, new Element('bar'))
                 ->put(2, new Element('baz')),
@@ -278,7 +278,7 @@ class DocumentTest extends TestCase
         );
 
         $document2 = $document->prependChild(
-            $node = $this->createMock(NodeInterface::class)
+            $node = $this->createMock(Node::class)
         );
 
         $this->assertNotSame($document, $document2);
@@ -312,7 +312,7 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            (new Map('int', NodeInterface::class))
+            (new Map('int', Node::class))
                 ->put(0, new Element('foo'))
                 ->put(1, new Element('bar'))
                 ->put(2, new Element('baz')),
@@ -320,7 +320,7 @@ class DocumentTest extends TestCase
         );
 
         $document2 = $document->appendChild(
-            $node = $this->createMock(NodeInterface::class)
+            $node = $this->createMock(Node::class)
         );
 
         $this->assertNotSame($document, $document2);
