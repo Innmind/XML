@@ -13,9 +13,9 @@ use Innmind\Xml\{
 
 final class EntityReferenceTranslator implements NodeTranslator
 {
-    public function translate(
+    public function __invoke(
         \DOMNode $node,
-        Translator $translator
+        Translator $translate
     ): Node {
         if (!$node instanceof \DOMEntityReference) {
             throw new InvalidArgumentException;

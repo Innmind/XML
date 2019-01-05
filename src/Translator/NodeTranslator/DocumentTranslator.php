@@ -17,9 +17,9 @@ use Innmind\Immutable\Map;
 
 final class DocumentTranslator implements NodeTranslator
 {
-    public function translate(
+    public function __invoke(
         \DOMNode $node,
-        Translator $translator
+        Translator $translate
     ): Node {
         if (!$node instanceof \DOMDocument) {
             throw new InvalidArgumentException;
@@ -29,7 +29,7 @@ final class DocumentTranslator implements NodeTranslator
             $this->buildVersion($node),
             $node->doctype ? $this->buildDoctype($node->doctype) : null,
             $node->childNodes ?
-                $this->buildChildren($node->childNodes, $translator) : null,
+                $this->buildChildren($node->childNodes, $translate) : null,
             $node->encoding ? $this->buildEncoding($node->encoding) : null
         );
     }
@@ -55,7 +55,7 @@ final class DocumentTranslator implements NodeTranslator
 
     private function buildChildren(
         \DOMNodeList $nodes,
-        Translator $translator
+        Translator $translate
     ): Map {
         $children = new Map('int', Node::class);
 
@@ -66,7 +66,7 @@ final class DocumentTranslator implements NodeTranslator
 
             $children = $children->put(
                 $children->size(),
-                $translator->translate($child)
+                $translate($child)
             );
         }
 

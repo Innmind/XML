@@ -31,8 +31,8 @@ class TextTranslatorTest extends TestCase
 XML
         );
 
-        $translator = new TextTranslator;
-        $node = $translator->translate(
+        $translate = new TextTranslator;
+        $node = $translate(
             $document
                 ->childNodes
                 ->item(0)
@@ -51,7 +51,7 @@ XML
     {
         $this->expectException(InvalidArgumentException::class);
 
-        (new TextTranslator)->translate(
+        (new TextTranslator)(
             new \DOMNode,
             new Translator(
                 new Map('int', NodeTranslator::class)

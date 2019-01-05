@@ -20,11 +20,11 @@ use PHPUnit\Framework\TestCase;
 
 class TranslatorTest extends TestCase
 {
-    private $translator;
+    private $translate;
 
     public function setUp()
     {
-        $this->translator = new Translator(
+        $this->translate = new Translator(
             NodeTranslators::defaults()
         );
     }
@@ -45,7 +45,7 @@ class TranslatorTest extends TestCase
 </foo>
 XML
         );
-        $node = $this->translator->translate($document);
+        $node = ($this->translate)($document);
 
         $this->assertInstanceOf(Document::class, $node);
         $this->assertSame('1.0', (string) $node->version());
@@ -107,6 +107,6 @@ XML
 
         (new Translator(
             new Map('int', NodeTranslator::class)
-        ))->translate(new \DOMDocument);
+        ))(new \DOMDocument);
     }
 }

@@ -17,9 +17,9 @@ use Innmind\Immutable\Map;
 
 final class ElementTranslator implements NodeTranslator
 {
-    public function translate(
+    public function __invoke(
         \DOMNode $node,
-        Translator $translator
+        Translator $translate
     ): Node {
         if (!$node instanceof \DOMElement) {
             throw new InvalidArgumentException;
@@ -40,7 +40,7 @@ final class ElementTranslator implements NodeTranslator
         return new Element(
             $node->nodeName,
             $attributes,
-            (new Children($translator))($node)
+            (new Children($translate))($node)
         );
     }
 }

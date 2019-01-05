@@ -7,8 +7,8 @@ use Innmind\Xml\Node;
 
 interface NodeTranslator
 {
-    public function translate(
+    public function __invoke(
         \DOMNode $node,
-        Translator $translator
+        Translator $translate
     ): Node;
 }

@@ -25,8 +25,8 @@ class EntityReferenceTranslatorTest extends TestCase
 
     public function testTranslate()
     {
-        $translator = new EntityReferenceTranslator;
-        $node = $translator->translate(
+        $translate = new EntityReferenceTranslator;
+        $node = $translate(
             new \DOMEntityReference('gt'),
             new Translator(
                 new Map('int', NodeTranslator::class)
@@ -41,7 +41,7 @@ class EntityReferenceTranslatorTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        (new EntityReferenceTranslator)->translate(
+        (new EntityReferenceTranslator)(
             new \DOMNode,
             new Translator(
                 new Map('int', NodeTranslator::class)

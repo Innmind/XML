@@ -31,8 +31,8 @@ class CharacterDataTranslatorTest extends TestCase
 XML
         );
 
-        $translator = new CharacterDataTranslator;
-        $node = $translator->translate(
+        $translate = new CharacterDataTranslator;
+        $node = $translate(
             $document
                 ->childNodes
                 ->item(0)
@@ -51,7 +51,7 @@ XML
     {
         $this->expectException(InvalidArgumentException::class);
 
-        (new CharacterDataTranslator)->translate(
+        (new CharacterDataTranslator)(
             new \DOMNode,
             new Translator(
                 new Map('int', NodeTranslator::class)

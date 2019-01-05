@@ -35,9 +35,9 @@ class DocumentTranslatorTest extends TestCase
 XML
         );
 
-        $translator = new DocumentTranslator;
+        $translate = new DocumentTranslator;
         $foo = new SelfClosingElement('foo');
-        $node = $translator->translate(
+        $node = $translate(
             $document,
             new Translator(
                 Map::of('int', NodeTranslator::class)
@@ -52,7 +52,7 @@ XML
                                 $this->foo = $foo;
                             }
 
-                            public function translate(\DOMNode $node, Translator $translator): Node
+                            public function __invoke(\DOMNode $node, Translator $translate): Node
                             {
                                 return $this->foo;
                             }
@@ -69,7 +69,7 @@ XML
     {
         $this->expectException(InvalidArgumentException::class);
 
-        (new DocumentTranslator)->translate(
+        (new DocumentTranslator)(
             new \DOMNode,
             new Translator(
                 new Map('int', NodeTranslator::class)

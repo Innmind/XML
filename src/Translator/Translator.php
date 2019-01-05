@@ -28,7 +28,7 @@ final class Translator
         $this->translators = $translators;
     }
 
-    public function translate(\DOMNode $node): Node
+    public function __invoke(\DOMNode $node): Node
     {
         if (!$this->translators->contains($node->nodeType)) {
             throw new UnknownNodeType;
@@ -36,7 +36,6 @@ final class Translator
 
         return $this
             ->translators
-            ->get($node->nodeType)
-            ->translate($node, $this);
+            ->get($node->nodeType)($node, $this);
     }
 }

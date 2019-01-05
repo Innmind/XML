@@ -14,11 +14,11 @@ use Innmind\Immutable\{
 
 final class Children
 {
-    private $translator;
+    private $translate;
 
-    public function __construct(Translator $translator)
+    public function __construct(Translator $translate)
     {
-        $this->translator = $translator;
+        $this->translate = $translate;
     }
 
     public function __invoke(\DOMNode $node): MapInterface
@@ -32,7 +32,7 @@ final class Children
         foreach ($node->childNodes as $child) {
             $children = $children->put(
                 $children->size(),
-                $this->translator->translate($child)
+                ($this->translate)($child)
             );
         }
 

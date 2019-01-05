@@ -31,8 +31,8 @@ class CommentTranslatorTest extends TestCase
 XML
         );
 
-        $translator = new CommentTranslator;
-        $node = $translator->translate(
+        $translate = new CommentTranslator;
+        $node = $translate(
             $document
                 ->childNodes
                 ->item(0)
@@ -51,7 +51,7 @@ XML
     {
         $this->expectException(InvalidArgumentException::class);
 
-        (new CommentTranslator)->translate(
+        (new CommentTranslator)(
             new \DOMNode,
             new Translator(
                 new Map('int', NodeTranslator::class)

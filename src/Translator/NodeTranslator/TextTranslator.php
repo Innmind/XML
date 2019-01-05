@@ -13,9 +13,9 @@ use Innmind\Xml\{
 
 final class TextTranslator implements NodeTranslator
 {
-    public function translate(
+    public function __invoke(
         \DOMNode $node,
-        Translator $translator
+        Translator $translate
     ): Node {
         if (!$node instanceof \DOMText) {
             throw new InvalidArgumentException;
