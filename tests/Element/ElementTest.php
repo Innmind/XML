@@ -59,6 +59,14 @@ class ElementTest extends TestCase
         new Element('foo', new Map('string', 'string'));
     }
 
+    public function testThrowWhenInvalidChildren()
+    {
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('Argument 3 must be of type MapInterface<int, Innmind\Xml\Node>');
+
+        new Element('foo', null, new Map('string', 'string'));
+    }
+
     public function testDefaultAttributes()
     {
         $node = new Element('foo');

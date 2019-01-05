@@ -29,6 +29,14 @@ class TranslatorTest extends TestCase
         );
     }
 
+    public function testThrowWhenInvalidTranslators()
+    {
+        $this->expectException(\TypeError::class);
+        $this->expectExceptionMessage('Argument 1 must be of type MapInterface<int, Innmind\Xml\Translator\NodeTranslator>');
+
+        new Translator(new Map('string', 'string'));
+    }
+
     public function testTranslate()
     {
         $document = new \DOMDocument;
