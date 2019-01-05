@@ -28,21 +28,22 @@ class CacheTest extends TestCase
     public function testCache()
     {
         $stream = $this->createMock(Readable::class);
-        $cache = new Cache(
+        $read = new Cache(
             $reader = $this->createMock(Reader::class),
             $storage = new Storage
         );
         $reader
-            ->method('read')
+            ->expects($this->exactly(2))
+            ->method('__invoke')
             ->with($stream)
             ->willReturnCallback(function($xml) {
                 return $this->createMock(Node::class);
             });
 
-        $node = $cache->read($stream);
+        $node = $read($stream);
         $this->assertInstanceOf(Node::class, $node);
-        $this->assertSame($node, $cache->read($stream));
+        $this->assertSame($node, $read($stream));
         $storage->remove($stream);
-        $this->assertNotSame($node, $cache->read($stream));
+        $this->assertNotSame($node, $read($stream));
     }
 }

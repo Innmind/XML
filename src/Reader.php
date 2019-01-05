@@ -7,5 +7,5 @@ use Innmind\Stream\Readable;
 
 interface Reader
 {
-    public function read(Readable $content): Node;
+    public function __invoke(Readable $content): Node;
 }

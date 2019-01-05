@@ -19,7 +19,7 @@ final class Reader implements ReaderInterface
         $this->translator = $translator;
     }
 
-    public function read(Readable $content): Node
+    public function __invoke(Readable $content): Node
     {
         $xml = new \DOMDocument;
         $xml->loadXML((string) $content);

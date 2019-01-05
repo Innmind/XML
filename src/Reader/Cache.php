@@ -13,22 +13,22 @@ use Innmind\Immutable\Map;
 
 final class Cache implements Reader
 {
-    private $reader;
+    private $read;
     private $cache;
 
-    public function __construct(Reader $reader, Storage $cache)
+    public function __construct(Reader $read, Storage $cache)
     {
-        $this->reader = $reader;
+        $this->read = $read;
         $this->cache = $cache;
     }
 
-    public function read(Readable $xml): Node
+    public function __invoke(Readable $xml): Node
     {
         if ($this->cache->contains($xml)) {
             return $this->cache->get($xml);
         }
 
-        $node = $this->reader->read($xml);
+        $node = ($this->read)($xml);
         $this->cache->add($xml, $node);
 
         return $node;

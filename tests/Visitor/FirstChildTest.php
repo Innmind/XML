@@ -16,11 +16,11 @@ use PHPUnit\Framework\TestCase;
 
 class FirstChildTest extends TestCase
 {
-    private $reader;
+    private $read;
 
     public function setUp()
     {
-        $this->reader = new Reader(
+        $this->read = new Reader(
             new Translator(
                 NodeTranslators::defaults()
             )
@@ -34,7 +34,7 @@ class FirstChildTest extends TestCase
 XML;
         $res = fopen('php://temp', 'r+');
         fwrite($res, $xml);
-        $tree = $this->reader->read(
+        $tree = ($this->read)(
             new Stream($res)
         );
         $div = $tree
