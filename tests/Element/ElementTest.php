@@ -32,7 +32,7 @@ class ElementTest extends TestCase
     }
 
     /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
+     * @expectedException Innmind\Xml\Exception\DomainException
      */
     public function testThrowWhenEmptyName()
     {
@@ -50,7 +50,8 @@ class ElementTest extends TestCase
     }
 
     /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
+     * @expectedException TypeError
+     * @expectedExceptionMessage Argument 2 must be of type MapInterface<string, Innmind\Xml\Attribute>
      */
     public function testThrowWhenInvalidAttributes()
     {

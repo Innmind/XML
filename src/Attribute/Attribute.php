@@ -5,7 +5,7 @@ namespace Innmind\Xml\Attribute;
 
 use Innmind\Xml\{
     Attribute as AttributeInterface,
-    Exception\InvalidArgumentException,
+    Exception\DomainException,
 };
 use Innmind\Immutable\Str;
 
@@ -18,7 +18,7 @@ class Attribute implements AttributeInterface
     public function __construct(string $name, string $value = '')
     {
         if (Str::of($name)->empty()) {
-            throw new InvalidArgumentException;
+            throw new DomainException;
         }
 
         $this->name = $name;

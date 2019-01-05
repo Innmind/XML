@@ -20,7 +20,7 @@ class VersionTest extends TestCase
     }
 
     /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
+     * @expectedException Innmind\Xml\Exception\DomainException
      */
     public function testThrowWhenMajorTooLow()
     {
@@ -28,7 +28,7 @@ class VersionTest extends TestCase
     }
 
     /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
+     * @expectedException Innmind\Xml\Exception\DomainException
      */
     public function testThrowWhenMinorTooLow()
     {

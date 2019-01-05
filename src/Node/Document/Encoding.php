@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Node\Document;
 
-use Innmind\Xml\Exception\InvalidArgumentException;
+use Innmind\Xml\Exception\DomainException;
 use Innmind\Immutable\Str;
 
 final class Encoding
@@ -13,7 +13,7 @@ final class Encoding
     public function __construct(string $string)
     {
         if (!Str::of($string)->matches('~^[a-zA-Z0-9\-_:\(\)]+$~')) {
-            throw new InvalidArgumentException;
+            throw new DomainException;
         }
 
         $this->string = $string;

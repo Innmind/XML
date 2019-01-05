@@ -77,7 +77,8 @@ class DocumentTest extends TestCase
     }
 
     /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
+     * @expectedException TypeError
+     * @expectedExceptionMessage Argument 3 must be of type MapInterface<int, Innmind\Xml\Node>
      */
     public function testThrowWhenInvalidChildren()
     {

@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Node\Document;
 
-use Innmind\Xml\Exception\InvalidArgumentException;
+use Innmind\Xml\Exception\DomainException;
 use Innmind\Immutable\Str;
 
 final class Type
@@ -19,7 +19,7 @@ final class Type
         string $systemId = ''
     ) {
         if (Str::of($name)->empty()) {
-            throw new InvalidArgumentException;
+            throw new DomainException;
         }
 
         $this->name = $name;

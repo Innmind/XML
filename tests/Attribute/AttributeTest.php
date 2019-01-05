@@ -20,7 +20,7 @@ class AttributeTest extends TestCase
     }
 
     /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
+     * @expectedException Innmind\Xml\Exception\DomainException
      */
     public function testThrowWhenEmptyName()
     {

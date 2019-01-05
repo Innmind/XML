@@ -7,7 +7,7 @@ use Innmind\Xml\{
     Element as ElementInterface,
     Attribute,
     Node,
-    Exception\InvalidArgumentException,
+    Exception\DomainException,
     Exception\OutOfBoundsException,
     Exception\LogicException,
 };
@@ -34,13 +34,27 @@ class Element implements ElementInterface
         $children = $children ?? new Map('int', Node::class);
 
         if (
-            Str::of($name)->empty() ||
             (string) $attributes->keyType() !== 'string' ||
-            (string) $attributes->valueType() !== Attribute::class ||
+            (string) $attributes->valueType() !== Attribute::class
+        ) {
+            throw new \TypeError(sprintf(
+                'Argument 2 must be of type MapInterface<string, %s>',
+                Attribute::class
+            ));
+        }
+
+        if (
             (string) $children->keyType() !== 'int' ||
             (string) $children->valueType() !== Node::class
         ) {
-            throw new InvalidArgumentException;
+            throw new \TypeError(sprintf(
+                'Argument 3 must be of type MapInterface<int, %s>',
+                Node::class
+            ));
+        }
+
+        if (Str::of($name)->empty()) {
+            throw new DomainException;
         }
 
         $this->name = $name;

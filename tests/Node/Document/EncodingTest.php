@@ -19,7 +19,7 @@ class EncodingTest extends TestCase
     }
 
     /**
-     * @expectedException Innmind\Xml\Exception\InvalidArgumentException
+     * @expectedException Innmind\Xml\Exception\DomainException
      * @dataProvider invalid
      */
     public function testThrowWhenInvalidName($name)

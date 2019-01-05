@@ -19,7 +19,10 @@ final class Translator
             (string) $translators->keyType() !== 'int' ||
             (string) $translators->valueType() !== NodeTranslator::class
         ) {
-            throw new InvalidArgumentException;
+            throw new \TypeError(sprintf(
+                'Argument 1 must be of type MapInterface<int, %s>',
+                NodeTranslator::class
+            ));
         }
 
         $this->translators = $translators;

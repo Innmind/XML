@@ -8,7 +8,6 @@ use Innmind\Xml\{
     Node\Document\Type,
     Node\Document\Version,
     Node\Document\Encoding,
-    Exception\InvalidArgumentException,
     Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
@@ -35,7 +34,10 @@ final class Document implements Node
             (string) $children->keyType() !== 'int' ||
             (string) $children->valueType() !== Node::class
         ) {
-            throw new InvalidArgumentException;
+            throw new \TypeError(sprintf(
+                'Argument 3 must be of type MapInterface<int, %s>',
+                Node::class
+            ));
         }
 
         $this->version = $version;
