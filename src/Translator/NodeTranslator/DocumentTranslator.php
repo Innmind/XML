@@ -13,7 +13,10 @@ use Innmind\Xml\{
     Node\Document\Encoding,
     Node\Document,
 };
-use Innmind\Immutable\Map;
+use Innmind\Immutable\{
+    Map,
+    Sequence,
+};
 
 final class DocumentTranslator implements NodeTranslator
 {
@@ -56,17 +59,16 @@ final class DocumentTranslator implements NodeTranslator
     private function buildChildren(
         \DOMNodeList $nodes,
         Translator $translate
-    ): Map {
-        $children = Map::of('int', Node::class);
+    ): Sequence {
+        $children = Sequence::of(Node::class);
 
         foreach ($nodes as $child) {
             if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {
                 continue;
             }
 
-            $children = $children->put(
-                $children->size(),
-                $translate($child)
+            $children = ($children)(
+                $translate($child),
             );
         }
 

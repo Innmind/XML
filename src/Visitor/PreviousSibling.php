@@ -22,7 +22,6 @@ final class PreviousSibling
         $parent = (new ParentNode($this->node))($tree);
         $position = $parent
             ->children()
-            ->values()
             ->indexOf($this->node);
 
         if ($position === 0) {

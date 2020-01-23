@@ -8,7 +8,7 @@ use Innmind\Xml\{
     Node,
     Exception\LogicException,
 };
-use Innmind\Immutable\Map;
+use Innmind\Immutable\Sequence;
 use PHPUnit\Framework\TestCase;
 
 class EntityReferenceTest extends TestCase
@@ -25,12 +25,8 @@ class EntityReferenceTest extends TestCase
     {
         $node = new EntityReference('foo');
 
-        $this->assertInstanceOf(Map::class, $node->children());
-        $this->assertSame('int', (string) $node->children()->keyType());
-        $this->assertSame(
-            Node::class,
-            (string) $node->children()->valueType()
-        );
+        $this->assertInstanceOf(Sequence::class, $node->children());
+        $this->assertSame(Node::class, $node->children()->type());
         $this->assertCount(0, $node->children());
         $this->assertFalse($node->hasChildren());
     }

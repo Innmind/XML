@@ -7,23 +7,23 @@ use Innmind\Xml\{
     Node,
     Exception\LogicException,
 };
-use Innmind\Immutable\Map;
+use Innmind\Immutable\Sequence;
 
 final class EntityReference implements Node
 {
     private string $data;
-    private Map $children;
+    private Sequence $children;
 
     public function __construct(string $data)
     {
         $this->data = $data;
-        $this->children = Map::of('int', Node::class);
+        $this->children = Sequence::of(Node::class);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function children(): Map
+    public function children(): Sequence
     {
         return $this->children;
     }

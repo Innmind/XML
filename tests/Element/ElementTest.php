@@ -11,7 +11,10 @@ use Innmind\Xml\{
     Exception\LogicException,
     Exception\OutOfBoundsException,
 };
-use Innmind\Immutable\Map;
+use Innmind\Immutable\{
+    Map,
+    Sequence,
+};
 use PHPUnit\Framework\TestCase;
 
 class ElementTest extends TestCase
@@ -59,9 +62,9 @@ class ElementTest extends TestCase
     public function testThrowWhenInvalidChildren()
     {
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 3 must be of type Map<int, Innmind\Xml\Node>');
+        $this->expectExceptionMessage('Argument 3 must be of type Sequence<Innmind\Xml\Node>');
 
-        new Element('foo', null, Map::of('string', 'string'));
+        new Element('foo', null, Sequence::of('string'));
     }
 
     public function testDefaultAttributes()
@@ -246,7 +249,7 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             null,
-            $expected = Map::of('int', Node::class)
+            $expected = Sequence::of(Node::class)
         );
 
         $this->assertSame($expected, $node->children());
@@ -256,12 +259,8 @@ class ElementTest extends TestCase
     {
         $node = new Element('foo');
 
-        $this->assertInstanceOf(Map::class, $node->children());
-        $this->assertSame('int', (string) $node->children()->keyType());
-        $this->assertSame(
-            Node::class,
-            (string) $node->children()->valueType()
-        );
+        $this->assertInstanceOf(Sequence::class, $node->children());
+        $this->assertSame(Node::class, $node->children()->type());
     }
 
     public function testHasChildren()
@@ -269,8 +268,7 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('bar'))
+            Sequence::of(Node::class, new Element('bar')),
         );
         $this->assertTrue($node->hasChildren());
 
@@ -282,10 +280,12 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz'))
+            Sequence::of(
+                Node::class,
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         );
 
         $element2 = $element->removeChild(1);
@@ -313,10 +313,12 @@ class ElementTest extends TestCase
         (new Element(
             'foobar',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz'))
+            Sequence::of(
+                Node::class,
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         ))->removeChild(3);
     }
 
@@ -325,10 +327,12 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz'))
+            Sequence::of(
+                Node::class,
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         );
 
         $element2 = $element->replaceChild(
@@ -364,10 +368,12 @@ class ElementTest extends TestCase
         (new Element(
             'foobar',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz'))
+            Sequence::of(
+                Node::class,
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         ))->replaceChild(
             3,
             $this->createMock(Node::class)
@@ -379,10 +385,12 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz'))
+            Sequence::of(
+                Node::class,
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         );
 
         $element2 = $element->prependChild(
@@ -414,15 +422,17 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testAopendChild()
+    public function testAppendChild()
     {
         $element = new Element(
             'foobar',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz'))
+            Sequence::of(
+                Node::class,
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         );
 
         $element2 = $element->appendChild(
@@ -467,8 +477,7 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('bar'))
+            Sequence::of(Node::class, new Element('bar')),
         );
 
         $this->assertSame(
@@ -499,9 +508,11 @@ class ElementTest extends TestCase
                 Map::of('string', Attribute::class)
                     ('bar', new Attribute('bar', 'baz'))
                     ('baz', new Attribute('baz', 'foo')),
-                Map::of('int', Node::class)
-                    (0, new Element('bar'))
-                    (1, new Element('baz'))
+                Sequence::of(
+                    Node::class,
+                    new Element('bar'),
+                    new Element('baz'),
+                ),
             ))->toString(),
         );
     }

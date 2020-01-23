@@ -22,7 +22,6 @@ class SelfClosingElement extends Element
         parent::__construct(
             $name,
             $attributes,
-            Map::of('int', Node::class),
         );
     }
 

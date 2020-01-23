@@ -13,31 +13,34 @@ use Innmind\Xml\{
 };
 use Innmind\Immutable\{
     Map,
+    Sequence,
     Str,
 };
 use function Innmind\Immutable\{
     assertMap,
+    assertSequence,
     join,
+    unwrap,
 };
 
 class Element implements ElementInterface
 {
     private string $name;
     private Map $attributes;
-    private Map $children;
+    private Sequence $children;
     private ?string $content = null;
     private ?string $string = null;
 
     public function __construct(
         string $name,
         Map $attributes = null,
-        Map $children = null
+        Sequence $children = null
     ) {
         $attributes ??= Map::of('string', Attribute::class);
-        $children ??= Map::of('int', Node::class);
+        $children ??= Sequence::of(Node::class);
 
         assertMap('string', Attribute::class, $attributes, 2);
-        assertMap('int', Node::class, $children, 3);
+        assertSequence(Node::class, $children, 3);
 
         if (Str::of($name)->empty()) {
             throw new DomainException;
@@ -116,7 +119,7 @@ class Element implements ElementInterface
     /**
      * {@inheritdoc}
      */
-    public function children(): Map
+    public function children(): Sequence
     {
         return $this->children;
     }
@@ -128,41 +131,31 @@ class Element implements ElementInterface
 
     public function removeChild(int $position): Node
     {
-        if (!$this->children->contains($position)) {
+        if (!$this->children->indices()->contains($position)) {
             throw new OutOfBoundsException;
         }
 
         $element = clone $this;
         $element->children = $this
             ->children
-            ->reduce(
-                Map::of('int', Node::class),
-                function(Map $children, int $pos, Node $node) use ($position): Map {
-                    if ($pos === $position) {
-                        return $children;
-                    }
-
-                    return ($children)(
-                        $children->size(),
-                        $node,
-                    );
-                }
-            );
+            ->take($position)
+            ->append($this->children->drop($position + 1));
 
         return $element;
     }
 
     public function replaceChild(int $position, Node $node): Node
     {
-        if (!$this->children->contains($position)) {
+        if (!$this->children->indices()->contains($position)) {
             throw new OutOfBoundsException;
         }
 
         $element = clone $this;
-        $element->children = ($this->children)(
-            $position,
-            $node,
-        );
+        $element->children = $this
+            ->children
+            ->take($position)
+            ->add($node)
+            ->append($this->children->drop($position + 1));
 
         return $element;
     }
@@ -170,18 +163,11 @@ class Element implements ElementInterface
     public function prependChild(Node $child): Node
     {
         $element = clone $this;
-        $element->children = $this
-            ->children
-            ->reduce(
-                Map::of('int', Node::class)
-                    (0, $child),
-                function(Map $children, int $position, Node $child): Map {
-                    return ($children)(
-                        $children->size(),
-                        $child,
-                    );
-                }
-            );
+        $element->children = Sequence::of(
+            Node::class,
+            $child,
+            ...unwrap($this->children),
+        );
 
         return $element;
     }
@@ -189,10 +175,7 @@ class Element implements ElementInterface
     public function appendChild(Node $child): Node
     {
         $element = clone $this;
-        $element->children = ($this->children)(
-            $this->children->size(),
-            $child,
-        );
+        $element->children = ($this->children)($child);
 
         return $element;
     }
@@ -200,13 +183,10 @@ class Element implements ElementInterface
     public function content(): string
     {
         if ($this->content === null) {
-            $children = $this
-                ->children
-                ->values()
-                ->mapTo(
-                    'string',
-                    static fn(Node $node): string => $node->toString(),
-                );
+            $children = $this->children->mapTo(
+                'string',
+                static fn(Node $node): string => $node->toString(),
+            );
 
             $this->content = join('', $children)->toString();
         }

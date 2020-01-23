@@ -21,7 +21,7 @@ final class ParentNode
     {
         $parent = $tree->children()->reduce(
             null,
-            function(?Node $parent, int $index, Node $child) use ($tree): ?Node {
+            function(?Node $parent, Node $child) use ($tree): ?Node {
                 if ($child === $this->node) {
                     return $tree;
                 }

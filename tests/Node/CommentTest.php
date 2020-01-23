@@ -8,7 +8,7 @@ use Innmind\Xml\{
     Node,
     Exception\LogicException,
 };
-use Innmind\Immutable\Map;
+use Innmind\Immutable\Sequence;
 use PHPUnit\Framework\TestCase;
 
 class CommentTest extends TestCase
@@ -25,12 +25,8 @@ class CommentTest extends TestCase
     {
         $comment = new Comment('foo');
 
-        $this->assertInstanceOf(Map::class, $comment->children());
-        $this->assertSame('int', (string) $comment->children()->keyType());
-        $this->assertSame(
-            Node::class,
-            (string) $comment->children()->ValueType()
-        );
+        $this->assertInstanceOf(Sequence::class, $comment->children());
+        $this->assertSame(Node::class, $comment->children()->type());
         $this->assertCount(0, $comment->children());
         $this->assertFalse($comment->hasChildren());
     }

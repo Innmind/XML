@@ -7,7 +7,7 @@ use Innmind\Xml\{
     Translator\Translator,
     Node,
 };
-use Innmind\Immutable\Map;
+use Innmind\Immutable\Sequence;
 
 final class Children
 {
@@ -18,18 +18,17 @@ final class Children
         $this->translate = $translate;
     }
 
-    public function __invoke(\DOMNode $node): Map
+    public function __invoke(\DOMNode $node): Sequence
     {
-        $children = Map::of('int', Node::class);
+        $children = Sequence::of(Node::class);
 
         if (!$node->childNodes instanceof \DOMNodeList) {
             return $children;
         }
 
         foreach ($node->childNodes as $child) {
-            $children = $children->put(
-                $children->size(),
-                ($this->translate)($child)
+            $children = ($children)(
+                ($this->translate)($child),
             );
         }
 

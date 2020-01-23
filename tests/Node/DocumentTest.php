@@ -13,7 +13,10 @@ use Innmind\Xml\{
     Element\SelfClosingElement,
     Exception\OutOfBoundsException,
 };
-use Innmind\Immutable\Map;
+use Innmind\Immutable\{
+    Map,
+    Sequence,
+};
 use PHPUnit\Framework\TestCase;
 
 class DocumentTest extends TestCase
@@ -53,7 +56,7 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             null,
-            $children = Map::of('int', Node::class)
+            $children = Sequence::of(Node::class)
         );
 
         $this->assertSame($children, $document->children());
@@ -63,26 +66,19 @@ class DocumentTest extends TestCase
     {
         $document = new Document(new Version(1));
 
-        $this->assertInstanceOf(
-            Map::class,
-            $document->children()
-        );
-        $this->assertSame('int', (string) $document->children()->keyType());
-        $this->assertSame(
-            Node::class,
-            (string) $document->children()->valueType()
-        );
+        $this->assertInstanceOf(Sequence::class, $document->children());
+        $this->assertSame(Node::class, $document->children()->type());
     }
 
     public function testThrowWhenInvalidChildren()
     {
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 3 must be of type Map<int, Innmind\Xml\Node>');
+        $this->expectExceptionMessage('Argument 3 must be of type Sequence<Innmind\Xml\Node>');
 
         new Document(
             new Version(1),
             null,
-            Map::of('string', 'string')
+            Sequence::of('string'),
         );
     }
 
@@ -116,8 +112,7 @@ class DocumentTest extends TestCase
             (new Document(
                 new Version(1),
                 null,
-                Map::of('int', Node::class)
-                    (0, new Element('foo'))
+                Sequence::of(Node::class, new Element('foo')),
             ))->content()
         );
     }
@@ -151,8 +146,7 @@ class DocumentTest extends TestCase
             (new Document(
                 new Version(2, 1),
                 new Type('html'),
-                Map::of('int', Node::class)
-                    (0, new SelfClosingElement('foo')),
+                Sequence::of(Node::class, new SelfClosingElement('foo')),
                 new Encoding('utf-8')
             ))->toString(),
         );
@@ -163,10 +157,12 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz')),
+            Sequence::of(
+                Node::class,
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
             new Encoding('utf-8')
         );
 
@@ -196,10 +192,12 @@ class DocumentTest extends TestCase
         (new Document(
             new Version(1),
             new Type('html'),
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz')),
+            Sequence::of(
+                Node::class,
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
             new Encoding('utf-8')
         ))->removeChild(3);
     }
@@ -209,10 +207,12 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz')),
+            Sequence::of(
+                Node::class,
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
             new Encoding('utf-8')
         );
 
@@ -250,10 +250,12 @@ class DocumentTest extends TestCase
         (new Document(
             new Version(1),
             new Type('html'),
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz')),
+            Sequence::of(
+                Node::class,
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
             new Encoding('utf-8')
         ))->replaceChild(
             3,
@@ -266,10 +268,12 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz')),
+            Sequence::of(
+                Node::class,
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
             new Encoding('utf-8')
         );
 
@@ -308,10 +312,12 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz')),
+            Sequence::of(
+                Node::class,
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
             new Encoding('utf-8')
         );
 

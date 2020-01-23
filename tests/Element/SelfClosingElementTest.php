@@ -11,7 +11,10 @@ use Innmind\Xml\{
     Exception\LogicException,
     Exception\OutOfBoundsException,
 };
-use Innmind\Immutable\Map;
+use Innmind\Immutable\{
+    Map,
+    Sequence,
+};
 use PHPUnit\Framework\TestCase;
 
 class SelfClosingElementTest extends TestCase
@@ -240,9 +243,7 @@ class SelfClosingElementTest extends TestCase
         $this->assertTrue(
             $node
                 ->children()
-                ->equals(
-                    Map::of('int', Node::class)
-                )
+                ->equals(Sequence::of(Node::class)),
         );
     }
 
