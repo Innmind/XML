@@ -9,7 +9,7 @@ use Innmind\Xml\{
     Translator\NodeTranslators,
     Node,
 };
-use Innmind\Immutable\MapInterface;
+use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
 
 class ChildrenTest extends TestCase
@@ -25,7 +25,7 @@ class ChildrenTest extends TestCase
             )
         ))($document->childNodes->item(0));
 
-        $this->assertInstanceOf(MapInterface::class, $children);
+        $this->assertInstanceOf(Map::class, $children);
         $this->assertSame('int', (string) $children->keyType());
         $this->assertSame(Node::class, (string) $children->valueType());
         $this->assertCount(0, $children);
@@ -42,7 +42,7 @@ class ChildrenTest extends TestCase
             )
         ))($document->childNodes->item(0));
 
-        $this->assertInstanceOf(MapInterface::class, $children);
+        $this->assertInstanceOf(Map::class, $children);
         $this->assertSame('int', (string) $children->keyType());
         $this->assertSame(Node::class, (string) $children->valueType());
         $this->assertCount(2, $children);

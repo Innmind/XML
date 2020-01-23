@@ -7,10 +7,7 @@ use Innmind\Xml\{
     Node,
     Exception\LogicException,
 };
-use Innmind\Immutable\{
-    MapInterface,
-    Map,
-};
+use Innmind\Immutable\Map;
 
 final class EntityReference implements Node
 {
@@ -20,13 +17,13 @@ final class EntityReference implements Node
     public function __construct(string $data)
     {
         $this->data = $data;
-        $this->children = new Map('int', Node::class);
+        $this->children = Map::of('int', Node::class);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function children(): MapInterface
+    public function children(): Map
     {
         return $this->children;
     }

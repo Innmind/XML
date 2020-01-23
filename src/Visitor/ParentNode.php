@@ -19,18 +19,23 @@ final class ParentNode
 
     public function __invoke(Node $tree): Node
     {
-        if ($tree->hasChildren()) {
-            foreach ($tree->children() as $child) {
+        $parent = $tree->children()->reduce(
+            null,
+            function(?Node $parent, int $index, Node $child) use ($tree): ?Node {
                 if ($child === $this->node) {
                     return $tree;
                 }
 
                 try {
-                    return $this($child);
+                    return $parent ?? $this($child);
                 } catch (NodeHasNoParent $e) {
-                    //pass
+                    return null;
                 }
-            }
+            },
+        );
+
+        if ($parent instanceof Node) {
+            return $parent;
         }
 
         throw new NodeHasNoParent;

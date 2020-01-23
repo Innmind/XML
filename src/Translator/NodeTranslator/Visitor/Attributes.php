@@ -4,16 +4,13 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Translator\NodeTranslator\Visitor;
 
 use Innmind\Xml\Attribute;
-use Innmind\Immutable\{
-    MapInterface,
-    Map,
-};
+use Innmind\Immutable\Map;
 
 final class Attributes
 {
-    public function __invoke(\DOMNode $node): MapInterface
+    public function __invoke(\DOMNode $node): Map
     {
-        $attributes = new Map('string', Attribute::class);
+        $attributes = Map::of('string', Attribute::class);
 
         if (!$node instanceof \DOMElement) {
             return $attributes;

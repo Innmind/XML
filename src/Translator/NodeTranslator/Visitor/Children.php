@@ -7,10 +7,7 @@ use Innmind\Xml\{
     Translator\Translator,
     Node,
 };
-use Innmind\Immutable\{
-    MapInterface,
-    Map,
-};
+use Innmind\Immutable\Map;
 
 final class Children
 {
@@ -21,9 +18,9 @@ final class Children
         $this->translate = $translate;
     }
 
-    public function __invoke(\DOMNode $node): MapInterface
+    public function __invoke(\DOMNode $node): Map
     {
-        $children = new Map('int', Node::class);
+        $children = Map::of('int', Node::class);
 
         if (!$node->childNodes instanceof \DOMNodeList) {
             return $children;

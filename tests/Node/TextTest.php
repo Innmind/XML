@@ -8,7 +8,7 @@ use Innmind\Xml\{
     Node,
     Exception\LogicException,
 };
-use Innmind\Immutable\MapInterface;
+use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
 
 class TextTest extends TestCase
@@ -25,7 +25,7 @@ class TextTest extends TestCase
     {
         $text = new Text('foo');
 
-        $this->assertInstanceOf(MapInterface::class, $text->children());
+        $this->assertInstanceOf(Map::class, $text->children());
         $this->assertSame('int', (string) $text->children()->keyType());
         $this->assertSame(
             Node::class,

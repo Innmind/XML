@@ -8,10 +8,8 @@ use Innmind\Xml\{
     Attribute,
     Exception\LogicException,
 };
-use Innmind\Immutable\{
-    MapInterface,
-    Map,
-};
+use Innmind\Immutable\Map;
+use function Innmind\Immutable\join;
 
 class SelfClosingElement extends Element
 {
@@ -19,12 +17,12 @@ class SelfClosingElement extends Element
 
     public function __construct(
         string $name,
-        MapInterface $attributes = null
+        Map $attributes = null
     ) {
         parent::__construct(
             $name,
             $attributes,
-            new Map('int', Node::class)
+            Map::of('int', Node::class),
         );
     }
 
@@ -61,19 +59,18 @@ class SelfClosingElement extends Element
     public function toString(): string
     {
         if ($this->string === null) {
-            $attributes = $this->attributes()->reduce(
-                [],
-                static function(array $attributes, string $name, Attribute $attribute): array {
-                    $attributes[] = $attribute->toString();
-
-                    return $attributes;
-                },
-            );
+            $attributes = $this
+                ->attributes()
+                ->values()
+                ->mapTo(
+                    'string',
+                    static fn(Attribute $attribute): string => $attribute->toString(),
+                );
 
             $this->string = sprintf(
                 '<%s%s/>',
                 $this->name(),
-                $this->hasAttributes() ? ' '.\implode(' ', $attributes) : ''
+                $this->hasAttributes() ? ' '.join(' ', $attributes)->toString() : ''
             );
         }
 

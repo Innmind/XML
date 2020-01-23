@@ -7,23 +7,16 @@ use Innmind\Xml\{
     Node,
     Exception\UnknownNodeType,
 };
-use Innmind\Immutable\MapInterface;
+use Innmind\Immutable\Map;
+use function Innmind\Immutable\assertMap;
 
 final class Translator
 {
-    private MapInterface $translators;
+    private Map $translators;
 
-    public function __construct(MapInterface $translators)
+    public function __construct(Map $translators)
     {
-        if (
-            (string) $translators->keyType() !== 'int' ||
-            (string) $translators->valueType() !== NodeTranslator::class
-        ) {
-            throw new \TypeError(sprintf(
-                'Argument 1 must be of type MapInterface<int, %s>',
-                NodeTranslator::class
-            ));
-        }
+        assertMap('int', NodeTranslator::class, $translators, 1);
 
         $this->translators = $translators;
     }

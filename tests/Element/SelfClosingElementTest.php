@@ -11,10 +11,7 @@ use Innmind\Xml\{
     Exception\LogicException,
     Exception\OutOfBoundsException,
 };
-use Innmind\Immutable\{
-    MapInterface,
-    Map,
-};
+use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
 
 class SelfClosingElementTest extends TestCase
@@ -45,7 +42,7 @@ class SelfClosingElementTest extends TestCase
     {
         $node = new SelfClosingElement(
             'foo',
-            $expected = new Map('string', Attribute::class)
+            $expected = Map::of('string', Attribute::class)
         );
 
         $this->assertSame($expected, $node->attributes());
@@ -54,16 +51,16 @@ class SelfClosingElementTest extends TestCase
     public function testThrowWhenInvalidAttributes()
     {
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 2 must be of type MapInterface<string, Innmind\Xml\Attribute>');
+        $this->expectExceptionMessage('Argument 2 must be of type Map<string, Innmind\Xml\Attribute>');
 
-        new SelfClosingElement('foo', new Map('string', 'string'));
+        new SelfClosingElement('foo', Map::of('string', 'string'));
     }
 
     public function testDefaultAttributes()
     {
         $node = new SelfClosingElement('foo');
 
-        $this->assertInstanceOf(MapInterface::class, $node->attributes());
+        $this->assertInstanceOf(Map::class, $node->attributes());
         $this->assertSame('string', (string) $node->attributes()->keyType());
         $this->assertSame(
             Attribute::class,
@@ -75,7 +72,7 @@ class SelfClosingElementTest extends TestCase
     {
         $node = new SelfClosingElement(
             'foo',
-            new Map('string', Attribute::class)
+            Map::of('string', Attribute::class)
         );
         $this->assertFalse($node->hasAttributes());
 
@@ -244,7 +241,7 @@ class SelfClosingElementTest extends TestCase
             $node
                 ->children()
                 ->equals(
-                    new Map('int', Node::class)
+                    Map::of('int', Node::class)
                 )
         );
     }

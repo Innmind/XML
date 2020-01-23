@@ -57,7 +57,7 @@ final class DocumentTranslator implements NodeTranslator
         \DOMNodeList $nodes,
         Translator $translate
     ): Map {
-        $children = new Map('int', Node::class);
+        $children = Map::of('int', Node::class);
 
         foreach ($nodes as $child) {
             if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {

@@ -32,9 +32,9 @@ class TranslatorTest extends TestCase
     public function testThrowWhenInvalidTranslators()
     {
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 1 must be of type MapInterface<int, Innmind\Xml\Translator\NodeTranslator>');
+        $this->expectExceptionMessage('Argument 1 must be of type Map<int, Innmind\Xml\Translator\NodeTranslator>');
 
-        new Translator(new Map('string', 'string'));
+        new Translator(Map::of('string', 'string'));
     }
 
     public function testTranslate()
@@ -68,7 +68,7 @@ XML
             $node->type()->systemId()
         );
         $this->assertCount(1, $node->children());
-        $foo = $node->children()->current();
+        $foo = $node->children()->get(0);
         $this->assertInstanceOf(Element::class, $foo);
         $this->assertSame('foo', $foo->name());
         $this->assertCount(1, $foo->attributes());
@@ -114,7 +114,7 @@ XML
         $this->expectException(UnknownNodeType::class);
 
         (new Translator(
-            new Map('int', NodeTranslator::class)
+            Map::of('int', NodeTranslator::class)
         ))(new \DOMDocument);
     }
 }

@@ -39,7 +39,7 @@ XML
                 ->childNodes
                 ->item(0),
             new Translator(
-                new Map('int', NodeTranslator::class)
+                Map::of('int', NodeTranslator::class)
             )
         );
 
@@ -54,7 +54,7 @@ XML
         (new CommentTranslator)(
             new \DOMNode,
             new Translator(
-                new Map('int', NodeTranslator::class)
+                Map::of('int', NodeTranslator::class)
             )
         );
     }

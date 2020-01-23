@@ -22,7 +22,7 @@ final class Reader implements ReaderInterface
     public function __invoke(Readable $content): Node
     {
         $xml = new \DOMDocument;
-        $xml->loadXML((string) $content);
+        $xml->loadXML($content->toString());
         $xml->normalizeDocument();
 
         return ($this->translate)($xml);

@@ -11,10 +11,7 @@ use Innmind\Xml\{
     Exception\LogicException,
     Exception\OutOfBoundsException,
 };
-use Innmind\Immutable\{
-    MapInterface,
-    Map,
-};
+use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
 
 class ElementTest extends TestCase
@@ -45,7 +42,7 @@ class ElementTest extends TestCase
     {
         $node = new Element(
             'foo',
-            $expected = new Map('string', Attribute::class)
+            $expected = Map::of('string', Attribute::class)
         );
 
         $this->assertSame($expected, $node->attributes());
@@ -54,24 +51,24 @@ class ElementTest extends TestCase
     public function testThrowWhenInvalidAttributes()
     {
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 2 must be of type MapInterface<string, Innmind\Xml\Attribute>');
+        $this->expectExceptionMessage('Argument 2 must be of type Map<string, Innmind\Xml\Attribute>');
 
-        new Element('foo', new Map('string', 'string'));
+        new Element('foo', Map::of('string', 'string'));
     }
 
     public function testThrowWhenInvalidChildren()
     {
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 3 must be of type MapInterface<int, Innmind\Xml\Node>');
+        $this->expectExceptionMessage('Argument 3 must be of type Map<int, Innmind\Xml\Node>');
 
-        new Element('foo', null, new Map('string', 'string'));
+        new Element('foo', null, Map::of('string', 'string'));
     }
 
     public function testDefaultAttributes()
     {
         $node = new Element('foo');
 
-        $this->assertInstanceOf(MapInterface::class, $node->attributes());
+        $this->assertInstanceOf(Map::class, $node->attributes());
         $this->assertSame('string', (string) $node->attributes()->keyType());
         $this->assertSame(
             Attribute::class,
@@ -83,7 +80,7 @@ class ElementTest extends TestCase
     {
         $node = new Element(
             'foo',
-            new Map('string', Attribute::class)
+            Map::of('string', Attribute::class)
         );
         $this->assertFalse($node->hasAttributes());
 
@@ -249,7 +246,7 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             null,
-            $expected = new Map('int', Node::class)
+            $expected = Map::of('int', Node::class)
         );
 
         $this->assertSame($expected, $node->children());
@@ -259,7 +256,7 @@ class ElementTest extends TestCase
     {
         $node = new Element('foo');
 
-        $this->assertInstanceOf(MapInterface::class, $node->children());
+        $this->assertInstanceOf(Map::class, $node->children());
         $this->assertSame('int', (string) $node->children()->keyType());
         $this->assertSame(
             Node::class,

@@ -12,46 +12,32 @@ use Innmind\Xml\{
     Exception\LogicException,
 };
 use Innmind\Immutable\{
-    MapInterface,
     Map,
     Str,
+};
+use function Innmind\Immutable\{
+    assertMap,
+    join,
 };
 
 class Element implements ElementInterface
 {
     private string $name;
-    private MapInterface $attributes;
-    private MapInterface $children;
+    private Map $attributes;
+    private Map $children;
     private ?string $content = null;
     private ?string $string = null;
 
     public function __construct(
         string $name,
-        MapInterface $attributes = null,
-        MapInterface $children = null
+        Map $attributes = null,
+        Map $children = null
     ) {
-        $attributes ??= new Map('string', Attribute::class);
-        $children ??= new Map('int', Node::class);
+        $attributes ??= Map::of('string', Attribute::class);
+        $children ??= Map::of('int', Node::class);
 
-        if (
-            (string) $attributes->keyType() !== 'string' ||
-            (string) $attributes->valueType() !== Attribute::class
-        ) {
-            throw new \TypeError(sprintf(
-                'Argument 2 must be of type MapInterface<string, %s>',
-                Attribute::class
-            ));
-        }
-
-        if (
-            (string) $children->keyType() !== 'int' ||
-            (string) $children->valueType() !== Node::class
-        ) {
-            throw new \TypeError(sprintf(
-                'Argument 3 must be of type MapInterface<int, %s>',
-                Node::class
-            ));
-        }
+        assertMap('string', Attribute::class, $attributes, 2);
+        assertMap('int', Node::class, $children, 3);
 
         if (Str::of($name)->empty()) {
             throw new DomainException;
@@ -70,7 +56,7 @@ class Element implements ElementInterface
     /**
      * {@inheritdoc}
      */
-    public function attributes(): MapInterface
+    public function attributes(): Map
     {
         return $this->attributes;
     }
@@ -104,9 +90,9 @@ class Element implements ElementInterface
         }
 
         $element = clone $this;
-        $element->attributes = $this->attributes->put(
+        $element->attributes = ($this->attributes)(
             $attribute->name(),
-            $attribute
+            $attribute,
         );
 
         return $element;
@@ -119,9 +105,9 @@ class Element implements ElementInterface
         }
 
         $element = clone $this;
-        $element->attributes = $this->attributes->put(
+        $element->attributes = ($this->attributes)(
             $attribute->name(),
-            $attribute
+            $attribute,
         );
 
         return $element;
@@ -130,7 +116,7 @@ class Element implements ElementInterface
     /**
      * {@inheritdoc}
      */
-    public function children(): MapInterface
+    public function children(): Map
     {
         return $this->children;
     }
@@ -150,15 +136,15 @@ class Element implements ElementInterface
         $element->children = $this
             ->children
             ->reduce(
-                new Map('int', Node::class),
+                Map::of('int', Node::class),
                 function(Map $children, int $pos, Node $node) use ($position): Map {
                     if ($pos === $position) {
                         return $children;
                     }
 
-                    return $children->put(
+                    return ($children)(
                         $children->size(),
-                        $node
+                        $node,
                     );
                 }
             );
@@ -173,9 +159,9 @@ class Element implements ElementInterface
         }
 
         $element = clone $this;
-        $element->children = $this->children->put(
+        $element->children = ($this->children)(
             $position,
-            $node
+            $node,
         );
 
         return $element;
@@ -190,9 +176,9 @@ class Element implements ElementInterface
                 Map::of('int', Node::class)
                     (0, $child),
                 function(Map $children, int $position, Node $child): Map {
-                    return $children->put(
+                    return ($children)(
                         $children->size(),
-                        $child
+                        $child,
                     );
                 }
             );
@@ -203,9 +189,9 @@ class Element implements ElementInterface
     public function appendChild(Node $child): Node
     {
         $element = clone $this;
-        $element->children = $this->children->put(
+        $element->children = ($this->children)(
             $this->children->size(),
-            $child
+            $child,
         );
 
         return $element;
@@ -214,16 +200,15 @@ class Element implements ElementInterface
     public function content(): string
     {
         if ($this->content === null) {
-            $children = $this->children->reduce(
-                [],
-                static function(array $children, int $index, Node $child): array {
-                    $children[] = $child->toString();
+            $children = $this
+                ->children
+                ->values()
+                ->mapTo(
+                    'string',
+                    static fn(Node $node): string => $node->toString(),
+                );
 
-                    return $children;
-                },
-            );
-
-            $this->content = \implode('', $children);
+            $this->content = join('', $children)->toString();
         }
 
         return $this->content;
@@ -232,19 +217,18 @@ class Element implements ElementInterface
     public function toString(): string
     {
         if ($this->string === null) {
-            $attributes = $this->attributes->reduce(
-                [],
-                static function(array $attributes, string $name, Attribute $attribute): array {
-                    $attributes[] = $attribute->toString();
-
-                    return $attributes;
-                },
-            );
+            $attributes = $this
+                ->attributes
+                ->values()
+                ->mapTo(
+                    'string',
+                    static fn(Attribute $attribute): string => $attribute->toString(),
+                );
 
             $this->string = sprintf(
                 '<%s%s>%s</%s>',
                 $this->name(),
-                $this->hasAttributes() ? ' '.\implode(' ', $attributes) : '',
+                $this->hasAttributes() ? ' '.join(' ', $attributes)->toString() : '',
                 $this->content(),
                 $this->name()
             );

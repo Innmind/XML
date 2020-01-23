@@ -3,14 +3,14 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml;
 
-use Innmind\Immutable\MapInterface;
+use Innmind\Immutable\Map;
 
 interface Node
 {
     /**
-     * @return MapInterface<int, Node> The int represent the position
+     * @return Map<int, Node> The int represent the position
      */
-    public function children(): MapInterface;
+    public function children(): Map;
     public function hasChildren(): bool;
     public function removeChild(int $position): self;
     public function replaceChild(int $position, self $child): self;

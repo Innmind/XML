@@ -7,7 +7,7 @@ use Innmind\Xml\{
     Node,
     Exception\LogicException,
 };
-use Innmind\Immutable\MapInterface;
+use Innmind\Immutable\Map;
 
 final class Text implements Node
 {
@@ -21,7 +21,7 @@ final class Text implements Node
     /**
      * {@inheritdoc}
      */
-    public function children(): MapInterface
+    public function children(): Map
     {
         return $this->data->children();
     }

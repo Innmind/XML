@@ -70,7 +70,7 @@ XML
         (new ElementTranslator)(
             new \DOMNode,
             new Translator(
-                new Map('int', NodeTranslator::class)
+                Map::of('int', NodeTranslator::class)
             )
         );
     }

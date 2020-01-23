@@ -22,10 +22,8 @@ final class NextSibling
         $parent = (new ParentNode($this->node))($tree);
         $position = $parent
             ->children()
-            ->filter(function(int $position, Node $node) {
-                return $node === $this->node;
-            })
-            ->key();
+            ->values()
+            ->indexOf($this->node);
 
         if ($position === ($parent->children()->size() - 1)) {
             throw new NoNextSibling;

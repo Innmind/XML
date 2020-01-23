@@ -13,10 +13,7 @@ use Innmind\Xml\{
     Element\SelfClosingElement,
     Exception\OutOfBoundsException,
 };
-use Innmind\Immutable\{
-    MapInterface,
-    Map,
-};
+use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
 
 class DocumentTest extends TestCase
@@ -56,7 +53,7 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             null,
-            $children = new Map('int', Node::class)
+            $children = Map::of('int', Node::class)
         );
 
         $this->assertSame($children, $document->children());
@@ -67,7 +64,7 @@ class DocumentTest extends TestCase
         $document = new Document(new Version(1));
 
         $this->assertInstanceOf(
-            MapInterface::class,
+            Map::class,
             $document->children()
         );
         $this->assertSame('int', (string) $document->children()->keyType());
@@ -80,12 +77,12 @@ class DocumentTest extends TestCase
     public function testThrowWhenInvalidChildren()
     {
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 3 must be of type MapInterface<int, Innmind\Xml\Node>');
+        $this->expectExceptionMessage('Argument 3 must be of type Map<int, Innmind\Xml\Node>');
 
         new Document(
             new Version(1),
             null,
-            new Map('string', 'string')
+            Map::of('string', 'string')
         );
     }
 
@@ -119,8 +116,8 @@ class DocumentTest extends TestCase
             (new Document(
                 new Version(1),
                 null,
-                (new Map('int', Node::class))
-                    ->put(0, new Element('foo'))
+                Map::of('int', Node::class)
+                    (0, new Element('foo'))
             ))->content()
         );
     }

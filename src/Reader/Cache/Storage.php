@@ -13,7 +13,7 @@ final class Storage
 
     public function __construct()
     {
-        $this->map = new Map(Readable::class, Node::class);
+        $this->map = Map::of(Readable::class, Node::class);
     }
 
     public function add(Readable $xml, Node $node): void

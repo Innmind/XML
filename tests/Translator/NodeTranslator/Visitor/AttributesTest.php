@@ -7,7 +7,7 @@ use Innmind\Xml\{
     Translator\NodeTranslator\Visitor\Attributes,
     Attribute,
 };
-use Innmind\Immutable\MapInterface;
+use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
 
 class AttributesTest extends TestCase
@@ -16,7 +16,7 @@ class AttributesTest extends TestCase
     {
         $attributes = (new Attributes)(new \DOMNode);
 
-        $this->assertInstanceOf(MapInterface::class, $attributes);
+        $this->assertInstanceOf(Map::class, $attributes);
         $this->assertSame('string', (string) $attributes->keyType());
         $this->assertSame(
             Attribute::class,
@@ -32,7 +32,7 @@ class AttributesTest extends TestCase
 
         $attributes = (new Attributes)($document->childNodes->item(0));
 
-        $this->assertInstanceOf(MapInterface::class, $attributes);
+        $this->assertInstanceOf(Map::class, $attributes);
         $this->assertSame('string', (string) $attributes->keyType());
         $this->assertSame(
             Attribute::class,
@@ -48,7 +48,7 @@ class AttributesTest extends TestCase
 
         $attributes = (new Attributes)($document->childNodes->item(0));
 
-        $this->assertInstanceOf(MapInterface::class, $attributes);
+        $this->assertInstanceOf(Map::class, $attributes);
         $this->assertSame('string', (string) $attributes->keyType());
         $this->assertSame(
             Attribute::class,

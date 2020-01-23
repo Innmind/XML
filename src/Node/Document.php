@@ -10,35 +10,28 @@ use Innmind\Xml\{
     Node\Document\Encoding,
     Exception\OutOfBoundsException,
 };
-use Innmind\Immutable\{
-    MapInterface,
-    Map,
+use Innmind\Immutable\Map;
+use function Innmind\Immutable\{
+    assertMap,
+    join,
 };
 
 final class Document implements Node
 {
     private Version $version;
     private ?Type $type = null;
-    private MapInterface $children;
+    private Map $children;
     private ?Encoding $encoding = null;
 
     public function __construct(
         Version $version,
         Type $type = null,
-        MapInterface $children = null,
+        Map $children = null,
         Encoding $encoding = null
     ) {
-        $children ??= new Map('int', Node::class);
+        $children ??= Map::of('int', Node::class);
 
-        if (
-            (string) $children->keyType() !== 'int' ||
-            (string) $children->valueType() !== Node::class
-        ) {
-            throw new \TypeError(sprintf(
-                'Argument 3 must be of type MapInterface<int, %s>',
-                Node::class
-            ));
-        }
+        assertMap('int', Node::class, $children, 3);
 
         $this->version = $version;
         $this->type = $type;
@@ -64,7 +57,7 @@ final class Document implements Node
     /**
      * {@inheritdoc}
      */
-    public function children(): MapInterface
+    public function children(): Map
     {
         return $this->children;
     }
@@ -84,7 +77,7 @@ final class Document implements Node
         $document->children = $this
             ->children
             ->reduce(
-                new Map('int', Node::class),
+                Map::of('int', Node::class),
                 function(Map $children, int $pos, Node $node) use ($position): Map {
                     if ($pos === $position) {
                         return $children;
@@ -157,16 +150,15 @@ final class Document implements Node
 
     public function content(): string
     {
-        $children = $this->children->reduce(
-            [],
-            static function(array $children, int $index, Node $child): array {
-                $children[] = $child->toString();
+        $children = $this
+            ->children
+            ->values()
+            ->mapTo(
+                'string',
+                static fn(Node $child): string => $child->toString(),
+            );
 
-                return $children;
-            },
-        );
-
-        return \implode('', $children);
+        return join('', $children)->toString();
     }
 
     public function toString(): string
