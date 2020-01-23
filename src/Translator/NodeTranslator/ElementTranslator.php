@@ -34,7 +34,7 @@ final class ElementTranslator implements NodeTranslator
         ) {
             return new SelfClosingElement(
                 $node->nodeName,
-                $attributes
+                $attributes,
             );
         }
 

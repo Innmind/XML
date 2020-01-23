@@ -13,6 +13,7 @@ use Innmind\Xml\{
 };
 use Innmind\Immutable\{
     Map,
+    Set,
     Sequence,
 };
 use PHPUnit\Framework\TestCase;
@@ -41,22 +42,12 @@ class SelfClosingElementTest extends TestCase
         new SelfClosingElement('');
     }
 
-    public function testAttributes()
-    {
-        $node = new SelfClosingElement(
-            'foo',
-            $expected = Map::of('string', Attribute::class)
-        );
-
-        $this->assertSame($expected, $node->attributes());
-    }
-
     public function testThrowWhenInvalidAttributes()
     {
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 2 must be of type Map<string, Innmind\Xml\Attribute>');
+        $this->expectExceptionMessage('Argument 2 must be of type Set<Innmind\Xml\Attribute>');
 
-        new SelfClosingElement('foo', Map::of('string', 'string'));
+        new SelfClosingElement('foo', Set::of('string'));
     }
 
     public function testDefaultAttributes()
@@ -73,16 +64,15 @@ class SelfClosingElementTest extends TestCase
 
     public function testHasAttributes()
     {
-        $node = new SelfClosingElement(
-            'foo',
-            Map::of('string', Attribute::class)
-        );
+        $node = new SelfClosingElement('foo');
         $this->assertFalse($node->hasAttributes());
 
         $node = new SelfClosingElement(
             'foo',
-            Map::of('string', Attribute::class)
-                ('foo', new Attribute('foo'))
+            Set::of(
+                Attribute::class,
+                new Attribute('foo'),
+            ),
         );
         $this->assertTrue($node->hasAttributes());
     }
@@ -91,8 +81,10 @@ class SelfClosingElementTest extends TestCase
     {
         $node = new SelfClosingElement(
             'foo',
-            Map::of('string', Attribute::class)
-                ('foo', $expected = new Attribute('foo'))
+            Set::of(
+                Attribute::class,
+                $expected = new Attribute('foo'),
+            ),
         );
 
         $this->assertSame($expected, $node->attribute('foo'));
@@ -102,9 +94,11 @@ class SelfClosingElementTest extends TestCase
     {
         $node = new SelfClosingElement(
             'foo',
-            Map::of('string', Attribute::class)
-                ('foo', new Attribute('foo'))
-                ('bar', new Attribute('bar'))
+            Set::of(
+                Attribute::class,
+                new Attribute('foo'),
+                new Attribute('bar'),
+            ),
         );
 
         $node2 = $node->removeAttribute('foo');
@@ -132,9 +126,11 @@ class SelfClosingElementTest extends TestCase
 
         (new SelfClosingElement(
             'foo',
-            Map::of('string', Attribute::class)
-                ('foo', new Attribute('foo'))
-                ('bar', new Attribute('bar'))
+            Set::of(
+                Attribute::class,
+                new Attribute('foo'),
+                new Attribute('bar'),
+            ),
         ))->removeAttribute('baz');
     }
 
@@ -142,9 +138,11 @@ class SelfClosingElementTest extends TestCase
     {
         $node = new SelfClosingElement(
             'foo',
-            Map::of('string', Attribute::class)
-                ('foo', new Attribute('foo'))
-                ('bar', new Attribute('bar'))
+            Set::of(
+                Attribute::class,
+                new Attribute('foo'),
+                new Attribute('bar'),
+            ),
         );
 
         $node2 = $node->replaceAttribute(
@@ -178,9 +176,11 @@ class SelfClosingElementTest extends TestCase
 
         (new SelfClosingElement(
             'foo',
-            Map::of('string', Attribute::class)
-                ('foo', new Attribute('foo'))
-                ('bar', new Attribute('bar'))
+            Set::of(
+                Attribute::class,
+                new Attribute('foo'),
+                new Attribute('bar'),
+            ),
         ))->replaceAttribute(
             new Attribute('baz')
         );
@@ -190,9 +190,11 @@ class SelfClosingElementTest extends TestCase
     {
         $node = new SelfClosingElement(
             'foo',
-            Map::of('string', Attribute::class)
-                ('foo', new Attribute('foo'))
-                ('bar', new Attribute('bar'))
+            Set::of(
+                Attribute::class,
+                new Attribute('foo'),
+                new Attribute('bar'),
+            ),
         );
 
         $node2 = $node->addAttribute(
@@ -230,9 +232,11 @@ class SelfClosingElementTest extends TestCase
 
         (new SelfClosingElement(
             'foo',
-            Map::of('string', Attribute::class)
-                ('foo', new Attribute('foo'))
-                ('bar', new Attribute('bar'))
+            Set::of(
+                Attribute::class,
+                new Attribute('foo'),
+                new Attribute('bar'),
+            ),
         ))->addAttribute(new Attribute('foo', 'baz'));
     }
 
@@ -306,9 +310,11 @@ class SelfClosingElementTest extends TestCase
             '<foo bar="baz" baz="foo"/>',
             (new SelfClosingElement(
                 'foo',
-                Map::of('string', Attribute::class)
-                    ('bar', new Attribute('bar', 'baz'))
-                    ('baz', new Attribute('baz', 'foo'))
+                Set::of(
+                    Attribute::class,
+                    new Attribute('bar', 'baz'),
+                    new Attribute('baz', 'foo'),
+                ),
             ))->toString(),
         );
     }

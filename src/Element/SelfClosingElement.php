@@ -8,7 +8,7 @@ use Innmind\Xml\{
     Attribute,
     Exception\LogicException,
 };
-use Innmind\Immutable\Map;
+use Innmind\Immutable\Set;
 use function Innmind\Immutable\join;
 
 class SelfClosingElement extends Element
@@ -17,12 +17,9 @@ class SelfClosingElement extends Element
 
     public function __construct(
         string $name,
-        Map $attributes = null
+        Set $attributes = null
     ) {
-        parent::__construct(
-            $name,
-            $attributes,
-        );
+        parent::__construct($name, $attributes);
     }
 
     public function hasChildren(): bool

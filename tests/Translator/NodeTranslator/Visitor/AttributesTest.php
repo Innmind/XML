@@ -7,7 +7,8 @@ use Innmind\Xml\{
     Translator\NodeTranslator\Visitor\Attributes,
     Attribute,
 };
-use Innmind\Immutable\Map;
+use Innmind\Immutable\Set;
+use function Innmind\Immutable\unwrap;
 use PHPUnit\Framework\TestCase;
 
 class AttributesTest extends TestCase
@@ -16,12 +17,8 @@ class AttributesTest extends TestCase
     {
         $attributes = (new Attributes)(new \DOMNode);
 
-        $this->assertInstanceOf(Map::class, $attributes);
-        $this->assertSame('string', (string) $attributes->keyType());
-        $this->assertSame(
-            Attribute::class,
-            (string) $attributes->valueType()
-        );
+        $this->assertInstanceOf(Set::class, $attributes);
+        $this->assertSame(Attribute::class, $attributes->type());
         $this->assertCount(0, $attributes);
     }
 
@@ -32,12 +29,8 @@ class AttributesTest extends TestCase
 
         $attributes = (new Attributes)($document->childNodes->item(0));
 
-        $this->assertInstanceOf(Map::class, $attributes);
-        $this->assertSame('string', (string) $attributes->keyType());
-        $this->assertSame(
-            Attribute::class,
-            (string) $attributes->valueType()
-        );
+        $this->assertInstanceOf(Set::class, $attributes);
+        $this->assertSame(Attribute::class, $attributes->type());
         $this->assertCount(0, $attributes);
     }
 
@@ -48,20 +41,13 @@ class AttributesTest extends TestCase
 
         $attributes = (new Attributes)($document->childNodes->item(0));
 
-        $this->assertInstanceOf(Map::class, $attributes);
-        $this->assertSame('string', (string) $attributes->keyType());
-        $this->assertSame(
-            Attribute::class,
-            (string) $attributes->valueType()
-        );
+        $this->assertInstanceOf(Set::class, $attributes);
+        $this->assertSame(Attribute::class, $attributes->type());
         $this->assertCount(2, $attributes);
-        $this->assertSame(
-            'baz',
-            $attributes->get('bar')->value()
-        );
-        $this->assertSame(
-            '',
-            $attributes->get('foobar')->value()
-        );
+        $attributes = unwrap($attributes);
+        $this->assertSame('bar', $attributes[0]->name());
+        $this->assertSame('baz', $attributes[0]->value());
+        $this->assertSame('foobar', $attributes[1]->name());
+        $this->assertSame('', $attributes[1]->value());
     }
 }

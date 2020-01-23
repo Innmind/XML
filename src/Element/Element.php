@@ -14,10 +14,11 @@ use Innmind\Xml\{
 use Innmind\Immutable\{
     Map,
     Sequence,
+    Set,
     Str,
 };
 use function Innmind\Immutable\{
-    assertMap,
+    assertSet,
     join,
     unwrap,
 };
@@ -32,19 +33,25 @@ class Element implements ElementInterface
 
     public function __construct(
         string $name,
-        Map $attributes = null,
+        Set $attributes = null,
         Node ...$children
     ) {
-        $attributes ??= Map::of('string', Attribute::class);
+        $attributes ??= Set::of(Attribute::class);
 
-        assertMap('string', Attribute::class, $attributes, 2);
+        assertSet(Attribute::class, $attributes, 2);
 
         if (Str::of($name)->empty()) {
             throw new DomainException;
         }
 
         $this->name = $name;
-        $this->attributes = $attributes;
+        $this->attributes = $attributes->toMapOf(
+            'string',
+            Attribute::class,
+            static function(Attribute $attribute): \Generator {
+                yield $attribute->name() => $attribute;
+            },
+        );
         $this->children = Sequence::of(Node::class, ...$children);
     }
 

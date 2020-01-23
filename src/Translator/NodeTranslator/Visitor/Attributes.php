@@ -4,13 +4,13 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Translator\NodeTranslator\Visitor;
 
 use Innmind\Xml\Attribute;
-use Innmind\Immutable\Map;
+use Innmind\Immutable\Set;
 
 final class Attributes
 {
-    public function __invoke(\DOMNode $node): Map
+    public function __invoke(\DOMNode $node): Set
     {
-        $attributes = Map::of('string', Attribute::class);
+        $attributes = Set::of(Attribute::class);
 
         if (!$node instanceof \DOMElement) {
             return $attributes;
@@ -21,12 +21,11 @@ final class Attributes
         }
 
         foreach ($node->attributes as $name => $attribute) {
-            $attributes = $attributes->put(
-                $name,
+            $attributes = ($attributes)(
                 new Attribute(
                     $name,
-                    $node->getAttribute($name)
-                )
+                    $node->getAttribute($name),
+                ),
             );
         }
 
