@@ -10,7 +10,7 @@ use Innmind\Xml\{
 
 final class ParentNode
 {
-    private $node;
+    private Node $node;
 
     public function __construct(Node $node)
     {

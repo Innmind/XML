@@ -14,7 +14,7 @@ use Innmind\Immutable\{
 
 final class Children
 {
-    private $translate;
+    private Translator $translate;
 
     public function __construct(Translator $translate)
     {

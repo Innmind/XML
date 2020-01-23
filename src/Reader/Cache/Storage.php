@@ -9,7 +9,7 @@ use Innmind\Immutable\Map;
 
 final class Storage
 {
-    private $map;
+    private Map $map;
 
     public function __construct()
     {

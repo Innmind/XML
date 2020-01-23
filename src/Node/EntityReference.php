@@ -14,8 +14,8 @@ use Innmind\Immutable\{
 
 final class EntityReference implements Node
 {
-    private $data;
-    private $children;
+    private string $data;
+    private Map $children;
 
     public function __construct(string $data)
     {

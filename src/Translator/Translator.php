@@ -11,7 +11,7 @@ use Innmind\Immutable\MapInterface;
 
 final class Translator
 {
-    private $translators;
+    private MapInterface $translators;
 
     public function __construct(MapInterface $translators)
     {

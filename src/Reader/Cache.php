@@ -13,8 +13,8 @@ use Innmind\Immutable\Map;
 
 final class Cache implements Reader
 {
-    private $read;
-    private $cache;
+    private Reader $read;
+    private Storage $cache;
 
     public function __construct(Reader $read, Storage $cache)
     {

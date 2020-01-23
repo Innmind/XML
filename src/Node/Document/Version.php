@@ -7,9 +7,9 @@ use Innmind\Xml\Exception\DomainException;
 
 final class Version
 {
-    private $major;
-    private $minor;
-    private $string;
+    private int $major;
+    private int $minor;
+    private string $string;
 
     public function __construct(int $major, int $minor = 0)
     {

@@ -19,19 +19,19 @@ use Innmind\Immutable\{
 
 class Element implements ElementInterface
 {
-    private $name;
-    private $attributes;
-    private $children;
-    private $content;
-    private $string;
+    private string $name;
+    private MapInterface $attributes;
+    private MapInterface $children;
+    private ?string $content = null;
+    private ?string $string = null;
 
     public function __construct(
         string $name,
         MapInterface $attributes = null,
         MapInterface $children = null
     ) {
-        $attributes = $attributes ?? new Map('string', Attribute::class);
-        $children = $children ?? new Map('int', Node::class);
+        $attributes ??= new Map('string', Attribute::class);
+        $children ??= new Map('int', Node::class);
 
         if (
             (string) $attributes->keyType() !== 'string' ||

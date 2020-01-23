@@ -15,7 +15,7 @@
         "issues": "http://github.com/Innmind/XML/issues"
     },
     "require": {
-        "php": "~7.2",
+        "php": "~7.4",
         "innmind/immutable": "~2.12",
         "innmind/stream": "^1.3"
     },

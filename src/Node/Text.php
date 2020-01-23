@@ -11,7 +11,7 @@ use Innmind\Immutable\MapInterface;
 
 final class Text implements Node
 {
-    private $data;
+    private CharacterData $data;
 
     public function __construct(string $data)
     {

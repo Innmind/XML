@@ -10,7 +10,7 @@ use Innmind\Xml\{
 
 final class NextSibling
 {
-    private $node;
+    private Node $node;
 
     public function __construct(Node $node)
     {

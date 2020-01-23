@@ -14,7 +14,7 @@ use Innmind\Immutable\{
 
 class SelfClosingElement extends Element
 {
-    private $string;
+    private ?string $string = null;
 
     public function __construct(
         string $name,

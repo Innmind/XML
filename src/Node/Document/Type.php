@@ -8,10 +8,10 @@ use Innmind\Immutable\Str;
 
 final class Type
 {
-    private $name;
-    private $publicId;
-    private $systemId;
-    private $string;
+    private string $name;
+    private string $publicId;
+    private string $systemId;
+    private string $string;
 
     public function __construct(
         string $name,

@@ -11,9 +11,9 @@ use Innmind\Immutable\Str;
 
 class Attribute implements AttributeInterface
 {
-    private $name;
-    private $value;
-    private $string;
+    private string $name;
+    private string $value;
+    private ?string $string = null;
 
     public function __construct(string $name, string $value = '')
     {

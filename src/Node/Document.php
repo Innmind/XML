@@ -17,10 +17,10 @@ use Innmind\Immutable\{
 
 final class Document implements Node
 {
-    private $version;
-    private $type;
-    private $children;
-    private $encoding;
+    private Version $version;
+    private ?Type $type = null;
+    private MapInterface $children;
+    private ?Encoding $encoding = null;
 
     public function __construct(
         Version $version,
@@ -28,7 +28,7 @@ final class Document implements Node
         MapInterface $children = null,
         Encoding $encoding = null
     ) {
-        $children = $children ?? new Map('int', Node::class);
+        $children ??= new Map('int', Node::class);
 
         if (
             (string) $children->keyType() !== 'int' ||

@@ -14,8 +14,8 @@ use Innmind\Immutable\{
 
 final class Comment implements Node
 {
-    private $value;
-    private $children;
+    private string $value;
+    private Map $children;
 
     public function __construct(string $value)
     {

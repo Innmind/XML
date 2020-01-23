@@ -8,7 +8,7 @@ use Innmind\Immutable\Str;
 
 final class Encoding
 {
-    private $string;
+    private string $string;
 
     public function __construct(string $string)
     {
