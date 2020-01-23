@@ -87,7 +87,7 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             Map::of('string', Attribute::class)
-                ('foo', new Attribute\Attribute('foo'))
+                ('foo', new Attribute('foo'))
         );
         $this->assertTrue($node->hasAttributes());
     }
@@ -97,7 +97,7 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             Map::of('string', Attribute::class)
-                ('foo', $expected = new Attribute\Attribute('foo'))
+                ('foo', $expected = new Attribute('foo'))
         );
 
         $this->assertSame($expected, $node->attribute('foo'));
@@ -108,8 +108,8 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             Map::of('string', Attribute::class)
-                ('foo', new Attribute\Attribute('foo'))
-                ('bar', new Attribute\Attribute('bar'))
+                ('foo', new Attribute('foo'))
+                ('bar', new Attribute('bar'))
         );
 
         $node2 = $node->removeAttribute('foo');
@@ -138,8 +138,8 @@ class ElementTest extends TestCase
         (new Element(
             'foo',
             Map::of('string', Attribute::class)
-                ('foo', new Attribute\Attribute('foo'))
-                ('bar', new Attribute\Attribute('bar'))
+                ('foo', new Attribute('foo'))
+                ('bar', new Attribute('bar'))
         ))->removeAttribute('baz');
     }
 
@@ -148,12 +148,12 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             Map::of('string', Attribute::class)
-                ('foo', new Attribute\Attribute('foo'))
-                ('bar', new Attribute\Attribute('bar'))
+                ('foo', new Attribute('foo'))
+                ('bar', new Attribute('bar'))
         );
 
         $node2 = $node->replaceAttribute(
-            $attribute = new Attribute\Attribute('foo', 'baz')
+            $attribute = new Attribute('foo', 'baz')
         );
 
         $this->assertNotSame($node, $node2);
@@ -184,10 +184,10 @@ class ElementTest extends TestCase
         (new Element(
             'foo',
             Map::of('string', Attribute::class)
-                ('foo', new Attribute\Attribute('foo'))
-                ('bar', new Attribute\Attribute('bar'))
+                ('foo', new Attribute('foo'))
+                ('bar', new Attribute('bar'))
         ))->replaceAttribute(
-            new Attribute\Attribute('baz')
+            new Attribute('baz')
         );
     }
 
@@ -196,12 +196,12 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             Map::of('string', Attribute::class)
-                ('foo', new Attribute\Attribute('foo'))
-                ('bar', new Attribute\Attribute('bar'))
+                ('foo', new Attribute('foo'))
+                ('bar', new Attribute('bar'))
         );
 
         $node2 = $node->addAttribute(
-            $attribute = new Attribute\Attribute('baz', 'baz')
+            $attribute = new Attribute('baz', 'baz')
         );
 
         $this->assertNotSame($node, $node2);
@@ -236,9 +236,9 @@ class ElementTest extends TestCase
         (new Element(
             'foo',
             Map::of('string', Attribute::class)
-                ('foo', new Attribute\Attribute('foo'))
-                ('bar', new Attribute\Attribute('bar'))
-        ))->addAttribute(new Attribute\Attribute('foo', 'baz'));
+                ('foo', new Attribute('foo'))
+                ('bar', new Attribute('bar'))
+        ))->addAttribute(new Attribute('foo', 'baz'));
     }
 
     public function testChildren()
@@ -488,8 +488,8 @@ class ElementTest extends TestCase
             (new Element(
                 'foo',
                 Map::of('string', Attribute::class)
-                    ('bar', new Attribute\Attribute('bar', 'baz'))
-                    ('baz', new Attribute\Attribute('baz', 'foo'))
+                    ('bar', new Attribute('bar', 'baz'))
+                    ('baz', new Attribute('baz', 'foo'))
             ))->toString(),
         );
         $this->assertSame(
@@ -497,8 +497,8 @@ class ElementTest extends TestCase
             (new Element(
                 'foo',
                 Map::of('string', Attribute::class)
-                    ('bar', new Attribute\Attribute('bar', 'baz'))
-                    ('baz', new Attribute\Attribute('baz', 'foo')),
+                    ('bar', new Attribute('bar', 'baz'))
+                    ('baz', new Attribute('baz', 'foo')),
                 Map::of('int', Node::class)
                     (0, new Element('bar'))
                     (1, new Element('baz'))

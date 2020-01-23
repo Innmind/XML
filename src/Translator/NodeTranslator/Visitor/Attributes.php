@@ -23,7 +23,7 @@ final class Attributes
         foreach ($node->attributes as $name => $attribute) {
             $attributes = $attributes->put(
                 $name,
-                new Attribute\Attribute(
+                new Attribute(
                     $name,
                     $node->getAttribute($name)
                 )
