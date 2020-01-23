@@ -18,7 +18,6 @@ use Innmind\Immutable\{
 };
 use function Innmind\Immutable\{
     assertMap,
-    assertSequence,
     join,
     unwrap,
 };
@@ -34,13 +33,11 @@ class Element implements ElementInterface
     public function __construct(
         string $name,
         Map $attributes = null,
-        Sequence $children = null
+        Node ...$children
     ) {
         $attributes ??= Map::of('string', Attribute::class);
-        $children ??= Sequence::of(Node::class);
 
         assertMap('string', Attribute::class, $attributes, 2);
-        assertSequence(Node::class, $children, 3);
 
         if (Str::of($name)->empty()) {
             throw new DomainException;
@@ -48,7 +45,7 @@ class Element implements ElementInterface
 
         $this->name = $name;
         $this->attributes = $attributes;
-        $this->children = $children;
+        $this->children = Sequence::of(Node::class, ...$children);
     }
 
     public function name(): string

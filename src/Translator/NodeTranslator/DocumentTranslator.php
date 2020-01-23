@@ -17,6 +17,7 @@ use Innmind\Immutable\{
     Map,
     Sequence,
 };
+use function Innmind\Immutable\unwrap;
 
 final class DocumentTranslator implements NodeTranslator
 {
@@ -31,9 +32,8 @@ final class DocumentTranslator implements NodeTranslator
         return new Document(
             $this->buildVersion($node),
             $node->doctype ? $this->buildDoctype($node->doctype) : null,
-            $node->childNodes ?
-                $this->buildChildren($node->childNodes, $translate) : null,
-            $node->encoding ? $this->buildEncoding($node->encoding) : null
+            $node->encoding ? $this->buildEncoding($node->encoding) : null,
+            ...($node->childNodes ? unwrap($this->buildChildren($node->childNodes, $translate)) : []),
         );
     }
 

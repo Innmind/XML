@@ -14,6 +14,7 @@ use Innmind\Xml\{
     Element\Element,
 };
 use Innmind\Immutable\Map;
+use function Innmind\Immutable\unwrap;
 
 final class ElementTranslator implements NodeTranslator
 {
@@ -40,7 +41,7 @@ final class ElementTranslator implements NodeTranslator
         return new Element(
             $node->nodeName,
             $attributes,
-            (new Children($translate))($node)
+            ...unwrap((new Children($translate))($node)),
         );
     }
 }

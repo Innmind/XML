@@ -59,14 +59,6 @@ class ElementTest extends TestCase
         new Element('foo', Map::of('string', 'string'));
     }
 
-    public function testThrowWhenInvalidChildren()
-    {
-        $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 3 must be of type Sequence<Innmind\Xml\Node>');
-
-        new Element('foo', null, Sequence::of('string'));
-    }
-
     public function testDefaultAttributes()
     {
         $node = new Element('foo');
@@ -244,17 +236,6 @@ class ElementTest extends TestCase
         ))->addAttribute(new Attribute('foo', 'baz'));
     }
 
-    public function testChildren()
-    {
-        $node = new Element(
-            'foo',
-            null,
-            $expected = Sequence::of(Node::class)
-        );
-
-        $this->assertSame($expected, $node->children());
-    }
-
     public function testDefaultChildren()
     {
         $node = new Element('foo');
@@ -268,7 +249,7 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             null,
-            Sequence::of(Node::class, new Element('bar')),
+            new Element('bar'),
         );
         $this->assertTrue($node->hasChildren());
 
@@ -280,12 +261,9 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            Sequence::of(
-                Node::class,
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $element2 = $element->removeChild(1);
@@ -313,12 +291,9 @@ class ElementTest extends TestCase
         (new Element(
             'foobar',
             null,
-            Sequence::of(
-                Node::class,
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         ))->removeChild(3);
     }
 
@@ -327,12 +302,9 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            Sequence::of(
-                Node::class,
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $element2 = $element->replaceChild(
@@ -368,12 +340,9 @@ class ElementTest extends TestCase
         (new Element(
             'foobar',
             null,
-            Sequence::of(
-                Node::class,
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         ))->replaceChild(
             3,
             $this->createMock(Node::class)
@@ -385,12 +354,9 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            Sequence::of(
-                Node::class,
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $element2 = $element->prependChild(
@@ -427,12 +393,9 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            Sequence::of(
-                Node::class,
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $element2 = $element->appendChild(
@@ -477,7 +440,7 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             null,
-            Sequence::of(Node::class, new Element('bar')),
+            new Element('bar'),
         );
 
         $this->assertSame(
@@ -508,11 +471,8 @@ class ElementTest extends TestCase
                 Map::of('string', Attribute::class)
                     ('bar', new Attribute('bar', 'baz'))
                     ('baz', new Attribute('baz', 'foo')),
-                Sequence::of(
-                    Node::class,
-                    new Element('bar'),
-                    new Element('baz'),
-                ),
+                new Element('bar'),
+                new Element('baz'),
             ))->toString(),
         );
     }

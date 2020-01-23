@@ -51,35 +51,12 @@ class DocumentTest extends TestCase
         $this->assertSame($type, $document->type());
     }
 
-    public function testChildren()
-    {
-        $document = new Document(
-            new Version(1),
-            null,
-            $children = Sequence::of(Node::class)
-        );
-
-        $this->assertSame($children, $document->children());
-    }
-
     public function testDefaultChildren()
     {
         $document = new Document(new Version(1));
 
         $this->assertInstanceOf(Sequence::class, $document->children());
         $this->assertSame(Node::class, $document->children()->type());
-    }
-
-    public function testThrowWhenInvalidChildren()
-    {
-        $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 3 must be of type Sequence<Innmind\Xml\Node>');
-
-        new Document(
-            new Version(1),
-            null,
-            Sequence::of('string'),
-        );
     }
 
     public function testEncoding()
@@ -90,8 +67,7 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             null,
-            null,
-            $encoding = new Encoding('utf-8')
+            $encoding = new Encoding('utf-8'),
         );
         $this->assertTrue($document->encodingIsSpecified());
         $this->assertSame($encoding, $document->encoding());
@@ -112,7 +88,8 @@ class DocumentTest extends TestCase
             (new Document(
                 new Version(1),
                 null,
-                Sequence::of(Node::class, new Element('foo')),
+                null,
+                new Element('foo'),
             ))->content()
         );
     }
@@ -128,8 +105,7 @@ class DocumentTest extends TestCase
             (new Document(
                 new Version(2, 1),
                 null,
-                null,
-                new Encoding('utf-8')
+                new Encoding('utf-8'),
             ))->toString(),
         );
         $this->assertSame(
@@ -137,8 +113,7 @@ class DocumentTest extends TestCase
             (new Document(
                 new Version(2, 1),
                 new Type('html'),
-                null,
-                new Encoding('utf-8')
+                new Encoding('utf-8'),
             ))->toString(),
         );
         $this->assertSame(
@@ -146,8 +121,8 @@ class DocumentTest extends TestCase
             (new Document(
                 new Version(2, 1),
                 new Type('html'),
-                Sequence::of(Node::class, new SelfClosingElement('foo')),
-                new Encoding('utf-8')
+                new Encoding('utf-8'),
+                new SelfClosingElement('foo'),
             ))->toString(),
         );
     }
@@ -157,13 +132,10 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            Sequence::of(
-                Node::class,
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
-            new Encoding('utf-8')
+            new Encoding('utf-8'),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $document2 = $document->removeChild(1);
@@ -192,13 +164,10 @@ class DocumentTest extends TestCase
         (new Document(
             new Version(1),
             new Type('html'),
-            Sequence::of(
-                Node::class,
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
-            new Encoding('utf-8')
+            new Encoding('utf-8'),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         ))->removeChild(3);
     }
 
@@ -207,13 +176,10 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            Sequence::of(
-                Node::class,
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
-            new Encoding('utf-8')
+            new Encoding('utf-8'),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $document2 = $document->replaceChild(
@@ -250,13 +216,10 @@ class DocumentTest extends TestCase
         (new Document(
             new Version(1),
             new Type('html'),
-            Sequence::of(
-                Node::class,
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
-            new Encoding('utf-8')
+            new Encoding('utf-8'),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         ))->replaceChild(
             3,
             $this->createMock(Node::class)
@@ -268,13 +231,10 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            Sequence::of(
-                Node::class,
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
-            new Encoding('utf-8')
+            new Encoding('utf-8'),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $document2 = $document->prependChild(
@@ -312,13 +272,10 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            Sequence::of(
-                Node::class,
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
-            new Encoding('utf-8')
+            new Encoding('utf-8'),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $document2 = $document->appendChild(

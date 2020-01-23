@@ -12,7 +12,6 @@ use Innmind\Xml\{
 };
 use Innmind\Immutable\Sequence;
 use function Innmind\Immutable\{
-    assertSequence,
     join,
     unwrap,
 };
@@ -27,17 +26,14 @@ final class Document implements Node
     public function __construct(
         Version $version,
         Type $type = null,
-        Sequence $children = null,
-        Encoding $encoding = null
+        Encoding $encoding = null,
+        Node ...$children
     ) {
-        $children ??= Sequence::of(Node::class);
-
-        assertSequence(Node::class, $children, 3);
 
         $this->version = $version;
         $this->type = $type;
-        $this->children = $children;
         $this->encoding = $encoding;
+        $this->children = Sequence::of(Node::class, ...$children);
     }
 
     public function version(): Version
