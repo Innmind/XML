@@ -18,8 +18,12 @@ final class Children
         $this->translate = $translate;
     }
 
+    /**
+     * @return Sequence<Node>
+     */
     public function __invoke(\DOMNode $node): Sequence
     {
+        /** @var Sequence<Node> */
         $children = Sequence::of(Node::class);
 
         if (!$node->childNodes instanceof \DOMNodeList) {

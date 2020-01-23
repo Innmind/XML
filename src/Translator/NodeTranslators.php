@@ -15,6 +15,7 @@ use Innmind\Immutable\Map;
 
 final class NodeTranslators
 {
+    /** @var Map<int, NodeTranslator>|null */
     private static ?Map $defaults = null;
 
     /**
@@ -22,6 +23,7 @@ final class NodeTranslators
      */
     public static function defaults(): Map
     {
+        /** @var Map<int, NodeTranslator> */
         return self::$defaults ??= Map::of('int', NodeTranslator::class)
             (XML_DOCUMENT_NODE, new DocumentTranslator)
             (XML_ELEMENT_NODE, new ElementTranslator)

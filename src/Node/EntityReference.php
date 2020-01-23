@@ -12,11 +12,13 @@ use Innmind\Immutable\Sequence;
 final class EntityReference implements Node
 {
     private string $data;
+    /** @var Sequence<Node> */
     private Sequence $children;
 
     public function __construct(string $data)
     {
         $this->data = $data;
+        /** @var Sequence<Node> */
         $this->children = Sequence::of(Node::class);
     }
 

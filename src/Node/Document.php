@@ -20,6 +20,7 @@ final class Document implements Node
 {
     private Version $version;
     private ?Type $type = null;
+    /** @var Sequence<Node> */
     private Sequence $children;
     private ?Encoding $encoding = null;
 
@@ -33,6 +34,7 @@ final class Document implements Node
         $this->version = $version;
         $this->type = $type;
         $this->encoding = $encoding;
+        /** @var Sequence<Node> */
         $this->children = Sequence::of(Node::class, ...$children);
     }
 
@@ -41,8 +43,10 @@ final class Document implements Node
         return $this->version;
     }
 
+    /** @psalm-suppress InvalidNullableReturnType */
     public function type(): Type
     {
+        /** @psalm-suppress NullableReturnStatement */
         return $this->type;
     }
 
@@ -98,6 +102,7 @@ final class Document implements Node
     public function prependChild(Node $child): Node
     {
         $document = clone $this;
+        /** @var Sequence<Node> */
         $document->children = Sequence::of(
             Node::class,
             $child,
@@ -115,8 +120,10 @@ final class Document implements Node
         return $document;
     }
 
+    /** @psalm-suppress InvalidNullableReturnType */
     public function encoding(): Encoding
     {
+        /** @psalm-suppress NullableReturnStatement */
         return $this->encoding;
     }
 
@@ -140,10 +147,10 @@ final class Document implements Node
         $string = sprintf(
             '<?xml version="%s"%s?>',
             $this->version->toString(),
-            $this->encodingIsSpecified() ? ' encoding="'.$this->encoding->toString().'"' : ''
+            $this->encoding instanceof Encoding ? ' encoding="'.$this->encoding->toString().'"' : ''
         );
 
-        if ($this->hasType()) {
+        if ($this->type instanceof Type) {
             $string .= "\n".$this->type->toString();
         }
 

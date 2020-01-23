@@ -9,10 +9,12 @@ use Innmind\Immutable\Map;
 
 final class Storage
 {
+    /** @var Map<Readable, Node> */
     private Map $map;
 
     public function __construct()
     {
+        /** @var Map<Readable, Node> */
         $this->map = Map::of(Readable::class, Node::class);
     }
 

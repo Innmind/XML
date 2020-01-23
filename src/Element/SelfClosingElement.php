@@ -15,10 +15,11 @@ class SelfClosingElement extends Element
 {
     private ?string $string = null;
 
-    public function __construct(
-        string $name,
-        Set $attributes = null
-    ) {
+    /**
+     * @param Set<Attribute>|null $attributes
+     */
+    public function __construct(string $name, Set $attributes = null)
+    {
         parent::__construct($name, $attributes);
     }
 

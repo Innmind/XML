@@ -56,10 +56,14 @@ final class DocumentTranslator implements NodeTranslator
         );
     }
 
+    /**
+     * @return Sequence<Node>
+     */
     private function buildChildren(
         \DOMNodeList $nodes,
         Translator $translate
     ): Sequence {
+        /** @var Sequence<Node> */
         $children = Sequence::of(Node::class);
 
         foreach ($nodes as $child) {

@@ -28,6 +28,7 @@ final class ElementTranslator implements NodeTranslator
 
         $attributes = (new Attributes)($node);
 
+        /** @psalm-suppress RedundantCondition */
         if (
             $node->childNodes instanceof \DOMNodeList &&
             $node->childNodes->length === 0

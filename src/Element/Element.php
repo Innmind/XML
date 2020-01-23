@@ -26,16 +26,22 @@ use function Innmind\Immutable\{
 class Element implements ElementInterface
 {
     private string $name;
+    /** @var Map<string, Attribute> */
     private Map $attributes;
+    /** @var Sequence<Node> */
     private Sequence $children;
     private ?string $content = null;
     private ?string $string = null;
 
+    /**
+     * @param Set<Attribute>|null $attributes
+     */
     public function __construct(
         string $name,
         Set $attributes = null,
         Node ...$children
     ) {
+        /** @var Set<Attribute> */
         $attributes ??= Set::of(Attribute::class);
 
         assertSet(Attribute::class, $attributes, 2);
@@ -45,6 +51,7 @@ class Element implements ElementInterface
         }
 
         $this->name = $name;
+        /** @var Map<string, Attribute> */
         $this->attributes = $attributes->toMapOf(
             'string',
             Attribute::class,
@@ -52,6 +59,7 @@ class Element implements ElementInterface
                 yield $attribute->name() => $attribute;
             },
         );
+        /** @var Sequence<Node> */
         $this->children = Sequence::of(Node::class, ...$children);
     }
 
@@ -167,6 +175,7 @@ class Element implements ElementInterface
     public function prependChild(Node $child): Node
     {
         $element = clone $this;
+        /** @var Sequence<Node> */
         $element->children = Sequence::of(
             Node::class,
             $child,

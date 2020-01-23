@@ -8,8 +8,12 @@ use Innmind\Immutable\Set;
 
 final class Attributes
 {
+    /**
+     * @return Set<Attribute>
+     */
     public function __invoke(\DOMNode $node): Set
     {
+        /** @var Set<Attribute> */
         $attributes = Set::of(Attribute::class);
 
         if (!$node instanceof \DOMElement) {
@@ -20,6 +24,10 @@ final class Attributes
             return $attributes;
         }
 
+        /**
+         * @var string $name
+         * @var mixed $attribute
+         */
         foreach ($node->attributes as $name => $attribute) {
             $attributes = ($attributes)(
                 new Attribute(

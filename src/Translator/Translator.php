@@ -12,8 +12,12 @@ use function Innmind\Immutable\assertMap;
 
 final class Translator
 {
+    /** @var Map<int, NodeTranslator> */
     private Map $translators;
 
+    /**
+     * @param Map<int, NodeTranslator> $translators
+     */
     public function __construct(Map $translators)
     {
         assertMap('int', NodeTranslator::class, $translators, 1);

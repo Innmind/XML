@@ -12,11 +12,13 @@ use Innmind\Immutable\Sequence;
 final class Comment implements Node
 {
     private string $value;
+    /** @var Sequence<Node> */
     private Sequence $children;
 
     public function __construct(string $value)
     {
         $this->value = $value;
+        /** @var Sequence<Node> */
         $this->children = Sequence::of(Node::class);
     }
 
