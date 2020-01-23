@@ -22,7 +22,7 @@ class TranslatorTest extends TestCase
 {
     private $translate;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->translate = new Translator(
             NodeTranslators::defaults()

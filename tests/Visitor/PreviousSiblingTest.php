@@ -18,7 +18,7 @@ class PreviousSiblingTest extends TestCase
 {
     private $read;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->read = new Reader(
             new Translator(
