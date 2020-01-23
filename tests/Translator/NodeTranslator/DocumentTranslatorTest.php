@@ -62,7 +62,7 @@ XML
         );
 
         $this->assertInstanceOf(Document::class, $node);
-        $this->assertSame($xml, (string) $node);
+        $this->assertSame($xml, $node->toString());
     }
 
     public function testThrowWhenInvalidNode()

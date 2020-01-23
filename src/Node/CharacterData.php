@@ -61,7 +61,7 @@ final class CharacterData implements Node
         return $this->value;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         return '<![CDATA['.$this->value.']]>';
     }

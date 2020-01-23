@@ -82,7 +82,7 @@ class EntityReferenceTest extends TestCase
     {
         $this->assertSame(
             '&foo;',
-            (string) new EntityReference('foo')
+            (new EntityReference('foo'))->toString(),
         );
     }
 }

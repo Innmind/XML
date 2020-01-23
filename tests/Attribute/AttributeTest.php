@@ -47,7 +47,7 @@ class AttributeTest extends TestCase
     {
         $this->assertSame(
             'foo',
-            (string) new Attribute('foo')
+            (new Attribute('foo'))->toString(),
         );
     }
 
@@ -55,7 +55,7 @@ class AttributeTest extends TestCase
     {
         $this->assertSame(
             'foo="bar"',
-            (string) new Attribute('foo', 'bar')
+            (new Attribute('foo', 'bar'))->toString(),
         );
     }
 }

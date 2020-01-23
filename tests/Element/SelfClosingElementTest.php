@@ -302,16 +302,16 @@ class SelfClosingElementTest extends TestCase
     {
         $this->assertSame(
             '<foo/>',
-            (string) new SelfClosingElement('foo')
+            (new SelfClosingElement('foo'))->toString(),
         );
         $this->assertSame(
             '<foo bar="baz" baz="foo"/>',
-            (string) new SelfClosingElement(
+            (new SelfClosingElement(
                 'foo',
                 Map::of('string', Attribute::class)
                     ('bar', new Attribute\Attribute('bar', 'baz'))
                     ('baz', new Attribute\Attribute('baz', 'foo'))
-            )
+            ))->toString(),
         );
     }
 }

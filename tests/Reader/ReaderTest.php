@@ -52,6 +52,6 @@ XML;
         fwrite($res, $xml);
         $node = ($this->read)(new Stream($res));
 
-        $this->assertSame($xml, (string) $node);
+        $this->assertSame($xml, $node->toString());
     }
 }

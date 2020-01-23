@@ -484,20 +484,20 @@ class ElementTest extends TestCase
     {
         $this->assertSame(
             '<foo></foo>',
-            (string) new Element('foo')
+            (new Element('foo'))->toString(),
         );
         $this->assertSame(
             '<foo bar="baz" baz="foo"></foo>',
-            (string) new Element(
+            (new Element(
                 'foo',
                 Map::of('string', Attribute::class)
                     ('bar', new Attribute\Attribute('bar', 'baz'))
                     ('baz', new Attribute\Attribute('baz', 'foo'))
-            )
+            ))->toString(),
         );
         $this->assertSame(
             '<foo bar="baz" baz="foo"><bar></bar><baz></baz></foo>',
-            (string) new Element(
+            (new Element(
                 'foo',
                 Map::of('string', Attribute::class)
                     ('bar', new Attribute\Attribute('bar', 'baz'))
@@ -505,7 +505,7 @@ class ElementTest extends TestCase
                 Map::of('int', Node::class)
                     (0, new Element('bar'))
                     (1, new Element('baz'))
-            )
+            ))->toString(),
         );
     }
 }

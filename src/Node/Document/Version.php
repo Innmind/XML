@@ -32,7 +32,7 @@ final class Version
         return $this->minor;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         return $this->string;
     }

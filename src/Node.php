@@ -17,5 +17,5 @@ interface Node
     public function prependChild(self $child): self;
     public function appendChild(self $child): self;
     public function content(): string;
-    public function __toString(): string;
+    public function toString(): string;
 }

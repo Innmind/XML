@@ -61,7 +61,7 @@ final class EntityReference implements Node
         return $this->data;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         return "&{$this->data};";
     }

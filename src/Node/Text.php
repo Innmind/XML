@@ -56,7 +56,7 @@ final class Text implements Node
         return $this->data->content();
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         return $this->data->content();
     }

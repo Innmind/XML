@@ -82,7 +82,7 @@ class TextTest extends TestCase
     {
         $this->assertSame(
             'foo',
-            (string) new Text('foo')
+            (new Text('foo'))->toString(),
         );
     }
 }

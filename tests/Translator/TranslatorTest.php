@@ -56,8 +56,8 @@ XML
         $node = ($this->translate)($document);
 
         $this->assertInstanceOf(Document::class, $node);
-        $this->assertSame('1.0', (string) $node->version());
-        $this->assertSame('utf-8', (string) $node->encoding());
+        $this->assertSame('1.0', $node->version()->toString());
+        $this->assertSame('utf-8', $node->encoding()->toString());
         $this->assertSame('html', $node->type()->name());
         $this->assertSame(
             '-//W3C//DTD HTML 4.01//EN',
@@ -106,7 +106,7 @@ XML
         $text = $foo->children()->get(6);
         $this->assertInstanceOf(Text::class, $text);
         $this->assertSame("\n    hey!\n", $text->content());
-        $this->assertSame($xml, (string) $node);
+        $this->assertSame($xml, $node->toString());
     }
 
     public function testThrowWhenNoTranslatorFoundForANodeType()

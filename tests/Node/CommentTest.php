@@ -82,7 +82,7 @@ class CommentTest extends TestCase
     {
         $this->assertSame(
             '<!--foo-->',
-            (string) new Comment('foo')
+            (new Comment('foo'))->toString(),
         );
     }
 }

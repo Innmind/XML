@@ -214,19 +214,37 @@ class Element implements ElementInterface
     public function content(): string
     {
         if ($this->content === null) {
-            $this->content = (string) $this->children->join('');
+            $children = $this->children->reduce(
+                [],
+                static function(array $children, int $index, Node $child): array {
+                    $children[] = $child->toString();
+
+                    return $children;
+                },
+            );
+
+            $this->content = \implode('', $children);
         }
 
         return $this->content;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         if ($this->string === null) {
+            $attributes = $this->attributes->reduce(
+                [],
+                static function(array $attributes, string $name, Attribute $attribute): array {
+                    $attributes[] = $attribute->toString();
+
+                    return $attributes;
+                },
+            );
+
             $this->string = sprintf(
                 '<%s%s>%s</%s>',
                 $this->name(),
-                $this->hasAttributes() ? ' '.$this->attributes->join(' ') : '',
+                $this->hasAttributes() ? ' '.\implode(' ', $attributes) : '',
                 $this->content(),
                 $this->name()
             );

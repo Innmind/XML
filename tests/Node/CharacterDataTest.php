@@ -82,7 +82,7 @@ class CharacterDataTest extends TestCase
     {
         $this->assertSame(
             '<![CDATA[foo]]>',
-            (string) new CharacterData('foo')
+            (new CharacterData('foo'))->toString(),
         );
     }
 }

@@ -5,6 +5,7 @@ namespace Innmind\Xml\Element;
 
 use Innmind\Xml\{
     Node,
+    Attribute,
     Exception\LogicException,
 };
 use Innmind\Immutable\{
@@ -57,13 +58,22 @@ class SelfClosingElement extends Element
         return '';
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         if ($this->string === null) {
+            $attributes = $this->attributes()->reduce(
+                [],
+                static function(array $attributes, string $name, Attribute $attribute): array {
+                    $attributes[] = $attribute->toString();
+
+                    return $attributes;
+                },
+            );
+
             $this->string = sprintf(
                 '<%s%s/>',
                 $this->name(),
-                $this->hasAttributes() ? ' '.$this->attributes()->join(' ') : ''
+                $this->hasAttributes() ? ' '.\implode(' ', $attributes) : ''
             );
         }
 

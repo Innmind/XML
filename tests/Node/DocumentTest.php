@@ -129,35 +129,35 @@ class DocumentTest extends TestCase
     {
         $this->assertSame(
             '<?xml version="2.1"?>'."\n",
-            (string) new Document(new Version(2, 1))
+            (new Document(new Version(2, 1)))->toString(),
         );
         $this->assertSame(
             '<?xml version="2.1" encoding="utf-8"?>'."\n",
-            (string) new Document(
+            (new Document(
                 new Version(2, 1),
                 null,
                 null,
                 new Encoding('utf-8')
-            )
+            ))->toString(),
         );
         $this->assertSame(
             '<?xml version="2.1" encoding="utf-8"?>'."\n".'<!DOCTYPE html>'."\n",
-            (string) new Document(
+            (new Document(
                 new Version(2, 1),
                 new Type('html'),
                 null,
                 new Encoding('utf-8')
-            )
+            ))->toString(),
         );
         $this->assertSame(
             '<?xml version="2.1" encoding="utf-8"?>'."\n".'<!DOCTYPE html>'."\n".'<foo/>',
-            (string) new Document(
+            (new Document(
                 new Version(2, 1),
                 new Type('html'),
                 Map::of('int', Node::class)
                     (0, new SelfClosingElement('foo')),
                 new Encoding('utf-8')
-            )
+            ))->toString(),
         );
     }
 

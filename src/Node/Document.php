@@ -157,19 +157,28 @@ final class Document implements Node
 
     public function content(): string
     {
-        return (string) $this->children->join('');
+        $children = $this->children->reduce(
+            [],
+            static function(array $children, int $index, Node $child): array {
+                $children[] = $child->toString();
+
+                return $children;
+            },
+        );
+
+        return \implode('', $children);
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         $string = sprintf(
             '<?xml version="%s"%s?>',
-            (string) $this->version,
-            $this->encodingIsSpecified() ? ' encoding="'.$this->encoding.'"' : ''
+            $this->version->toString(),
+            $this->encodingIsSpecified() ? ' encoding="'.$this->encoding->toString().'"' : ''
         );
 
         if ($this->hasType()) {
-            $string .= "\n".(string) $this->type;
+            $string .= "\n".$this->type->toString();
         }
 
         return $string."\n".$this->content();

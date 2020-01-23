@@ -35,7 +35,7 @@ class Attribute implements AttributeInterface
         return $this->value;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         if ($this->string === null) {
             $this->string = $this->name;
