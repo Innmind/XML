@@ -142,7 +142,7 @@ class ElementTest extends TestCase
             ),
         );
 
-        $node2 = $node->replaceAttribute(
+        $node2 = $node->addAttribute(
             $attribute = new Attribute('foo', 'baz')
         );
 
@@ -165,22 +165,6 @@ class ElementTest extends TestCase
             $attribute,
             $node2->attributes()->get('foo')
         );
-    }
-
-    public function testDoNothingWhenReplacingUnknownAttribute()
-    {
-        $element = new Element(
-            'foo',
-            Set::of(
-                Attribute::class,
-                new Attribute('foo'),
-                new Attribute('bar'),
-            ),
-        );
-
-        $this->assertSame($element, $element->replaceAttribute(
-            new Attribute('baz')
-        ));
     }
 
     public function testAddAttribute()
@@ -221,20 +205,6 @@ class ElementTest extends TestCase
             $attribute,
             $node2->attributes()->get('baz')
         );
-    }
-
-    public function testDoNothingWhenAttributeAlreadyExists()
-    {
-        $element = new Element(
-            'foo',
-            Set::of(
-                Attribute::class,
-                new Attribute('foo'),
-                new Attribute('bar'),
-            ),
-        );
-
-        $this->assertSame($element, $element->addAttribute(new Attribute('foo', 'baz')));
     }
 
     public function testDefaultChildren()

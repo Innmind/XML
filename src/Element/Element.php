@@ -98,27 +98,8 @@ class Element implements ElementInterface
         return $element;
     }
 
-    public function replaceAttribute(Attribute $attribute): ElementInterface
-    {
-        if (!$this->attributes->contains($attribute->name())) {
-            return $this;
-        }
-
-        $element = clone $this;
-        $element->attributes = ($this->attributes)(
-            $attribute->name(),
-            $attribute,
-        );
-
-        return $element;
-    }
-
     public function addAttribute(Attribute $attribute): ElementInterface
     {
-        if ($this->attributes->contains($attribute->name())) {
-            return $this;
-        }
-
         $element = clone $this;
         $element->attributes = ($this->attributes)(
             $attribute->name(),
