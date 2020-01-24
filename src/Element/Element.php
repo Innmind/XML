@@ -76,11 +76,6 @@ class Element implements ElementInterface
         return $this->attributes;
     }
 
-    public function hasAttributes(): bool
-    {
-        return $this->attributes->size() > 0;
-    }
-
     public function attribute(string $name): Attribute
     {
         return $this->attributes->get($name);
@@ -202,7 +197,7 @@ class Element implements ElementInterface
             $this->string = sprintf(
                 '<%s%s>%s</%s>',
                 $this->name(),
-                $this->hasAttributes() ? ' '.join(' ', $attributes)->toString() : '',
+                !$this->attributes()->empty() ? ' '.join(' ', $attributes)->toString() : '',
                 $this->content(),
                 $this->name()
             );

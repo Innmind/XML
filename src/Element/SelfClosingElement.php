@@ -67,7 +67,7 @@ class SelfClosingElement extends Element
             $this->string = sprintf(
                 '<%s%s/>',
                 $this->name(),
-                $this->hasAttributes() ? ' '.join(' ', $attributes)->toString() : ''
+                !$this->attributes()->empty() ? ' '.join(' ', $attributes)->toString() : ''
             );
         }
 

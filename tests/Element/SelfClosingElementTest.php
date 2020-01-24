@@ -62,21 +62,6 @@ class SelfClosingElementTest extends TestCase
         );
     }
 
-    public function testHasAttributes()
-    {
-        $node = new SelfClosingElement('foo');
-        $this->assertFalse($node->hasAttributes());
-
-        $node = new SelfClosingElement(
-            'foo',
-            Set::of(
-                Attribute::class,
-                new Attribute('foo'),
-            ),
-        );
-        $this->assertTrue($node->hasAttributes());
-    }
-
     public function testAttribute()
     {
         $node = new SelfClosingElement(

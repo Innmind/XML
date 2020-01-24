@@ -86,7 +86,7 @@ XML
         $div = $foo->children()->get(3);
         $this->assertInstanceOf(Element::class, $div);
         $this->assertSame('div', $div->name());
-        $this->assertFalse($div->hasAttributes());
+        $this->assertTrue($div->attributes()->empty());
         $this->assertCount(3, $div->children());
         $linebreak = $div->children()->get(0);
         $this->assertInstanceOf(Text::class, $linebreak);
