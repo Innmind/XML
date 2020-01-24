@@ -29,6 +29,14 @@ class TranslatorTest extends TestCase
         );
     }
 
+    public function testDefault()
+    {
+        $this->assertEquals(
+            $this->translate,
+            Translator::default(),
+        );
+    }
+
     public function testThrowWhenInvalidTranslators()
     {
         $this->expectException(\TypeError::class);

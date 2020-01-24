@@ -12,6 +12,8 @@ use function Innmind\Immutable\assertMap;
 
 final class Translator
 {
+    private static ?self $default = null;
+
     /** @var Map<int, NodeTranslator> */
     private Map $translators;
 
@@ -23,6 +25,11 @@ final class Translator
         assertMap('int', NodeTranslator::class, $translators, 1);
 
         $this->translators = $translators;
+    }
+
+    public static function default(): self
+    {
+        return self::$default ??= new self(NodeTranslators::defaults());
     }
 
     public function __invoke(\DOMNode $node): Node
