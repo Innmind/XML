@@ -120,18 +120,18 @@ class SelfClosingElementTest extends TestCase
         );
     }
 
-    public function testThrowWhenRemovingUnknownAttribute()
+    public function testDoNothingWhenRemovingUnknownAttribute()
     {
-        $this->expectException(OutOfBoundsException::class);
-
-        (new SelfClosingElement(
+        $element = new SelfClosingElement(
             'foo',
             Set::of(
                 Attribute::class,
                 new Attribute('foo'),
                 new Attribute('bar'),
             ),
-        ))->removeAttribute('baz');
+        );
+
+        $this->assertSame($element, $element->removeAttribute('baz'));
     }
 
     public function testReplaceAttribute()
@@ -170,20 +170,20 @@ class SelfClosingElementTest extends TestCase
         );
     }
 
-    public function testThrowWhenReplacingUnknownAttribute()
+    public function testDoNothingWhenReplacingUnknownAttribute()
     {
-        $this->expectException(OutOfBoundsException::class);
-
-        (new SelfClosingElement(
+        $element = new SelfClosingElement(
             'foo',
             Set::of(
                 Attribute::class,
                 new Attribute('foo'),
                 new Attribute('bar'),
             ),
-        ))->replaceAttribute(
-            new Attribute('baz')
         );
+
+        $this->assertSame($element, $element->replaceAttribute(
+            new Attribute('baz')
+        ));
     }
 
     public function testAddAttribute()
@@ -226,18 +226,18 @@ class SelfClosingElementTest extends TestCase
         );
     }
 
-    public function testThrowWhenAttributeAlreadyExists()
+    public function testDoNothingWhenAttributeAlreadyExists()
     {
-        $this->expectException(LogicException::class);
-
-        (new SelfClosingElement(
+        $element = new SelfClosingElement(
             'foo',
             Set::of(
                 Attribute::class,
                 new Attribute('foo'),
                 new Attribute('bar'),
             ),
-        ))->addAttribute(new Attribute('foo', 'baz'));
+        );
+
+        $this->assertSame($element, $element->addAttribute(new Attribute('foo', 'baz')));
     }
 
     public function testChildren()

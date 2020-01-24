@@ -89,7 +89,7 @@ class Element implements ElementInterface
     public function removeAttribute(string $name): ElementInterface
     {
         if (!$this->attributes->contains($name)) {
-            throw new OutOfBoundsException;
+            return $this;
         }
 
         $element = clone $this;
@@ -101,7 +101,7 @@ class Element implements ElementInterface
     public function replaceAttribute(Attribute $attribute): ElementInterface
     {
         if (!$this->attributes->contains($attribute->name())) {
-            throw new OutOfBoundsException;
+            return $this;
         }
 
         $element = clone $this;
@@ -116,7 +116,7 @@ class Element implements ElementInterface
     public function addAttribute(Attribute $attribute): ElementInterface
     {
         if ($this->attributes->contains($attribute->name())) {
-            throw new LogicException;
+            return $this;
         }
 
         $element = clone $this;
