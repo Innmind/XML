@@ -20,19 +20,15 @@ final class Attributes
             return $attributes;
         }
 
-        if (!$node->attributes) {
-            return $attributes;
-        }
-
         /**
          * @var string $name
-         * @var mixed $attribute
+         * @var \DOMAttr $attribute
          */
         foreach ($node->attributes as $name => $attribute) {
             $attributes = ($attributes)(
                 new Attribute(
                     $name,
-                    $node->getAttribute($name),
+                    $attribute->value,
                 ),
             );
         }

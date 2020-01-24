@@ -26,10 +26,6 @@ final class Children
         /** @var Sequence<Node> */
         $children = Sequence::of(Node::class);
 
-        if (!$node->childNodes instanceof \DOMNodeList) {
-            return $children;
-        }
-
         foreach ($node->childNodes as $child) {
             $children = ($children)(
                 ($this->translate)($child),
