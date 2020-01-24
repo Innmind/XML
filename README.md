@@ -19,12 +19,12 @@ composer require innmind/xml
 
 ```php
 use function Innmind\Xml\bootstrap;
-use Innmind\Filesystem\Stream\Stream;
+use Innmind\Stream\Readable\Stream;
 
 $read = bootstrap()['reader'];
 
 $tree = $read(
-    new StringStream('<root><foo some="attribute"/></root>')
+    Stream::ofContent('<root><foo some="attribute"/></root>')
 );
 ```
 
@@ -63,11 +63,11 @@ $services = bootstrap();
 $cache = $services['cache']($services['reader']);
 $xml = '<root><foo some="attribute"/></root>';
 $tree = $cache(
-    $stream = new StringStream($xml)
+    $stream = Stream::ofContent($xml),
 );
 $tree2 = $cache($stream);
 $tree3 = $cache(
-    new StringStream($xml)
+    Stream::ofContent($xml),
 );
 ```
 
