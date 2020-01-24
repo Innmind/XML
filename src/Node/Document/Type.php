@@ -8,10 +8,10 @@ use Innmind\Immutable\Str;
 
 final class Type
 {
-    private $name;
-    private $publicId;
-    private $systemId;
-    private $string;
+    private string $name;
+    private string $publicId;
+    private string $systemId;
+    private string $string;
 
     public function __construct(
         string $name,
@@ -25,11 +25,11 @@ final class Type
         $this->name = $name;
         $this->publicId = $publicId;
         $this->systemId = $systemId;
-        $this->string = sprintf(
+        $this->string = \sprintf(
             '<!DOCTYPE %s%s%s>',
             $name,
             $publicId ? ' PUBLIC "'.$publicId.'"' : '',
-            $systemId ? ' "'.$systemId.'"' : ''
+            $systemId ? ' "'.$systemId.'"' : '',
         );
     }
 
@@ -48,7 +48,7 @@ final class Type
         return $this->systemId;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         return $this->string;
     }

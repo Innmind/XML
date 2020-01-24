@@ -13,7 +13,11 @@ use Innmind\Xml\{
     Node\Document\Encoding,
     Node\Document,
 };
-use Innmind\Immutable\Map;
+use Innmind\Immutable\{
+    Map,
+    Sequence,
+};
+use function Innmind\Immutable\unwrap;
 
 final class DocumentTranslator implements NodeTranslator
 {
@@ -28,19 +32,18 @@ final class DocumentTranslator implements NodeTranslator
         return new Document(
             $this->buildVersion($node),
             $node->doctype ? $this->buildDoctype($node->doctype) : null,
-            $node->childNodes ?
-                $this->buildChildren($node->childNodes, $translate) : null,
-            $node->encoding ? $this->buildEncoding($node->encoding) : null
+            $node->encoding ? $this->buildEncoding($node->encoding) : null,
+            ...($node->childNodes ? unwrap($this->buildChildren($node->childNodes, $translate)) : []),
         );
     }
 
     private function buildVersion(\DOMDocument $document): Version
     {
-        list($major, $minor) = explode('.', $document->xmlVersion);
+        [$major, $minor] = \explode('.', $document->xmlVersion);
 
         return new Version(
             (int) $major,
-            (int) $minor
+            (int) $minor,
         );
     }
 
@@ -49,24 +52,27 @@ final class DocumentTranslator implements NodeTranslator
         return new Type(
             $type->name,
             $type->publicId,
-            $type->systemId
+            $type->systemId,
         );
     }
 
+    /**
+     * @return Sequence<Node>
+     */
     private function buildChildren(
         \DOMNodeList $nodes,
         Translator $translate
-    ): Map {
-        $children = new Map('int', Node::class);
+    ): Sequence {
+        /** @var Sequence<Node> */
+        $children = Sequence::of(Node::class);
 
         foreach ($nodes as $child) {
-            if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {
+            if ($child->nodeType === \XML_DOCUMENT_TYPE_NODE) {
                 continue;
             }
 
-            $children = $children->put(
-                $children->size(),
-                $translate($child)
+            $children = ($children)(
+                $translate($child),
             );
         }
 

@@ -3,19 +3,19 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml;
 
-use Innmind\Immutable\MapInterface;
+use Innmind\Immutable\Sequence;
 
 interface Node
 {
     /**
-     * @return MapInterface<int, Node> The int represent the position
+     * @return Sequence<Node>
      */
-    public function children(): MapInterface;
+    public function children(): Sequence;
     public function hasChildren(): bool;
     public function removeChild(int $position): self;
     public function replaceChild(int $position, self $child): self;
     public function prependChild(self $child): self;
     public function appendChild(self $child): self;
     public function content(): string;
-    public function __toString(): string;
+    public function toString(): string;
 }

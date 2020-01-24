@@ -17,9 +17,9 @@ final class Text
                 ->children()
                 ->reduce(
                     '',
-                    function(string $string, int $position, Node $node): string {
+                    function(string $string, Node $node): string {
                         return $string.$this($node);
-                    }
+                    },
                 );
         }
 

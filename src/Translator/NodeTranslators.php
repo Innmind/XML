@@ -11,30 +11,25 @@ use Innmind\Xml\Translator\NodeTranslator\{
     TextTranslator,
     EntityReferenceTranslator,
 };
-use Innmind\Immutable\{
-    MapInterface,
-    Map,
-};
+use Innmind\Immutable\Map;
 
 final class NodeTranslators
 {
-    private static $defaults;
+    /** @var Map<int, NodeTranslator>|null */
+    private static ?Map $defaults = null;
 
     /**
-     * @return MapInterface<int, NodeTranslator>
+     * @return Map<int, NodeTranslator>
      */
-    public static function defaults(): MapInterface
+    public static function defaults(): Map
     {
-        if (!self::$defaults) {
-            self::$defaults = Map::of('int', NodeTranslator::class)
-                (XML_DOCUMENT_NODE, new DocumentTranslator)
-                (XML_ELEMENT_NODE, new ElementTranslator)
-                (XML_CDATA_SECTION_NODE, new CharacterDataTranslator)
-                (XML_TEXT_NODE, new TextTranslator)
-                (XML_COMMENT_NODE, new CommentTranslator)
-                (XML_ENTITY_REF_NODE, new EntityReferenceTranslator);
-        }
-
-        return self::$defaults;
+        /** @var Map<int, NodeTranslator> */
+        return self::$defaults ??= Map::of('int', NodeTranslator::class)
+            (\XML_DOCUMENT_NODE, new DocumentTranslator)
+            (\XML_ELEMENT_NODE, new ElementTranslator)
+            (\XML_CDATA_SECTION_NODE, new CharacterDataTranslator)
+            (\XML_TEXT_NODE, new TextTranslator)
+            (\XML_COMMENT_NODE, new CommentTranslator)
+            (\XML_ENTITY_REF_NODE, new EntityReferenceTranslator);
     }
 }

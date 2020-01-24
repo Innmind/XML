@@ -14,6 +14,7 @@ use Innmind\Xml\{
     Element\Element,
 };
 use Innmind\Immutable\Map;
+use function Innmind\Immutable\unwrap;
 
 final class ElementTranslator implements NodeTranslator
 {
@@ -27,20 +28,21 @@ final class ElementTranslator implements NodeTranslator
 
         $attributes = (new Attributes)($node);
 
+        /** @psalm-suppress RedundantCondition */
         if (
             $node->childNodes instanceof \DOMNodeList &&
             $node->childNodes->length === 0
         ) {
             return new SelfClosingElement(
                 $node->nodeName,
-                $attributes
+                $attributes,
             );
         }
 
         return new Element(
             $node->nodeName,
             $attributes,
-            (new Children($translate))($node)
+            ...unwrap((new Children($translate))($node)),
         );
     }
 }

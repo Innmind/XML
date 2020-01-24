@@ -18,7 +18,7 @@ class EncodingTest extends TestCase
     {
         $encoding = new Encoding($string);
 
-        $this->assertSame($string, (string) $encoding);
+        $this->assertSame($string, $encoding->toString());
     }
 
     /**

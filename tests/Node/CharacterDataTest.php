@@ -8,7 +8,7 @@ use Innmind\Xml\{
     Node,
     Exception\LogicException,
 };
-use Innmind\Immutable\MapInterface;
+use Innmind\Immutable\Sequence;
 use PHPUnit\Framework\TestCase;
 
 class CharacterDataTest extends TestCase
@@ -25,12 +25,8 @@ class CharacterDataTest extends TestCase
     {
         $characterData = new CharacterData('foo');
 
-        $this->assertInstanceOf(MapInterface::class, $characterData->children());
-        $this->assertSame('int', (string) $characterData->children()->keyType());
-        $this->assertSame(
-            Node::class,
-            (string) $characterData->children()->ValueType()
-        );
+        $this->assertInstanceOf(Sequence::class, $characterData->children());
+        $this->assertSame(Node::class, $characterData->children()->type());
         $this->assertCount(0, $characterData->children());
         $this->assertFalse($characterData->hasChildren());
     }
@@ -82,7 +78,7 @@ class CharacterDataTest extends TestCase
     {
         $this->assertSame(
             '<![CDATA[foo]]>',
-            (string) new CharacterData('foo')
+            (new CharacterData('foo'))->toString(),
         );
     }
 }

@@ -10,7 +10,7 @@ use Innmind\Xml\{
 
 final class PreviousSibling
 {
-    private $node;
+    private Node $node;
 
     public function __construct(Node $node)
     {
@@ -22,10 +22,7 @@ final class PreviousSibling
         $parent = (new ParentNode($this->node))($tree);
         $position = $parent
             ->children()
-            ->filter(function(int $position, Node $node) {
-                return $node === $this->node;
-            })
-            ->key();
+            ->indexOf($this->node);
 
         if ($position === 0) {
             throw new NoPreviousSibling;

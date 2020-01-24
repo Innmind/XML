@@ -12,8 +12,9 @@ use Innmind\Xml\{
     Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
-    MapInterface,
     Map,
+    Set,
+    Sequence,
 };
 use PHPUnit\Framework\TestCase;
 
@@ -41,37 +42,19 @@ class ElementTest extends TestCase
         new Element('');
     }
 
-    public function testAttributes()
-    {
-        $node = new Element(
-            'foo',
-            $expected = new Map('string', Attribute::class)
-        );
-
-        $this->assertSame($expected, $node->attributes());
-    }
-
     public function testThrowWhenInvalidAttributes()
     {
         $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 2 must be of type MapInterface<string, Innmind\Xml\Attribute>');
+        $this->expectExceptionMessage('Argument 2 must be of type Set<Innmind\Xml\Attribute>');
 
-        new Element('foo', new Map('string', 'string'));
-    }
-
-    public function testThrowWhenInvalidChildren()
-    {
-        $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 3 must be of type MapInterface<int, Innmind\Xml\Node>');
-
-        new Element('foo', null, new Map('string', 'string'));
+        new Element('foo', Set::of('string'));
     }
 
     public function testDefaultAttributes()
     {
         $node = new Element('foo');
 
-        $this->assertInstanceOf(MapInterface::class, $node->attributes());
+        $this->assertInstanceOf(Map::class, $node->attributes());
         $this->assertSame('string', (string) $node->attributes()->keyType());
         $this->assertSame(
             Attribute::class,
@@ -79,28 +62,14 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testHasAttributes()
-    {
-        $node = new Element(
-            'foo',
-            new Map('string', Attribute::class)
-        );
-        $this->assertFalse($node->hasAttributes());
-
-        $node = new Element(
-            'foo',
-            Map::of('string', Attribute::class)
-                ('foo', new Attribute\Attribute('foo'))
-        );
-        $this->assertTrue($node->hasAttributes());
-    }
-
     public function testAttribute()
     {
         $node = new Element(
             'foo',
-            Map::of('string', Attribute::class)
-                ('foo', $expected = new Attribute\Attribute('foo'))
+            Set::of(
+                Attribute::class,
+                $expected = new Attribute('foo'),
+            ),
         );
 
         $this->assertSame($expected, $node->attribute('foo'));
@@ -110,9 +79,11 @@ class ElementTest extends TestCase
     {
         $node = new Element(
             'foo',
-            Map::of('string', Attribute::class)
-                ('foo', new Attribute\Attribute('foo'))
-                ('bar', new Attribute\Attribute('bar'))
+            Set::of(
+                Attribute::class,
+                new Attribute('foo'),
+                new Attribute('bar'),
+            ),
         );
 
         $node2 = $node->removeAttribute('foo');
@@ -134,29 +105,33 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testThrowWhenRemovingUnknownAttribute()
+    public function testDoNothingWhenRemovingUnknownAttribute()
     {
-        $this->expectException(OutOfBoundsException::class);
-
-        (new Element(
+        $element = new Element(
             'foo',
-            Map::of('string', Attribute::class)
-                ('foo', new Attribute\Attribute('foo'))
-                ('bar', new Attribute\Attribute('bar'))
-        ))->removeAttribute('baz');
+            Set::of(
+                Attribute::class,
+                new Attribute('foo'),
+                new Attribute('bar'),
+            ),
+        );
+
+        $this->assertSame($element, $element->removeAttribute('baz'));
     }
 
     public function testReplaceAttribute()
     {
         $node = new Element(
             'foo',
-            Map::of('string', Attribute::class)
-                ('foo', new Attribute\Attribute('foo'))
-                ('bar', new Attribute\Attribute('bar'))
+            Set::of(
+                Attribute::class,
+                new Attribute('foo'),
+                new Attribute('bar'),
+            ),
         );
 
-        $node2 = $node->replaceAttribute(
-            $attribute = new Attribute\Attribute('foo', 'baz')
+        $node2 = $node->addAttribute(
+            $attribute = new Attribute('foo', 'baz')
         );
 
         $this->assertNotSame($node, $node2);
@@ -180,31 +155,19 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testThrowWhenReplacingUnknownAttribute()
-    {
-        $this->expectException(OutOfBoundsException::class);
-
-        (new Element(
-            'foo',
-            Map::of('string', Attribute::class)
-                ('foo', new Attribute\Attribute('foo'))
-                ('bar', new Attribute\Attribute('bar'))
-        ))->replaceAttribute(
-            new Attribute\Attribute('baz')
-        );
-    }
-
     public function testAddAttribute()
     {
         $node = new Element(
             'foo',
-            Map::of('string', Attribute::class)
-                ('foo', new Attribute\Attribute('foo'))
-                ('bar', new Attribute\Attribute('bar'))
+            Set::of(
+                Attribute::class,
+                new Attribute('foo'),
+                new Attribute('bar'),
+            ),
         );
 
         $node2 = $node->addAttribute(
-            $attribute = new Attribute\Attribute('baz', 'baz')
+            $attribute = new Attribute('baz', 'baz')
         );
 
         $this->assertNotSame($node, $node2);
@@ -232,39 +195,12 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testThrowWhenAttributeAlreadyExists()
-    {
-        $this->expectException(LogicException::class);
-
-        (new Element(
-            'foo',
-            Map::of('string', Attribute::class)
-                ('foo', new Attribute\Attribute('foo'))
-                ('bar', new Attribute\Attribute('bar'))
-        ))->addAttribute(new Attribute\Attribute('foo', 'baz'));
-    }
-
-    public function testChildren()
-    {
-        $node = new Element(
-            'foo',
-            null,
-            $expected = new Map('int', Node::class)
-        );
-
-        $this->assertSame($expected, $node->children());
-    }
-
     public function testDefaultChildren()
     {
         $node = new Element('foo');
 
-        $this->assertInstanceOf(MapInterface::class, $node->children());
-        $this->assertSame('int', (string) $node->children()->keyType());
-        $this->assertSame(
-            Node::class,
-            (string) $node->children()->valueType()
-        );
+        $this->assertInstanceOf(Sequence::class, $node->children());
+        $this->assertSame(Node::class, $node->children()->type());
     }
 
     public function testHasChildren()
@@ -272,8 +208,7 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('bar'))
+            new Element('bar'),
         );
         $this->assertTrue($node->hasChildren());
 
@@ -285,10 +220,9 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz'))
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $element2 = $element->removeChild(1);
@@ -316,10 +250,9 @@ class ElementTest extends TestCase
         (new Element(
             'foobar',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz'))
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         ))->removeChild(3);
     }
 
@@ -328,10 +261,9 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz'))
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $element2 = $element->replaceChild(
@@ -367,10 +299,9 @@ class ElementTest extends TestCase
         (new Element(
             'foobar',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz'))
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         ))->replaceChild(
             3,
             $this->createMock(Node::class)
@@ -382,10 +313,9 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz'))
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $element2 = $element->prependChild(
@@ -417,15 +347,14 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testAopendChild()
+    public function testAppendChild()
     {
         $element = new Element(
             'foobar',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz'))
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $element2 = $element->appendChild(
@@ -470,8 +399,7 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             null,
-            Map::of('int', Node::class)
-                (0, new Element('bar'))
+            new Element('bar'),
         );
 
         $this->assertSame(
@@ -484,28 +412,31 @@ class ElementTest extends TestCase
     {
         $this->assertSame(
             '<foo></foo>',
-            (string) new Element('foo')
+            (new Element('foo'))->toString(),
         );
         $this->assertSame(
             '<foo bar="baz" baz="foo"></foo>',
-            (string) new Element(
+            (new Element(
                 'foo',
-                Map::of('string', Attribute::class)
-                    ('bar', new Attribute\Attribute('bar', 'baz'))
-                    ('baz', new Attribute\Attribute('baz', 'foo'))
-            )
+                Set::of(
+                    Attribute::class,
+                    new Attribute('bar', 'baz'),
+                    new Attribute('baz', 'foo'),
+                ),
+            ))->toString(),
         );
         $this->assertSame(
             '<foo bar="baz" baz="foo"><bar></bar><baz></baz></foo>',
-            (string) new Element(
+            (new Element(
                 'foo',
-                Map::of('string', Attribute::class)
-                    ('bar', new Attribute\Attribute('bar', 'baz'))
-                    ('baz', new Attribute\Attribute('baz', 'foo')),
-                Map::of('int', Node::class)
-                    (0, new Element('bar'))
-                    (1, new Element('baz'))
-            )
+                Set::of(
+                    Attribute::class,
+                    new Attribute('bar', 'baz'),
+                    new Attribute('baz', 'foo'),
+                ),
+                new Element('bar'),
+                new Element('baz'),
+            ))->toString(),
         );
     }
 }

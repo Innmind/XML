@@ -7,26 +7,25 @@ use Innmind\Xml\{
     Node,
     Exception\LogicException,
 };
-use Innmind\Immutable\{
-    MapInterface,
-    Map,
-};
+use Innmind\Immutable\Sequence;
 
 final class EntityReference implements Node
 {
-    private $data;
-    private $children;
+    private string $data;
+    /** @var Sequence<Node> */
+    private Sequence $children;
 
     public function __construct(string $data)
     {
         $this->data = $data;
-        $this->children = new Map('int', Node::class);
+        /** @var Sequence<Node> */
+        $this->children = Sequence::of(Node::class);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function children(): MapInterface
+    public function children(): Sequence
     {
         return $this->children;
     }
@@ -38,22 +37,22 @@ final class EntityReference implements Node
 
     public function removeChild(int $position): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function replaceChild(int $position, Node $node): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function prependChild(Node $child): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function appendChild(Node $child): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function content(): string
@@ -61,7 +60,7 @@ final class EntityReference implements Node
         return $this->data;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         return "&{$this->data};";
     }

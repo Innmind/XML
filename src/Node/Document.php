@@ -10,40 +10,32 @@ use Innmind\Xml\{
     Node\Document\Encoding,
     Exception\OutOfBoundsException,
 };
-use Innmind\Immutable\{
-    MapInterface,
-    Map,
+use Innmind\Immutable\Sequence;
+use function Innmind\Immutable\{
+    join,
+    unwrap,
 };
 
 final class Document implements Node
 {
-    private $version;
-    private $type;
-    private $children;
-    private $encoding;
+    private Version $version;
+    private ?Type $type = null;
+    /** @var Sequence<Node> */
+    private Sequence $children;
+    private ?Encoding $encoding = null;
 
     public function __construct(
         Version $version,
         Type $type = null,
-        MapInterface $children = null,
-        Encoding $encoding = null
+        Encoding $encoding = null,
+        Node ...$children
     ) {
-        $children = $children ?? new Map('int', Node::class);
-
-        if (
-            (string) $children->keyType() !== 'int' ||
-            (string) $children->valueType() !== Node::class
-        ) {
-            throw new \TypeError(sprintf(
-                'Argument 3 must be of type MapInterface<int, %s>',
-                Node::class
-            ));
-        }
 
         $this->version = $version;
         $this->type = $type;
-        $this->children = $children;
         $this->encoding = $encoding;
+        /** @var Sequence<Node> */
+        $this->children = Sequence::of(Node::class, ...$children);
     }
 
     public function version(): Version
@@ -51,8 +43,10 @@ final class Document implements Node
         return $this->version;
     }
 
+    /** @psalm-suppress InvalidNullableReturnType */
     public function type(): Type
     {
+        /** @psalm-suppress NullableReturnStatement */
         return $this->type;
     }
 
@@ -64,53 +58,43 @@ final class Document implements Node
     /**
      * {@inheritdoc}
      */
-    public function children(): MapInterface
+    public function children(): Sequence
     {
         return $this->children;
     }
 
     public function hasChildren(): bool
     {
-        return $this->children->size() > 0;
+        return !$this->children->empty();
     }
 
     public function removeChild(int $position): Node
     {
-        if (!$this->children->contains($position)) {
-            throw new OutOfBoundsException;
+        if (!$this->children->indices()->contains($position)) {
+            throw new OutOfBoundsException((string) $position);
         }
 
         $document = clone $this;
         $document->children = $this
             ->children
-            ->reduce(
-                new Map('int', Node::class),
-                function(Map $children, int $pos, Node $node) use ($position): Map {
-                    if ($pos === $position) {
-                        return $children;
-                    }
-
-                    return $children->put(
-                        $children->size(),
-                        $node
-                    );
-                }
-            );
+            ->take($position)
+            ->append($this->children->drop($position + 1));
 
         return $document;
     }
 
     public function replaceChild(int $position, Node $node): Node
     {
-        if (!$this->children->contains($position)) {
-            throw new OutOfBoundsException;
+        if (!$this->children->indices()->contains($position)) {
+            throw new OutOfBoundsException((string) $position);
         }
 
         $document = clone $this;
-        $document->children = $this->children->put(
-            $position,
-            $node
-        );
+        $document->children = $this
+            ->children
+            ->take($position)
+            ->add($node)
+            ->append($this->children->drop($position + 1));
 
         return $document;
     }
@@ -118,18 +102,12 @@ final class Document implements Node
     public function prependChild(Node $child): Node
     {
         $document = clone $this;
-        $document->children = $this
-            ->children
-            ->reduce(
-                Map::of('int', Node::class)
-                    (0, $child),
-                function(Map $children, int $position, Node $child): Map {
-                    return $children->put(
-                        $children->size(),
-                        $child
-                    );
-                }
-            );
+        /** @var Sequence<Node> */
+        $document->children = Sequence::of(
+            Node::class,
+            $child,
+            ...unwrap($this->children),
+        );
 
         return $document;
     }
@@ -137,16 +115,15 @@ final class Document implements Node
     public function appendChild(Node $child): Node
     {
         $document = clone $this;
-        $document->children = $this->children->put(
-            $this->children->size(),
-            $child
-        );
+        $document->children = ($this->children)($child);
 
         return $document;
     }
 
+    /** @psalm-suppress InvalidNullableReturnType */
     public function encoding(): Encoding
     {
+        /** @psalm-suppress NullableReturnStatement */
         return $this->encoding;
     }
 
@@ -157,19 +134,24 @@ final class Document implements Node
 
     public function content(): string
     {
-        return (string) $this->children->join('');
-    }
-
-    public function __toString(): string
-    {
-        $string = sprintf(
-            '<?xml version="%s"%s?>',
-            (string) $this->version,
-            $this->encodingIsSpecified() ? ' encoding="'.$this->encoding.'"' : ''
+        $children = $this->children->mapTo(
+            'string',
+            static fn(Node $child): string => $child->toString(),
         );
 
-        if ($this->hasType()) {
-            $string .= "\n".(string) $this->type;
+        return join('', $children)->toString();
+    }
+
+    public function toString(): string
+    {
+        $string = \sprintf(
+            '<?xml version="%s"%s?>',
+            $this->version->toString(),
+            $this->encoding instanceof Encoding ? ' encoding="'.$this->encoding->toString().'"' : '',
+        );
+
+        if ($this->type instanceof Type) {
+            $string .= "\n".$this->type->toString();
         }
 
         return $string."\n".$this->content();

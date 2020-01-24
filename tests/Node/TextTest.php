@@ -8,7 +8,7 @@ use Innmind\Xml\{
     Node,
     Exception\LogicException,
 };
-use Innmind\Immutable\MapInterface;
+use Innmind\Immutable\Sequence;
 use PHPUnit\Framework\TestCase;
 
 class TextTest extends TestCase
@@ -25,12 +25,8 @@ class TextTest extends TestCase
     {
         $text = new Text('foo');
 
-        $this->assertInstanceOf(MapInterface::class, $text->children());
-        $this->assertSame('int', (string) $text->children()->keyType());
-        $this->assertSame(
-            Node::class,
-            (string) $text->children()->valueType()
-        );
+        $this->assertInstanceOf(Sequence::class, $text->children());
+        $this->assertSame(Node::class, $text->children()->type());
         $this->assertCount(0, $text->children());
         $this->assertFalse($text->hasChildren());
     }
@@ -82,7 +78,7 @@ class TextTest extends TestCase
     {
         $this->assertSame(
             'foo',
-            (string) new Text('foo')
+            (new Text('foo'))->toString(),
         );
     }
 }

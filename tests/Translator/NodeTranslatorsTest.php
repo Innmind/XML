@@ -13,7 +13,7 @@ use Innmind\Xml\Translator\{
     NodeTranslator\TextTranslator,
     NodeTranslator\EntityReferenceTranslator,
 };
-use Innmind\Immutable\MapInterface;
+use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
 
 class NodeTranslatorsTest extends TestCase
@@ -22,7 +22,7 @@ class NodeTranslatorsTest extends TestCase
     {
         $defaults = NodeTranslators::defaults();
 
-        $this->assertInstanceOf(MapInterface::class, $defaults);
+        $this->assertInstanceOf(Map::class, $defaults);
         $this->assertSame('int', (string) $defaults->keyType());
         $this->assertSame(
             NodeTranslator::class,

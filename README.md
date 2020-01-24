@@ -1,10 +1,9 @@
 # XML
 
-| `master` | `develop` |
-|----------|-----------|
-| [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Innmind/XML/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/Innmind/XML/?branch=master) | [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/Innmind/XML/badges/quality-score.png?b=develop)](https://scrutinizer-ci.com/g/Innmind/XML/?branch=develop) |
-| [![Code Coverage](https://scrutinizer-ci.com/g/Innmind/XML/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/Innmind/XML/?branch=master) | [![Code Coverage](https://scrutinizer-ci.com/g/Innmind/XML/badges/coverage.png?b=develop)](https://scrutinizer-ci.com/g/Innmind/XML/?branch=develop) |
-| [![Build Status](https://scrutinizer-ci.com/g/Innmind/XML/badges/build.png?b=master)](https://scrutinizer-ci.com/g/Innmind/XML/build-status/master) | [![Build Status](https://scrutinizer-ci.com/g/Innmind/XML/badges/build.png?b=develop)](https://scrutinizer-ci.com/g/Innmind/XML/build-status/develop) |
+| `develop` |
+|-----------|
+| [![codecov](https://codecov.io/gh/Innmind/XML/branch/develop/graph/badge.svg)](https://codecov.io/gh/Innmind/XML) |
+| [![Build Status](https://github.com/Innmind/XML/workflows/CI/badge.svg)](https://github.com/Innmind/XML/actions?query=workflow%3ACI) |
 
 This library is an abstraction on top of the `\DOM*` classes of php, the goal is to clarify the interfaces of each node.
 
@@ -20,12 +19,12 @@ composer require innmind/xml
 
 ```php
 use function Innmind\Xml\bootstrap;
-use Innmind\Filesystem\Stream\Stream;
+use Innmind\Stream\Readable\Stream;
 
 $read = bootstrap()['reader'];
 
 $tree = $read(
-    new StringStream('<root><foo some="attribute"/></root>')
+    Stream::ofContent('<root><foo some="attribute"/></root>')
 );
 ```
 
@@ -64,11 +63,11 @@ $services = bootstrap();
 $cache = $services['cache']($services['reader']);
 $xml = '<root><foo some="attribute"/></root>';
 $tree = $cache(
-    $stream = new StringStream($xml)
+    $stream = Stream::ofContent($xml),
 );
 $tree2 = $cache($stream);
 $tree3 = $cache(
-    new StringStream($xml)
+    Stream::ofContent($xml),
 );
 ```
 

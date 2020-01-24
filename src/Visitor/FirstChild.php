@@ -16,6 +16,6 @@ final class FirstChild
             throw new NodeDoesntHaveChildren;
         }
 
-        return $node->children()->get(0);
+        return $node->children()->first();
     }
 }

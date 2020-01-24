@@ -7,14 +7,14 @@ use Innmind\Xml\Exception\DomainException;
 
 final class Version
 {
-    private $major;
-    private $minor;
-    private $string;
+    private int $major;
+    private int $minor;
+    private string $string;
 
     public function __construct(int $major, int $minor = 0)
     {
         if ($major < 0 || $minor < 0) {
-            throw new DomainException;
+            throw new DomainException("$major.$minor");
         }
 
         $this->major = $major;
@@ -32,7 +32,7 @@ final class Version
         return $this->minor;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         return $this->string;
     }

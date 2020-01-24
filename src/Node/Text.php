@@ -7,11 +7,11 @@ use Innmind\Xml\{
     Node,
     Exception\LogicException,
 };
-use Innmind\Immutable\MapInterface;
+use Innmind\Immutable\Sequence;
 
 final class Text implements Node
 {
-    private $data;
+    private CharacterData $data;
 
     public function __construct(string $data)
     {
@@ -21,7 +21,7 @@ final class Text implements Node
     /**
      * {@inheritdoc}
      */
-    public function children(): MapInterface
+    public function children(): Sequence
     {
         return $this->data->children();
     }
@@ -33,22 +33,22 @@ final class Text implements Node
 
     public function removeChild(int $position): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function replaceChild(int $position, Node $node): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function prependChild(Node $child): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function appendChild(Node $child): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function content(): string
@@ -56,7 +56,7 @@ final class Text implements Node
         return $this->data->content();
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         return $this->data->content();
     }

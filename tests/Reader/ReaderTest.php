@@ -17,7 +17,7 @@ class ReaderTest extends TestCase
 {
     private $read;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->read = new Reader(
             new Translator(
@@ -31,6 +31,14 @@ class ReaderTest extends TestCase
         $this->assertInstanceOf(
             ReaderInterface::class,
             $this->read
+        );
+    }
+
+    public function testUseDefaultTranslatorWhenNoneProvided()
+    {
+        $this->assertEquals(
+            $this->read,
+            new Reader,
         );
     }
 
@@ -52,6 +60,6 @@ XML;
         fwrite($res, $xml);
         $node = ($this->read)(new Stream($res));
 
-        $this->assertSame($xml, (string) $node);
+        $this->assertSame($xml, $node->toString());
     }
 }

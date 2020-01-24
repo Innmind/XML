@@ -8,18 +8,18 @@ use Innmind\Immutable\Str;
 
 final class Encoding
 {
-    private $string;
+    private string $string;
 
     public function __construct(string $string)
     {
         if (!Str::of($string)->matches('~^[a-zA-Z0-9\-_:\(\)]+$~')) {
-            throw new DomainException;
+            throw new DomainException($string);
         }
 
         $this->string = $string;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         return $this->string;
     }

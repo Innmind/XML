@@ -9,57 +9,57 @@ use Innmind\Xml\{
     Node,
     Exception\DomainException,
     Exception\OutOfBoundsException,
-    Exception\LogicException,
 };
 use Innmind\Immutable\{
-    MapInterface,
     Map,
+    Sequence,
+    Set,
     Str,
+};
+use function Innmind\Immutable\{
+    assertSet,
+    join,
+    unwrap,
 };
 
 class Element implements ElementInterface
 {
-    private $name;
-    private $attributes;
-    private $children;
-    private $content;
-    private $string;
+    private string $name;
+    /** @var Map<string, Attribute> */
+    private Map $attributes;
+    /** @var Sequence<Node> */
+    private Sequence $children;
+    private ?string $content = null;
+    private ?string $string = null;
 
+    /**
+     * @param Set<Attribute>|null $attributes
+     */
     public function __construct(
         string $name,
-        MapInterface $attributes = null,
-        MapInterface $children = null
+        Set $attributes = null,
+        Node ...$children
     ) {
-        $attributes = $attributes ?? new Map('string', Attribute::class);
-        $children = $children ?? new Map('int', Node::class);
+        /** @var Set<Attribute> */
+        $attributes ??= Set::of(Attribute::class);
 
-        if (
-            (string) $attributes->keyType() !== 'string' ||
-            (string) $attributes->valueType() !== Attribute::class
-        ) {
-            throw new \TypeError(sprintf(
-                'Argument 2 must be of type MapInterface<string, %s>',
-                Attribute::class
-            ));
-        }
-
-        if (
-            (string) $children->keyType() !== 'int' ||
-            (string) $children->valueType() !== Node::class
-        ) {
-            throw new \TypeError(sprintf(
-                'Argument 3 must be of type MapInterface<int, %s>',
-                Node::class
-            ));
-        }
+        assertSet(Attribute::class, $attributes, 2);
 
         if (Str::of($name)->empty()) {
             throw new DomainException;
         }
 
         $this->name = $name;
-        $this->attributes = $attributes;
-        $this->children = $children;
+        /** @var Map<string, Attribute> */
+        $this->attributes = $attributes->toMapOf(
+            'string',
+            Attribute::class,
+            static function(Attribute $attribute): \Generator {
+                yield $attribute->name() => $attribute;
+            },
+        );
+        /** @var Sequence<Node> */
+        $this->children = Sequence::of(Node::class, ...$children);
     }
 
     public function name(): string
@@ -70,14 +70,9 @@ class Element implements ElementInterface
     /**
      * {@inheritdoc}
      */
-    public function attributes(): MapInterface
+    public function attributes(): Map
     {
         return $this->attributes;
-    }
-
-    public function hasAttributes(): bool
-    {
-        return $this->attributes->size() > 0;
     }
 
     public function attribute(string $name): Attribute
@@ -88,7 +83,7 @@ class Element implements ElementInterface
     public function removeAttribute(string $name): ElementInterface
     {
         if (!$this->attributes->contains($name)) {
-            throw new OutOfBoundsException;
+            return $this;
         }
 
         $element = clone $this;
@@ -97,86 +92,54 @@ class Element implements ElementInterface
         return $element;
     }
 
-    public function replaceAttribute(Attribute $attribute): ElementInterface
-    {
-        if (!$this->attributes->contains($attribute->name())) {
-            throw new OutOfBoundsException;
-        }
-
-        $element = clone $this;
-        $element->attributes = $this->attributes->put(
-            $attribute->name(),
-            $attribute
-        );
-
-        return $element;
-    }
-
     public function addAttribute(Attribute $attribute): ElementInterface
     {
-        if ($this->attributes->contains($attribute->name())) {
-            throw new LogicException;
-        }
-
         $element = clone $this;
-        $element->attributes = $this->attributes->put(
+        $element->attributes = ($this->attributes)(
             $attribute->name(),
-            $attribute
+            $attribute,
         );
 
         return $element;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function children(): MapInterface
+    public function children(): Sequence
     {
         return $this->children;
     }
 
     public function hasChildren(): bool
     {
-        return $this->children->size() > 0;
+        return !$this->children->empty();
     }
 
     public function removeChild(int $position): Node
     {
-        if (!$this->children->contains($position)) {
-            throw new OutOfBoundsException;
+        if (!$this->children->indices()->contains($position)) {
+            throw new OutOfBoundsException((string) $position);
         }
 
         $element = clone $this;
         $element->children = $this
             ->children
-            ->reduce(
-                new Map('int', Node::class),
-                function(Map $children, int $pos, Node $node) use ($position): Map {
-                    if ($pos === $position) {
-                        return $children;
-                    }
-
-                    return $children->put(
-                        $children->size(),
-                        $node
-                    );
-                }
-            );
+            ->take($position)
+            ->append($this->children->drop($position + 1));
 
         return $element;
     }
 
     public function replaceChild(int $position, Node $node): Node
     {
-        if (!$this->children->contains($position)) {
-            throw new OutOfBoundsException;
+        if (!$this->children->indices()->contains($position)) {
+            throw new OutOfBoundsException((string) $position);
         }
 
         $element = clone $this;
-        $element->children = $this->children->put(
-            $position,
-            $node
-        );
+        $element->children = $this
+            ->children
+            ->take($position)
+            ->add($node)
+            ->append($this->children->drop($position + 1));
 
         return $element;
     }
@@ -184,18 +147,12 @@ class Element implements ElementInterface
     public function prependChild(Node $child): Node
     {
         $element = clone $this;
-        $element->children = $this
-            ->children
-            ->reduce(
-                Map::of('int', Node::class)
-                    (0, $child),
-                function(Map $children, int $position, Node $child): Map {
-                    return $children->put(
-                        $children->size(),
-                        $child
-                    );
-                }
-            );
+        /** @var Sequence<Node> */
+        $element->children = Sequence::of(
+            Node::class,
+            $child,
+            ...unwrap($this->children),
+        );
 
         return $element;
     }
@@ -203,10 +160,7 @@ class Element implements ElementInterface
     public function appendChild(Node $child): Node
     {
         $element = clone $this;
-        $element->children = $this->children->put(
-            $this->children->size(),
-            $child
-        );
+        $element->children = ($this->children)($child);
 
         return $element;
     }
@@ -214,21 +168,34 @@ class Element implements ElementInterface
     public function content(): string
     {
         if ($this->content === null) {
-            $this->content = (string) $this->children->join('');
+            $children = $this->children->mapTo(
+                'string',
+                static fn(Node $node): string => $node->toString(),
+            );
+
+            $this->content = join('', $children)->toString();
         }
 
         return $this->content;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         if ($this->string === null) {
-            $this->string = sprintf(
+            $attributes = $this
+                ->attributes
+                ->values()
+                ->mapTo(
+                    'string',
+                    static fn(Attribute $attribute): string => $attribute->toString(),
+                );
+
+            $this->string = \sprintf(
                 '<%s%s>%s</%s>',
                 $this->name(),
-                $this->hasAttributes() ? ' '.$this->attributes->join(' ') : '',
+                !$this->attributes()->empty() ? ' '.join(' ', $attributes)->toString() : '',
                 $this->content(),
-                $this->name()
+                $this->name(),
             );
         }
 

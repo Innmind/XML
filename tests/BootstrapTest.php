@@ -20,7 +20,7 @@ class BootstrapTest extends TestCase
         $storage = $services['cache_storage'];
 
         $this->assertInstanceOf(Reader::class, $reader);
-        $this->assertInternalType('callable', $cache);
+        $this->assertIsCallable($cache);
         $this->assertInstanceOf(Cache::class, $cache($reader));
         $this->assertInstanceOf(Cache\Storage::class, $storage);
     }

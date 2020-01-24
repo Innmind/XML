@@ -9,16 +9,18 @@ use Innmind\Immutable\Map;
 
 final class Storage
 {
-    private $map;
+    /** @var Map<Readable, Node> */
+    private Map $map;
 
     public function __construct()
     {
-        $this->map = new Map(Readable::class, Node::class);
+        /** @var Map<Readable, Node> */
+        $this->map = Map::of(Readable::class, Node::class);
     }
 
     public function add(Readable $xml, Node $node): void
     {
-        $this->map = $this->map->put($xml, $node);
+        $this->map = ($this->map)($xml, $node);
     }
 
     public function contains(Readable $xml): bool

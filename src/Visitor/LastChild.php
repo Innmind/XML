@@ -16,8 +16,6 @@ final class LastChild
             throw new NodeDoesntHaveChildren;
         }
 
-        return $node->children()->get(
-            $node->children()->size() - 1
-        );
+        return $node->children()->last();
     }
 }

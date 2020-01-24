@@ -12,17 +12,17 @@ use Innmind\Stream\Readable;
 
 final class Reader implements ReaderInterface
 {
-    private $translate;
+    private Translator $translate;
 
-    public function __construct(Translator $translate)
+    public function __construct(Translator $translate = null)
     {
-        $this->translate = $translate;
+        $this->translate = $translate ?? Translator::default();
     }
 
     public function __invoke(Readable $content): Node
     {
         $xml = new \DOMDocument;
-        $xml->loadXML((string) $content);
+        $xml->loadXML($content->toString());
         $xml->normalizeDocument();
 
         return ($this->translate)($xml);

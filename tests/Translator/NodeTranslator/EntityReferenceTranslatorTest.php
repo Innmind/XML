@@ -29,7 +29,7 @@ class EntityReferenceTranslatorTest extends TestCase
         $node = $translate(
             new \DOMEntityReference('gt'),
             new Translator(
-                new Map('int', NodeTranslator::class)
+                Map::of('int', NodeTranslator::class)
             )
         );
 
@@ -44,7 +44,7 @@ class EntityReferenceTranslatorTest extends TestCase
         (new EntityReferenceTranslator)(
             new \DOMNode,
             new Translator(
-                new Map('int', NodeTranslator::class)
+                Map::of('int', NodeTranslator::class)
             )
         );
     }

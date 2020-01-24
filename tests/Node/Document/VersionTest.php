@@ -17,9 +17,9 @@ class VersionTest extends TestCase
 
         $this->assertSame(2, $version->major());
         $this->assertSame(1, $version->minor());
-        $this->assertSame('2.1', (string) $version);
+        $this->assertSame('2.1', $version->toString());
 
-        $this->assertSame('1.0', (string) new Version(1));
+        $this->assertSame('1.0', (new Version(1))->toString());
     }
 
     public function testThrowWhenMajorTooLow()

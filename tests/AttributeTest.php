@@ -1,25 +1,16 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\Xml\Attribute;
+namespace Tests\Innmind\Xml;
 
 use Innmind\Xml\{
-    Attribute\Attribute,
-    Attribute as AttributeInterface,
+    Attribute,
     Exception\DomainException,
 };
 use PHPUnit\Framework\TestCase;
 
 class AttributeTest extends TestCase
 {
-    public function testInterface()
-    {
-        $this->assertInstanceOf(
-            AttributeInterface::class,
-            new Attribute('foo')
-        );
-    }
-
     public function testThrowWhenEmptyName()
     {
         $this->expectException(DomainException::class);
@@ -47,7 +38,7 @@ class AttributeTest extends TestCase
     {
         $this->assertSame(
             'foo',
-            (string) new Attribute('foo')
+            (new Attribute('foo'))->toString(),
         );
     }
 
@@ -55,7 +46,7 @@ class AttributeTest extends TestCase
     {
         $this->assertSame(
             'foo="bar"',
-            (string) new Attribute('foo', 'bar')
+            (new Attribute('foo', 'bar'))->toString(),
         );
     }
 }

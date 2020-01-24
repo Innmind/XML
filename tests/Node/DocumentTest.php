@@ -14,8 +14,8 @@ use Innmind\Xml\{
     Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
-    MapInterface,
     Map,
+    Sequence,
 };
 use PHPUnit\Framework\TestCase;
 
@@ -51,42 +51,12 @@ class DocumentTest extends TestCase
         $this->assertSame($type, $document->type());
     }
 
-    public function testChildren()
-    {
-        $document = new Document(
-            new Version(1),
-            null,
-            $children = new Map('int', Node::class)
-        );
-
-        $this->assertSame($children, $document->children());
-    }
-
     public function testDefaultChildren()
     {
         $document = new Document(new Version(1));
 
-        $this->assertInstanceOf(
-            MapInterface::class,
-            $document->children()
-        );
-        $this->assertSame('int', (string) $document->children()->keyType());
-        $this->assertSame(
-            Node::class,
-            (string) $document->children()->valueType()
-        );
-    }
-
-    public function testThrowWhenInvalidChildren()
-    {
-        $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 3 must be of type MapInterface<int, Innmind\Xml\Node>');
-
-        new Document(
-            new Version(1),
-            null,
-            new Map('string', 'string')
-        );
+        $this->assertInstanceOf(Sequence::class, $document->children());
+        $this->assertSame(Node::class, $document->children()->type());
     }
 
     public function testEncoding()
@@ -97,8 +67,7 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             null,
-            null,
-            $encoding = new Encoding('utf-8')
+            $encoding = new Encoding('utf-8'),
         );
         $this->assertTrue($document->encodingIsSpecified());
         $this->assertSame($encoding, $document->encoding());
@@ -119,8 +88,8 @@ class DocumentTest extends TestCase
             (new Document(
                 new Version(1),
                 null,
-                (new Map('int', Node::class))
-                    ->put(0, new Element('foo'))
+                null,
+                new Element('foo'),
             ))->content()
         );
     }
@@ -129,35 +98,32 @@ class DocumentTest extends TestCase
     {
         $this->assertSame(
             '<?xml version="2.1"?>'."\n",
-            (string) new Document(new Version(2, 1))
+            (new Document(new Version(2, 1)))->toString(),
         );
         $this->assertSame(
             '<?xml version="2.1" encoding="utf-8"?>'."\n",
-            (string) new Document(
+            (new Document(
                 new Version(2, 1),
                 null,
-                null,
-                new Encoding('utf-8')
-            )
+                new Encoding('utf-8'),
+            ))->toString(),
         );
         $this->assertSame(
             '<?xml version="2.1" encoding="utf-8"?>'."\n".'<!DOCTYPE html>'."\n",
-            (string) new Document(
+            (new Document(
                 new Version(2, 1),
                 new Type('html'),
-                null,
-                new Encoding('utf-8')
-            )
+                new Encoding('utf-8'),
+            ))->toString(),
         );
         $this->assertSame(
             '<?xml version="2.1" encoding="utf-8"?>'."\n".'<!DOCTYPE html>'."\n".'<foo/>',
-            (string) new Document(
+            (new Document(
                 new Version(2, 1),
                 new Type('html'),
-                Map::of('int', Node::class)
-                    (0, new SelfClosingElement('foo')),
-                new Encoding('utf-8')
-            )
+                new Encoding('utf-8'),
+                new SelfClosingElement('foo'),
+            ))->toString(),
         );
     }
 
@@ -166,11 +132,10 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz')),
-            new Encoding('utf-8')
+            new Encoding('utf-8'),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $document2 = $document->removeChild(1);
@@ -199,11 +164,10 @@ class DocumentTest extends TestCase
         (new Document(
             new Version(1),
             new Type('html'),
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz')),
-            new Encoding('utf-8')
+            new Encoding('utf-8'),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         ))->removeChild(3);
     }
 
@@ -212,11 +176,10 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz')),
-            new Encoding('utf-8')
+            new Encoding('utf-8'),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $document2 = $document->replaceChild(
@@ -253,11 +216,10 @@ class DocumentTest extends TestCase
         (new Document(
             new Version(1),
             new Type('html'),
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz')),
-            new Encoding('utf-8')
+            new Encoding('utf-8'),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         ))->replaceChild(
             3,
             $this->createMock(Node::class)
@@ -269,11 +231,10 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz')),
-            new Encoding('utf-8')
+            new Encoding('utf-8'),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $document2 = $document->prependChild(
@@ -311,11 +272,10 @@ class DocumentTest extends TestCase
         $document = new Document(
             new Version(1),
             new Type('html'),
-            Map::of('int', Node::class)
-                (0, new Element('foo'))
-                (1, new Element('bar'))
-                (2, new Element('baz')),
-            new Encoding('utf-8')
+            new Encoding('utf-8'),
+            new Element('foo'),
+            new Element('bar'),
+            new Element('baz'),
         );
 
         $document2 = $document->appendChild(

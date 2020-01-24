@@ -7,26 +7,25 @@ use Innmind\Xml\{
     Node,
     Exception\LogicException,
 };
-use Innmind\Immutable\{
-    MapInterface,
-    Map,
-};
+use Innmind\Immutable\Sequence;
 
 final class CharacterData implements Node
 {
-    private $value;
-    private $children;
+    private string $value;
+    /** @var Sequence<Node> */
+    private Sequence $children;
 
     public function __construct(string $value)
     {
         $this->value = $value;
-        $this->children = new Map('int', Node::class);
+        /** @var Sequence<Node> */
+        $this->children = Sequence::of(Node::class);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function children(): MapInterface
+    public function children(): Sequence
     {
         return $this->children;
     }
@@ -38,22 +37,22 @@ final class CharacterData implements Node
 
     public function removeChild(int $position): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function replaceChild(int $position, Node $node): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function prependChild(Node $child): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function appendChild(Node $child): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function content(): string
@@ -61,7 +60,7 @@ final class CharacterData implements Node
         return $this->value;
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         return '<![CDATA['.$this->value.']]>';
     }

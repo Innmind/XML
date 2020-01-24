@@ -7,32 +7,28 @@ use Innmind\Xml\{
     Translator\Translator,
     Node,
 };
-use Innmind\Immutable\{
-    MapInterface,
-    Map,
-};
+use Innmind\Immutable\Sequence;
 
 final class Children
 {
-    private $translate;
+    private Translator $translate;
 
     public function __construct(Translator $translate)
     {
         $this->translate = $translate;
     }
 
-    public function __invoke(\DOMNode $node): MapInterface
+    /**
+     * @return Sequence<Node>
+     */
+    public function __invoke(\DOMNode $node): Sequence
     {
-        $children = new Map('int', Node::class);
-
-        if (!$node->childNodes instanceof \DOMNodeList) {
-            return $children;
-        }
+        /** @var Sequence<Node> */
+        $children = Sequence::of(Node::class);
 
         foreach ($node->childNodes as $child) {
-            $children = $children->put(
-                $children->size(),
-                ($this->translate)($child)
+            $children = ($children)(
+                ($this->translate)($child),
             );
         }
 

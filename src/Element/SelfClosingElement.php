@@ -5,26 +5,22 @@ namespace Innmind\Xml\Element;
 
 use Innmind\Xml\{
     Node,
+    Attribute,
     Exception\LogicException,
 };
-use Innmind\Immutable\{
-    MapInterface,
-    Map,
-};
+use Innmind\Immutable\Set;
+use function Innmind\Immutable\join;
 
 class SelfClosingElement extends Element
 {
-    private $string;
+    private ?string $string = null;
 
-    public function __construct(
-        string $name,
-        MapInterface $attributes = null
-    ) {
-        parent::__construct(
-            $name,
-            $attributes,
-            new Map('int', Node::class)
-        );
+    /**
+     * @param Set<Attribute>|null $attributes
+     */
+    public function __construct(string $name, Set $attributes = null)
+    {
+        parent::__construct($name, $attributes);
     }
 
     public function hasChildren(): bool
@@ -34,22 +30,22 @@ class SelfClosingElement extends Element
 
     public function removeChild(int $position): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function replaceChild(int $position, Node $node): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function prependChild(Node $child): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function appendChild(Node $child): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function content(): string
@@ -57,13 +53,21 @@ class SelfClosingElement extends Element
         return '';
     }
 
-    public function __toString(): string
+    public function toString(): string
     {
         if ($this->string === null) {
-            $this->string = sprintf(
+            $attributes = $this
+                ->attributes()
+                ->values()
+                ->mapTo(
+                    'string',
+                    static fn(Attribute $attribute): string => $attribute->toString(),
+                );
+
+            $this->string = \sprintf(
                 '<%s%s/>',
                 $this->name(),
-                $this->hasAttributes() ? ' '.$this->attributes()->join(' ') : ''
+                !$this->attributes()->empty() ? ' '.join(' ', $attributes)->toString() : '',
             );
         }
 

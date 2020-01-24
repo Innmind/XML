@@ -21,7 +21,7 @@ class TypeTest extends TestCase
         $this->assertSame($name, $type->name());
         $this->assertSame($public, $type->publicId());
         $this->assertSame($system, $type->systemId());
-        $this->assertSame($string, (string) $type);
+        $this->assertSame($string, $type->toString());
     }
 
     public function testThrowWhenEmptyName()
