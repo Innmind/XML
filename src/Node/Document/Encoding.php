@@ -13,7 +13,7 @@ final class Encoding
     public function __construct(string $string)
     {
         if (!Str::of($string)->matches('~^[a-zA-Z0-9\-_:\(\)]+$~')) {
-            throw new DomainException;
+            throw new DomainException($string);
         }
 
         $this->string = $string;

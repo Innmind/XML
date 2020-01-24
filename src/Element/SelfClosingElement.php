@@ -30,22 +30,22 @@ class SelfClosingElement extends Element
 
     public function removeChild(int $position): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function replaceChild(int $position, Node $node): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function prependChild(Node $child): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function appendChild(Node $child): Node
     {
-        throw new LogicException;
+        throw new LogicException('Operation not applicable');
     }
 
     public function content(): string

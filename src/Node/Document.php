@@ -71,7 +71,7 @@ final class Document implements Node
     public function removeChild(int $position): Node
     {
         if (!$this->children->indices()->contains($position)) {
-            throw new OutOfBoundsException;
+            throw new OutOfBoundsException((string) $position);
         }
 
         $document = clone $this;
@@ -86,7 +86,7 @@ final class Document implements Node
     public function replaceChild(int $position, Node $node): Node
     {
         if (!$this->children->indices()->contains($position)) {
-            throw new OutOfBoundsException;
+            throw new OutOfBoundsException((string) $position);
         }
 
         $document = clone $this;
