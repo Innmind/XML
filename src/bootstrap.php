@@ -8,6 +8,9 @@ use Innmind\Xml\{
     Translator\NodeTranslators,
 };
 
+/**
+ * @return array{reader: Reader, cache_storage: Reader\Cache\Storage, cache: callable(Reader): Reader}
+ */
 function bootstrap(): array {
     return [
         'reader' => new Reader\Reader(
