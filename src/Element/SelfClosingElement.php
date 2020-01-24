@@ -64,10 +64,10 @@ class SelfClosingElement extends Element
                     static fn(Attribute $attribute): string => $attribute->toString(),
                 );
 
-            $this->string = sprintf(
+            $this->string = \sprintf(
                 '<%s%s/>',
                 $this->name(),
-                !$this->attributes()->empty() ? ' '.join(' ', $attributes)->toString() : ''
+                !$this->attributes()->empty() ? ' '.join(' ', $attributes)->toString() : '',
             );
         }
 

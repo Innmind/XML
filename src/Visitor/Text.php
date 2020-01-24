@@ -19,7 +19,7 @@ final class Text
                     '',
                     function(string $string, Node $node): string {
                         return $string.$this($node);
-                    }
+                    },
                 );
         }
 

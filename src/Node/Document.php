@@ -65,7 +65,7 @@ final class Document implements Node
 
     public function hasChildren(): bool
     {
-        return $this->children->size() > 0;
+        return !$this->children->empty();
     }
 
     public function removeChild(int $position): Node
@@ -144,10 +144,10 @@ final class Document implements Node
 
     public function toString(): string
     {
-        $string = sprintf(
+        $string = \sprintf(
             '<?xml version="%s"%s?>',
             $this->version->toString(),
-            $this->encoding instanceof Encoding ? ' encoding="'.$this->encoding->toString().'"' : ''
+            $this->encoding instanceof Encoding ? ' encoding="'.$this->encoding->toString().'"' : '',
         );
 
         if ($this->type instanceof Type) {

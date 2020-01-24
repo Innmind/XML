@@ -25,11 +25,11 @@ final class Type
         $this->name = $name;
         $this->publicId = $publicId;
         $this->systemId = $systemId;
-        $this->string = sprintf(
+        $this->string = \sprintf(
             '<!DOCTYPE %s%s%s>',
             $name,
             $publicId ? ' PUBLIC "'.$publicId.'"' : '',
-            $systemId ? ' "'.$systemId.'"' : ''
+            $systemId ? ' "'.$systemId.'"' : '',
         );
     }
 

@@ -38,9 +38,9 @@ class Attribute
             $this->string = $this->name;
 
             if (!Str::of($this->value)->empty()) {
-                $this->string .= sprintf(
+                $this->string .= \sprintf(
                     '="%s"',
-                    $this->value
+                    $this->value,
                 );
             }
         }

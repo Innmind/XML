@@ -9,7 +9,6 @@ use Innmind\Xml\{
     Node,
     Exception\DomainException,
     Exception\OutOfBoundsException,
-    Exception\LogicException,
 };
 use Innmind\Immutable\{
     Map,
@@ -104,9 +103,6 @@ class Element implements ElementInterface
         return $element;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function children(): Sequence
     {
         return $this->children;
@@ -114,7 +110,7 @@ class Element implements ElementInterface
 
     public function hasChildren(): bool
     {
-        return $this->children->size() > 0;
+        return !$this->children->empty();
     }
 
     public function removeChild(int $position): Node
@@ -194,12 +190,12 @@ class Element implements ElementInterface
                     static fn(Attribute $attribute): string => $attribute->toString(),
                 );
 
-            $this->string = sprintf(
+            $this->string = \sprintf(
                 '<%s%s>%s</%s>',
                 $this->name(),
                 !$this->attributes()->empty() ? ' '.join(' ', $attributes)->toString() : '',
                 $this->content(),
-                $this->name()
+                $this->name(),
             );
         }
 

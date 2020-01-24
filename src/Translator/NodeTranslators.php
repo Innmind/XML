@@ -25,11 +25,11 @@ final class NodeTranslators
     {
         /** @var Map<int, NodeTranslator> */
         return self::$defaults ??= Map::of('int', NodeTranslator::class)
-            (XML_DOCUMENT_NODE, new DocumentTranslator)
-            (XML_ELEMENT_NODE, new ElementTranslator)
-            (XML_CDATA_SECTION_NODE, new CharacterDataTranslator)
-            (XML_TEXT_NODE, new TextTranslator)
-            (XML_COMMENT_NODE, new CommentTranslator)
-            (XML_ENTITY_REF_NODE, new EntityReferenceTranslator);
+            (\XML_DOCUMENT_NODE, new DocumentTranslator)
+            (\XML_ELEMENT_NODE, new ElementTranslator)
+            (\XML_CDATA_SECTION_NODE, new CharacterDataTranslator)
+            (\XML_TEXT_NODE, new TextTranslator)
+            (\XML_COMMENT_NODE, new CommentTranslator)
+            (\XML_ENTITY_REF_NODE, new EntityReferenceTranslator);
     }
 }

@@ -39,11 +39,11 @@ final class DocumentTranslator implements NodeTranslator
 
     private function buildVersion(\DOMDocument $document): Version
     {
-        list($major, $minor) = explode('.', $document->xmlVersion);
+        [$major, $minor] = \explode('.', $document->xmlVersion);
 
         return new Version(
             (int) $major,
-            (int) $minor
+            (int) $minor,
         );
     }
 
@@ -52,7 +52,7 @@ final class DocumentTranslator implements NodeTranslator
         return new Type(
             $type->name,
             $type->publicId,
-            $type->systemId
+            $type->systemId,
         );
     }
 
@@ -67,7 +67,7 @@ final class DocumentTranslator implements NodeTranslator
         $children = Sequence::of(Node::class);
 
         foreach ($nodes as $child) {
-            if ($child->nodeType === XML_DOCUMENT_TYPE_NODE) {
+            if ($child->nodeType === \XML_DOCUMENT_TYPE_NODE) {
                 continue;
             }
 

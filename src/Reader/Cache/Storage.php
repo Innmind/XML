@@ -20,7 +20,7 @@ final class Storage
 
     public function add(Readable $xml, Node $node): void
     {
-        $this->map = $this->map->put($xml, $node);
+        $this->map = ($this->map)($xml, $node);
     }
 
     public function contains(Readable $xml): bool
