@@ -14,9 +14,9 @@ final class Reader implements ReaderInterface
 {
     private Translator $translate;
 
-    public function __construct(Translator $translate)
+    public function __construct(Translator $translate = null)
     {
-        $this->translate = $translate;
+        $this->translate = $translate ?? Translator::default();
     }
 
     public function __invoke(Readable $content): Node

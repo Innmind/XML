@@ -34,6 +34,14 @@ class ReaderTest extends TestCase
         );
     }
 
+    public function testUseDefaultTranslatorWhenNoneProvided()
+    {
+        $this->assertEquals(
+            $this->read,
+            new Reader,
+        );
+    }
+
     public function testRead()
     {
         $xml = <<<XML
