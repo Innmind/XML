@@ -23,7 +23,10 @@ final class NodeTranslators
      */
     public static function defaults(): Map
     {
-        /** @var Map<int, NodeTranslator> */
+        /**
+         * @psalm-suppress InvalidArgument
+         * @var Map<int, NodeTranslator>
+         */
         return self::$defaults ??= Map::of('int', NodeTranslator::class)
             (\XML_DOCUMENT_NODE, new DocumentTranslator)
             (\XML_ELEMENT_NODE, new ElementTranslator)

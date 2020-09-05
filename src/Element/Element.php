@@ -128,7 +128,7 @@ class Element implements ElementInterface
         return $element;
     }
 
-    public function replaceChild(int $position, Node $node): Node
+    public function replaceChild(int $position, Node $child): Node
     {
         if (!$this->children->indices()->contains($position)) {
             throw new OutOfBoundsException((string) $position);
@@ -138,7 +138,7 @@ class Element implements ElementInterface
         $element->children = $this
             ->children
             ->take($position)
-            ->add($node)
+            ->add($child)
             ->append($this->children->drop($position + 1));
 
         return $element;
