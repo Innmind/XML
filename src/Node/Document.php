@@ -30,7 +30,6 @@ final class Document implements Node
         Encoding $encoding = null,
         Node ...$children
     ) {
-
         $this->version = $version;
         $this->type = $type;
         $this->encoding = $encoding;
@@ -55,9 +54,6 @@ final class Document implements Node
         return $this->type instanceof Type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function children(): Sequence
     {
         return $this->children;
@@ -83,7 +79,7 @@ final class Document implements Node
         return $document;
     }
 
-    public function replaceChild(int $position, Node $node): Node
+    public function replaceChild(int $position, Node $child): Node
     {
         if (!$this->children->indices()->contains($position)) {
             throw new OutOfBoundsException((string) $position);
@@ -93,7 +89,7 @@ final class Document implements Node
         $document->children = $this
             ->children
             ->take($position)
-            ->add($node)
+            ->add($child)
             ->append($this->children->drop($position + 1));
 
         return $document;

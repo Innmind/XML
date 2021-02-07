@@ -1,9 +1,8 @@
 # XML
 
-| `develop` |
-|-----------|
-| [![codecov](https://codecov.io/gh/Innmind/XML/branch/develop/graph/badge.svg)](https://codecov.io/gh/Innmind/XML) |
-| [![Build Status](https://github.com/Innmind/XML/workflows/CI/badge.svg)](https://github.com/Innmind/XML/actions?query=workflow%3ACI) |
+[![Build Status](https://github.com/innmind/xml/workflows/CI/badge.svg?branch=master)](https://github.com/innmind/xml/actions?query=workflow%3ACI)
+[![codecov](https://codecov.io/gh/innmind/xml/branch/develop/graph/badge.svg)](https://codecov.io/gh/innmind/xml)
+[![Type Coverage](https://shepherd.dev/github/innmind/xml/coverage.svg)](https://shepherd.dev/github/innmind/xml)
 
 This library is an abstraction on top of the `\DOM*` classes of php, the goal is to clarify the interfaces of each node.
 

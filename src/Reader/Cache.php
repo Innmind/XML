@@ -9,7 +9,6 @@ use Innmind\Xml\{
     Node,
 };
 use Innmind\Stream\Readable;
-use Innmind\Immutable\Map;
 
 final class Cache implements Reader
 {

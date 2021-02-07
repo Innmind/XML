@@ -33,7 +33,7 @@ class SelfClosingElement extends Element
         throw new LogicException('Operation not applicable');
     }
 
-    public function replaceChild(int $position, Node $node): Node
+    public function replaceChild(int $position, Node $child): Node
     {
         throw new LogicException('Operation not applicable');
     }

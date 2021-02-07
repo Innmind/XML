@@ -32,8 +32,8 @@ class LastChildTest extends TestCase
         $xml = <<<XML
 <div><foo /><baz /><bar /></div>
 XML;
-        $res = fopen('php://temp', 'r+');
-        fwrite($res, $xml);
+        $res = \fopen('php://temp', 'r+');
+        \fwrite($res, $xml);
         $tree = ($this->read)(
             new Stream($res)
         );
@@ -52,8 +52,8 @@ XML;
         $xml = <<<XML
 <div><foo /></div>
 XML;
-        $res = fopen('php://temp', 'r+');
-        fwrite($res, $xml);
+        $res = \fopen('php://temp', 'r+');
+        \fwrite($res, $xml);
         $tree = ($this->read)(
             new Stream($res)
         );

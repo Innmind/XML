@@ -31,27 +31,27 @@ class NodeTranslatorsTest extends TestCase
         $this->assertCount(6, $defaults);
         $this->assertInstanceOf(
             DocumentTranslator::class,
-            $defaults->get(XML_DOCUMENT_NODE)
+            $defaults->get(\XML_DOCUMENT_NODE)
         );
         $this->assertInstanceOf(
             ElementTranslator::class,
-            $defaults->get(XML_ELEMENT_NODE)
+            $defaults->get(\XML_ELEMENT_NODE)
         );
         $this->assertInstanceOf(
             CharacterDataTranslator::class,
-            $defaults->get(XML_CDATA_SECTION_NODE)
+            $defaults->get(\XML_CDATA_SECTION_NODE)
         );
         $this->assertInstanceOf(
             CommentTranslator::class,
-            $defaults->get(XML_COMMENT_NODE)
+            $defaults->get(\XML_COMMENT_NODE)
         );
         $this->assertInstanceOf(
             TextTranslator::class,
-            $defaults->get(XML_TEXT_NODE)
+            $defaults->get(\XML_TEXT_NODE)
         );
         $this->assertInstanceOf(
             EntityReferenceTranslator::class,
-            $defaults->get(XML_ENTITY_REF_NODE)
+            $defaults->get(\XML_ENTITY_REF_NODE)
         );
     }
 }
