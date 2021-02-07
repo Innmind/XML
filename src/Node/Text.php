@@ -18,9 +18,6 @@ final class Text implements Node
         $this->data = new CharacterData($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function children(): Sequence
     {
         return $this->data->children();

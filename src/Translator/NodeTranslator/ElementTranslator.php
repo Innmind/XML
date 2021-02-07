@@ -13,7 +13,6 @@ use Innmind\Xml\{
     Element\SelfClosingElement,
     Element\Element,
 };
-use Innmind\Immutable\Map;
 use function Innmind\Immutable\unwrap;
 
 final class ElementTranslator implements NodeTranslator

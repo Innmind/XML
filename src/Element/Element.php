@@ -67,9 +67,6 @@ class Element implements ElementInterface
         return $this->name;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function attributes(): Map
     {
         return $this->attributes;

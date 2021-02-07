@@ -38,8 +38,8 @@ class TextTest extends TestCase
     42
 </div>
 XML;
-        $res = fopen('php://temp', 'r+');
-        fwrite($res, $xml);
+        $res = \fopen('php://temp', 'r+');
+        \fwrite($res, $xml);
         $tree = ($this->read)(
             new Stream($res)
         );

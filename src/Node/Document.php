@@ -30,7 +30,6 @@ final class Document implements Node
         Encoding $encoding = null,
         Node ...$children
     ) {
-
         $this->version = $version;
         $this->type = $type;
         $this->encoding = $encoding;
@@ -55,9 +54,6 @@ final class Document implements Node
         return $this->type instanceof Type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function children(): Sequence
     {
         return $this->children;

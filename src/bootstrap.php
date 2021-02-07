@@ -6,7 +6,8 @@ namespace Innmind\Xml;
 /**
  * @return array{reader: Reader, cache_storage: Reader\Cache\Storage, cache: callable(Reader): Reader}
  */
-function bootstrap(): array {
+function bootstrap(): array
+{
     return [
         'reader' => new Reader\Reader,
         'cache_storage' => $storage = new Reader\Cache\Storage,

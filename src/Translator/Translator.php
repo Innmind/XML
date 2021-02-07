@@ -27,11 +27,6 @@ final class Translator
         $this->translators = $translators;
     }
 
-    public static function default(): self
-    {
-        return self::$default ??= new self(NodeTranslators::defaults());
-    }
-
     public function __invoke(\DOMNode $node): Node
     {
         if (!$this->translators->contains($node->nodeType)) {
@@ -41,5 +36,10 @@ final class Translator
         return $this
             ->translators
             ->get($node->nodeType)($node, $this);
+    }
+
+    public static function default(): self
+    {
+        return self::$default ??= new self(NodeTranslators::defaults());
     }
 }

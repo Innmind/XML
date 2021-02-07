@@ -22,9 +22,6 @@ final class CharacterData implements Node
         $this->children = Sequence::of(Node::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function children(): Sequence
     {
         return $this->children;

@@ -32,8 +32,8 @@ class ParentNodeTest extends TestCase
         $xml = <<<XML
 <div><div><foo /><bar /></div></div>
 XML;
-        $res = fopen('php://temp', 'r+');
-        fwrite($res, $xml);
+        $res = \fopen('php://temp', 'r+');
+        \fwrite($res, $xml);
         $tree = ($this->read)(
             new Stream($res)
         );

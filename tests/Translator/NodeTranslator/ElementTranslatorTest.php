@@ -40,9 +40,8 @@ XML
             new Translator(
                 Map::of('int', NodeTranslator::class)
                     (
-                        XML_ELEMENT_NODE,
-                        new class($foo) implements NodeTranslator
-                        {
+                        \XML_ELEMENT_NODE,
+                        new class($foo) implements NodeTranslator {
                             private $foo;
 
                             public function __construct(Node $foo)
