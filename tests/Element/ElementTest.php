@@ -195,9 +195,9 @@ class ElementTest extends TestCase
             null,
             new Element('bar'),
         );
-        $this->assertTrue($node->hasChildren());
+        $this->assertFalse($node->children()->empty());
 
-        $this->assertFalse((new Element('foo'))->hasChildren());
+        $this->assertTrue((new Element('foo'))->children()->empty());
     }
 
     public function testRemoveChild()

@@ -195,7 +195,7 @@ class SelfClosingElementTest extends TestCase
     public function testHasChildren()
     {
         $node = new SelfClosingElement('foo');
-        $this->assertFalse($node->hasChildren());
+        $this->assertTrue($node->children()->empty());
     }
 
     public function testThrowWhenRemovingChild()

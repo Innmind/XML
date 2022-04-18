@@ -26,11 +26,6 @@ class SelfClosingElement extends Element
         parent::__construct($name, $attributes);
     }
 
-    public function hasChildren(): bool
-    {
-        return false;
-    }
-
     public function removeChild(int $position): Node
     {
         throw new LogicException('Operation not applicable');

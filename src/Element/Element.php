@@ -102,11 +102,6 @@ class Element implements ElementInterface
         return $this->children;
     }
 
-    public function hasChildren(): bool
-    {
-        return !$this->children->empty();
-    }
-
     public function removeChild(int $position): Node
     {
         if (!$this->children->indices()->contains($position)) {
