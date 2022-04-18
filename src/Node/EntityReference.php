@@ -19,7 +19,7 @@ final class EntityReference implements Node
     {
         $this->data = $data;
         /** @var Sequence<Node> */
-        $this->children = Sequence::of(Node::class);
+        $this->children = Sequence::of();
     }
 
     public function children(): Sequence

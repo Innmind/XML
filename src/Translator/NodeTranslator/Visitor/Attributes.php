@@ -14,7 +14,7 @@ final class Attributes
     public function __invoke(\DOMNode $node): Set
     {
         /** @var Set<Attribute> */
-        $attributes = Set::of(Attribute::class);
+        $attributes = Set::of();
 
         if (!$node instanceof \DOMElement) {
             return $attributes;

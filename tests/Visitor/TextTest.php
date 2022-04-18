@@ -41,7 +41,7 @@ XML;
         $res = \fopen('php://temp', 'r+');
         \fwrite($res, $xml);
         $tree = ($this->read)(
-            new Stream($res)
+            Stream::of($res)
         );
 
         $this->assertSame(

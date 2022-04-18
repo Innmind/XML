@@ -26,7 +26,6 @@ class EntityReferenceTest extends TestCase
         $node = new EntityReference('foo');
 
         $this->assertInstanceOf(Sequence::class, $node->children());
-        $this->assertSame(Node::class, $node->children()->type());
         $this->assertCount(0, $node->children());
         $this->assertFalse($node->hasChildren());
     }

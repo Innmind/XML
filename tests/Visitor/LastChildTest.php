@@ -35,14 +35,22 @@ XML;
         $res = \fopen('php://temp', 'r+');
         \fwrite($res, $xml);
         $tree = ($this->read)(
-            new Stream($res)
+            Stream::of($res)
         );
         $div = $tree
             ->children()
-            ->get(0);
+            ->get(0)
+            ->match(
+                static fn($node) => $node,
+                static fn() => null,
+            );
         $bar = $div
             ->children()
-            ->get(2);
+            ->get(2)
+            ->match(
+                static fn($node) => $node,
+                static fn() => null,
+            );
 
         $this->assertSame(
             $bar,
@@ -55,14 +63,22 @@ XML;
         $res = \fopen('php://temp', 'r+');
         \fwrite($res, $xml);
         $tree = ($this->read)(
-            new Stream($res)
+            Stream::of($res)
         );
         $div = $tree
             ->children()
-            ->get(0);
+            ->get(0)
+            ->match(
+                static fn($node) => $node,
+                static fn() => null,
+            );
         $foo = $div
             ->children()
-            ->get(0);
+            ->get(0)
+            ->match(
+                static fn($node) => $node,
+                static fn() => null,
+            );
 
         $this->assertSame(
             $foo,

@@ -13,7 +13,6 @@ use Innmind\Xml\{
     Element\SelfClosingElement,
     Element\Element,
 };
-use function Innmind\Immutable\unwrap;
 
 final class ElementTranslator implements NodeTranslator
 {
@@ -41,7 +40,7 @@ final class ElementTranslator implements NodeTranslator
         return new Element(
             $node->nodeName,
             $attributes,
-            ...unwrap((new Children($translate))($node)),
+            ...(new Children($translate))($node)->toList(),
         );
     }
 }

@@ -35,17 +35,25 @@ XML;
         $res = \fopen('php://temp', 'r+');
         \fwrite($res, $xml);
         $tree = ($this->read)(
-            new Stream($res)
+            Stream::of($res)
         );
         $div = $tree
             ->children()
             ->get(0);
         $bar = $div
-            ->children()
-            ->get(2);
+            ->map(static fn($div) => $div->children())
+            ->flatMap(static fn($children) => $children->get(2))
+            ->match(
+                static fn($node) => $node,
+                static fn() => null,
+            );
         $baz = $div
-            ->children()
-            ->get(1);
+            ->map(static fn($div) => $div->children())
+            ->flatMap(static fn($children) => $children->get(1))
+            ->match(
+                static fn($node) => $node,
+                static fn() => null,
+            );
 
         $this->assertSame(
             $baz,
@@ -61,14 +69,18 @@ XML;
         $res = \fopen('php://temp', 'r+');
         \fwrite($res, $xml);
         $tree = ($this->read)(
-            new Stream($res)
+            Stream::of($res)
         );
         $div = $tree
             ->children()
             ->get(0);
         $foo = $div
-            ->children()
-            ->get(0);
+            ->map(static fn($div) => $div->children())
+            ->flatMap(static fn($children) => $children->get(0))
+            ->match(
+                static fn($foo) => $foo,
+                static fn() => null,
+            );
 
         $this->expectException(NoPreviousSibling::class);
 

@@ -24,7 +24,7 @@ final class Children
     public function __invoke(\DOMNode $node): Sequence
     {
         /** @var Sequence<Node> */
-        $children = Sequence::of(Node::class);
+        $children = Sequence::of();
 
         foreach ($node->childNodes as $child) {
             $children = ($children)(

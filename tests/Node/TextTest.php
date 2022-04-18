@@ -26,7 +26,6 @@ class TextTest extends TestCase
         $text = new Text('foo');
 
         $this->assertInstanceOf(Sequence::class, $text->children());
-        $this->assertSame(Node::class, $text->children()->type());
         $this->assertCount(0, $text->children());
         $this->assertFalse($text->hasChildren());
     }

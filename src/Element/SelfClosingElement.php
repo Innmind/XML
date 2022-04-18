@@ -8,8 +8,10 @@ use Innmind\Xml\{
     Attribute,
     Exception\LogicException,
 };
-use Innmind\Immutable\Set;
-use function Innmind\Immutable\join;
+use Innmind\Immutable\{
+    Set,
+    Str,
+};
 
 class SelfClosingElement extends Element
 {
@@ -59,15 +61,14 @@ class SelfClosingElement extends Element
             $attributes = $this
                 ->attributes()
                 ->values()
-                ->mapTo(
-                    'string',
+                ->map(
                     static fn(Attribute $attribute): string => $attribute->toString(),
                 );
 
             $this->string = \sprintf(
                 '<%s%s/>',
                 $this->name(),
-                !$this->attributes()->empty() ? ' '.join(' ', $attributes)->toString() : '',
+                !$this->attributes()->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
             );
         }
 

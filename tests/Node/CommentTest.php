@@ -26,7 +26,6 @@ class CommentTest extends TestCase
         $comment = new Comment('foo');
 
         $this->assertInstanceOf(Sequence::class, $comment->children());
-        $this->assertSame(Node::class, $comment->children()->type());
         $this->assertCount(0, $comment->children());
         $this->assertFalse($comment->hasChildren());
     }

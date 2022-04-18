@@ -16,11 +16,6 @@ use Innmind\Immutable\{
     Set,
     Str,
 };
-use function Innmind\Immutable\{
-    assertSet,
-    join,
-    unwrap,
-};
 
 class Element implements ElementInterface
 {
@@ -33,6 +28,7 @@ class Element implements ElementInterface
     private ?string $string = null;
 
     /**
+     * @no-named-arguments
      * @param Set<Attribute>|null $attributes
      */
     public function __construct(
@@ -41,23 +37,22 @@ class Element implements ElementInterface
         Node ...$children,
     ) {
         /** @var Set<Attribute> */
-        $attributes ??= Set::of(Attribute::class);
-
-        assertSet(Attribute::class, $attributes, 2);
+        $attributes ??= Set::of();
 
         if (Str::of($name)->empty()) {
             throw new DomainException;
         }
 
         $this->name = $name;
-        $this->attributes = $attributes->toMapOf(
-            'string',
-            Attribute::class,
-            static function(Attribute $attribute): \Generator {
-                yield $attribute->name() => $attribute;
-            },
+        $this->attributes = Map::of(
+            ...$attributes
+                ->map(static fn($attribute) => [
+                    $attribute->name(),
+                    $attribute,
+                ])
+                ->toList(),
         );
-        $this->children = Sequence::of(Node::class, ...$children);
+        $this->children = Sequence::of(...$children);
     }
 
     public function name(): string
@@ -72,7 +67,10 @@ class Element implements ElementInterface
 
     public function attribute(string $name): Attribute
     {
-        return $this->attributes->get($name);
+        return $this->attributes->get($name)->match(
+            static fn($attribute) => $attribute,
+            static fn() => throw new \LogicException,
+        );
     }
 
     public function removeAttribute(string $name): ElementInterface
@@ -115,6 +113,7 @@ class Element implements ElementInterface
         }
 
         $element = clone $this;
+        /** @psalm-suppress ArgumentTypeCoercion */
         $element->children = $this
             ->children
             ->take($position)
@@ -130,6 +129,7 @@ class Element implements ElementInterface
         }
 
         $element = clone $this;
+        /** @psalm-suppress ArgumentTypeCoercion */
         $element->children = $this
             ->children
             ->take($position)
@@ -143,9 +143,8 @@ class Element implements ElementInterface
     {
         $element = clone $this;
         $element->children = Sequence::of(
-            Node::class,
             $child,
-            ...unwrap($this->children),
+            ...$this->children->toList(),
         );
 
         return $element;
@@ -162,12 +161,11 @@ class Element implements ElementInterface
     public function content(): string
     {
         if ($this->content === null) {
-            $children = $this->children->mapTo(
-                'string',
+            $children = $this->children->map(
                 static fn(Node $node): string => $node->toString(),
             );
 
-            $this->content = join('', $children)->toString();
+            $this->content = Str::of('')->join($children)->toString();
         }
 
         return $this->content;
@@ -179,15 +177,14 @@ class Element implements ElementInterface
             $attributes = $this
                 ->attributes
                 ->values()
-                ->mapTo(
-                    'string',
+                ->map(
                     static fn(Attribute $attribute): string => $attribute->toString(),
                 );
 
             $this->string = \sprintf(
                 '<%s%s>%s</%s>',
                 $this->name(),
-                !$this->attributes()->empty() ? ' '.join(' ', $attributes)->toString() : '',
+                !$this->attributes()->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
                 $this->content(),
                 $this->name(),
             );

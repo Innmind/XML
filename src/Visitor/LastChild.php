@@ -12,10 +12,9 @@ final class LastChild
 {
     public function __invoke(Node $node): Node
     {
-        if (!$node->hasChildren()) {
-            throw new NodeDoesntHaveChildren;
-        }
-
-        return $node->children()->last();
+        return $node->children()->last()->match(
+            static fn($node) => $node,
+            static fn() => throw new NodeDoesntHaveChildren,
+        );
     }
 }

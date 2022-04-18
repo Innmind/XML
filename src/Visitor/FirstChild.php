@@ -12,10 +12,9 @@ final class FirstChild
 {
     public function __invoke(Node $node): Node
     {
-        if (!$node->hasChildren()) {
-            throw new NodeDoesntHaveChildren;
-        }
-
-        return $node->children()->first();
+        return $node->children()->first()->match(
+            static fn($node) => $node,
+            static fn() => throw new NodeDoesntHaveChildren,
+        );
     }
 }

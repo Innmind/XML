@@ -38,23 +38,22 @@ XML
         $node = $translate(
             $document->childNodes->item(0),
             new Translator(
-                Map::of('int', NodeTranslator::class)
-                    (
-                        \XML_ELEMENT_NODE,
-                        new class($foo) implements NodeTranslator {
-                            private $foo;
+                Map::of([
+                    \XML_ELEMENT_NODE,
+                    new class($foo) implements NodeTranslator {
+                        private $foo;
 
-                            public function __construct(Node $foo)
-                            {
-                                $this->foo = $foo;
-                            }
-
-                            public function __invoke(\DOMNode $node, Translator $translate): Node
-                            {
-                                return $this->foo;
-                            }
+                        public function __construct(Node $foo)
+                        {
+                            $this->foo = $foo;
                         }
-                    ),
+
+                        public function __invoke(\DOMNode $node, Translator $translate): Node
+                        {
+                            return $this->foo;
+                        }
+                    },
+                ]),
             ),
         );
 
@@ -68,9 +67,7 @@ XML
 
         (new ElementTranslator)(
             new \DOMNode,
-            new Translator(
-                Map::of('int', NodeTranslator::class),
-            )
+            new Translator(Map::of()),
         );
     }
 }

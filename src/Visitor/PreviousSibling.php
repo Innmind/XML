@@ -20,14 +20,15 @@ final class PreviousSibling
     public function __invoke(Node $tree): Node
     {
         $parent = (new ParentNode($this->node))($tree);
-        $position = $parent
+
+        return $parent
             ->children()
-            ->indexOf($this->node);
-
-        if ($position === 0) {
-            throw new NoPreviousSibling;
-        }
-
-        return $parent->children()->get($position - 1);
+            ->indexOf($this->node)
+            ->filter(static fn($position) => $position > 0)
+            ->flatMap(static fn($position) => $parent->children()->get($position - 1))
+            ->match(
+                static fn($node) => $node,
+                static fn() => throw new NoPreviousSibling,
+            );
     }
 }

@@ -17,7 +17,6 @@ use Innmind\Immutable\{
     Map,
     Sequence,
 };
-use function Innmind\Immutable\unwrap;
 
 final class DocumentTranslator implements NodeTranslator
 {
@@ -37,7 +36,7 @@ final class DocumentTranslator implements NodeTranslator
             $this->buildVersion($node),
             $node->doctype ? $this->buildDoctype($node->doctype) : null,
             $node->encoding ? $this->buildEncoding($node->encoding) : null,
-            ...($node->childNodes ? unwrap($this->buildChildren($node->childNodes, $translate)) : []),
+            ...($node->childNodes ? $this->buildChildren($node->childNodes, $translate)->toList() : []),
         );
     }
 
@@ -68,7 +67,7 @@ final class DocumentTranslator implements NodeTranslator
         Translator $translate,
     ): Sequence {
         /** @var Sequence<Node> */
-        $children = Sequence::of(Node::class);
+        $children = Sequence::of();
 
         foreach ($nodes as $child) {
             if ($child->nodeType === \XML_DOCUMENT_TYPE_NODE) {

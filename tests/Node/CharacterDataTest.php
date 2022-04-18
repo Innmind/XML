@@ -26,7 +26,6 @@ class CharacterDataTest extends TestCase
         $characterData = new CharacterData('foo');
 
         $this->assertInstanceOf(Sequence::class, $characterData->children());
-        $this->assertSame(Node::class, $characterData->children()->type());
         $this->assertCount(0, $characterData->children());
         $this->assertFalse($characterData->hasChildren());
     }

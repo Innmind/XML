@@ -42,34 +42,18 @@ class ElementTest extends TestCase
         new Element('');
     }
 
-    public function testThrowWhenInvalidAttributes()
-    {
-        $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 2 must be of type Set<Innmind\Xml\Attribute>');
-
-        new Element('foo', Set::of('string'));
-    }
-
     public function testDefaultAttributes()
     {
         $node = new Element('foo');
 
         $this->assertInstanceOf(Map::class, $node->attributes());
-        $this->assertSame('string', (string) $node->attributes()->keyType());
-        $this->assertSame(
-            Attribute::class,
-            (string) $node->attributes()->valueType(),
-        );
     }
 
     public function testAttribute()
     {
         $node = new Element(
             'foo',
-            Set::of(
-                Attribute::class,
-                $expected = new Attribute('foo'),
-            ),
+            Set::of($expected = new Attribute('foo')),
         );
 
         $this->assertSame($expected, $node->attribute('foo'));
@@ -80,7 +64,6 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             Set::of(
-                Attribute::class,
                 new Attribute('foo'),
                 new Attribute('bar'),
             ),
@@ -99,7 +82,7 @@ class ElementTest extends TestCase
         $this->assertTrue($node->attributes()->contains('bar'));
         $this->assertFalse($node2->attributes()->contains('foo'));
         $this->assertTrue($node2->attributes()->contains('bar'));
-        $this->assertSame(
+        $this->assertEquals(
             $node->attributes()->get('bar'),
             $node2->attributes()->get('bar'),
         );
@@ -110,7 +93,6 @@ class ElementTest extends TestCase
         $element = new Element(
             'foo',
             Set::of(
-                Attribute::class,
                 new Attribute('foo'),
                 new Attribute('bar'),
             ),
@@ -124,7 +106,6 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             Set::of(
-                Attribute::class,
                 new Attribute('foo'),
                 new Attribute('bar'),
             ),
@@ -145,13 +126,16 @@ class ElementTest extends TestCase
         $this->assertTrue($node->attributes()->contains('bar'));
         $this->assertTrue($node2->attributes()->contains('foo'));
         $this->assertTrue($node2->attributes()->contains('bar'));
-        $this->assertSame(
+        $this->assertEquals(
             $node->attributes()->get('bar'),
             $node2->attributes()->get('bar'),
         );
         $this->assertSame(
             $attribute,
-            $node2->attributes()->get('foo'),
+            $node2->attributes()->get('foo')->match(
+                static fn($attribute) => $attribute,
+                static fn() => null,
+            ),
         );
     }
 
@@ -160,7 +144,6 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             Set::of(
-                Attribute::class,
                 new Attribute('foo'),
                 new Attribute('bar'),
             ),
@@ -181,17 +164,20 @@ class ElementTest extends TestCase
         $this->assertTrue($node->attributes()->contains('bar'));
         $this->assertTrue($node2->attributes()->contains('foo'));
         $this->assertTrue($node2->attributes()->contains('bar'));
-        $this->assertSame(
+        $this->assertEquals(
             $node->attributes()->get('bar'),
             $node2->attributes()->get('bar'),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $node->attributes()->get('foo'),
             $node2->attributes()->get('foo'),
         );
         $this->assertSame(
             $attribute,
-            $node2->attributes()->get('baz'),
+            $node2->attributes()->get('baz')->match(
+                static fn($attribute) => $attribute,
+                static fn() => null,
+            ),
         );
     }
 
@@ -200,7 +186,6 @@ class ElementTest extends TestCase
         $node = new Element('foo');
 
         $this->assertInstanceOf(Sequence::class, $node->children());
-        $this->assertSame(Node::class, $node->children()->type());
     }
 
     public function testHasChildren()
@@ -233,11 +218,11 @@ class ElementTest extends TestCase
         $this->assertSame($element->attributes(), $element2->attributes());
         $this->assertCount(3, $element->children());
         $this->assertCount(2, $element2->children());
-        $this->assertSame(
+        $this->assertEquals(
             $element->children()->get(0),
             $element2->children()->get(0),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $element->children()->get(2),
             $element2->children()->get(1),
         );
@@ -277,16 +262,22 @@ class ElementTest extends TestCase
         $this->assertSame($element->attributes(), $element2->attributes());
         $this->assertCount(3, $element->children());
         $this->assertCount(3, $element2->children());
-        $this->assertSame(
+        $this->assertEquals(
             $element->children()->get(0),
             $element2->children()->get(0),
         );
-        $this->assertNotSame(
+        $this->assertNotEquals(
             $element->children()->get(1),
             $element2->children()->get(1),
         );
-        $this->assertSame($node, $element2->children()->get(1));
         $this->assertSame(
+            $node,
+            $element2->children()->get(1)->match(
+                static fn($node) => $node,
+                static fn() => null,
+            ),
+        );
+        $this->assertEquals(
             $element->children()->get(2),
             $element2->children()->get(2),
         );
@@ -331,17 +322,20 @@ class ElementTest extends TestCase
         $this->assertCount(4, $element2->children());
         $this->assertSame(
             $node,
-            $element2->children()->get(0),
+            $element2->children()->get(0)->match(
+                static fn($node) => $node,
+                static fn() => null,
+            ),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $element->children()->get(0),
             $element2->children()->get(1),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $element->children()->get(1),
             $element2->children()->get(2),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $element->children()->get(2),
             $element2->children()->get(3),
         );
@@ -368,21 +362,24 @@ class ElementTest extends TestCase
         $this->assertNotSame($element->children(), $element2->children());
         $this->assertCount(3, $element->children());
         $this->assertCount(4, $element2->children());
-        $this->assertSame(
+        $this->assertEquals(
             $element->children()->get(0),
             $element2->children()->get(0),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $element->children()->get(1),
             $element2->children()->get(1),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $element->children()->get(2),
             $element2->children()->get(2),
         );
         $this->assertSame(
             $node,
-            $element2->children()->get(3),
+            $element2->children()->get(3)->match(
+                static fn($node) => $node,
+                static fn() => null,
+            ),
         );
     }
 
@@ -419,7 +416,6 @@ class ElementTest extends TestCase
             (new Element(
                 'foo',
                 Set::of(
-                    Attribute::class,
                     new Attribute('bar', 'baz'),
                     new Attribute('baz', 'foo'),
                 ),
@@ -430,7 +426,6 @@ class ElementTest extends TestCase
             (new Element(
                 'foo',
                 Set::of(
-                    Attribute::class,
                     new Attribute('bar', 'baz'),
                     new Attribute('baz', 'foo'),
                 ),

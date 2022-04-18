@@ -23,7 +23,10 @@ final class Reader implements ReaderInterface
     {
         $xml = new \DOMDocument;
         /** @psalm-suppress ArgumentTypeCoercion */
-        $xml->loadXML($content->toString());
+        $xml->loadXML($content->toString()->match(
+            static fn($string) => $string,
+            static fn() => '',
+        ));
         $xml->normalizeDocument();
 
         return ($this->translate)($xml);

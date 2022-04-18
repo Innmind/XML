@@ -10,10 +10,9 @@ use Innmind\Xml\{
     Node\Document\Encoding,
     Exception\OutOfBoundsException,
 };
-use Innmind\Immutable\Sequence;
-use function Innmind\Immutable\{
-    join,
-    unwrap,
+use Innmind\Immutable\{
+    Sequence,
+    Str,
 };
 
 final class Document implements Node
@@ -24,6 +23,9 @@ final class Document implements Node
     private Sequence $children;
     private ?Encoding $encoding = null;
 
+    /**
+     * @no-named-arguments
+     */
     public function __construct(
         Version $version,
         Type $type = null,
@@ -33,7 +35,7 @@ final class Document implements Node
         $this->version = $version;
         $this->type = $type;
         $this->encoding = $encoding;
-        $this->children = Sequence::of(Node::class, ...$children);
+        $this->children = Sequence::of(...$children);
     }
 
     public function version(): Version
@@ -70,6 +72,7 @@ final class Document implements Node
         }
 
         $document = clone $this;
+        /** @psalm-suppress ArgumentTypeCoercion */
         $document->children = $this
             ->children
             ->take($position)
@@ -85,6 +88,7 @@ final class Document implements Node
         }
 
         $document = clone $this;
+        /** @psalm-suppress ArgumentTypeCoercion */
         $document->children = $this
             ->children
             ->take($position)
@@ -98,9 +102,8 @@ final class Document implements Node
     {
         $document = clone $this;
         $document->children = Sequence::of(
-            Node::class,
             $child,
-            ...unwrap($this->children),
+            ...$this->children->toList(),
         );
 
         return $document;
@@ -128,12 +131,11 @@ final class Document implements Node
 
     public function content(): string
     {
-        $children = $this->children->mapTo(
-            'string',
+        $children = $this->children->map(
             static fn(Node $child): string => $child->toString(),
         );
 
-        return join('', $children)->toString();
+        return Str::of('')->join($children)->toString();
     }
 
     public function toString(): string

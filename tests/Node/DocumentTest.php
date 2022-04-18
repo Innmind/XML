@@ -56,7 +56,6 @@ class DocumentTest extends TestCase
         $document = new Document(new Version(1));
 
         $this->assertInstanceOf(Sequence::class, $document->children());
-        $this->assertSame(Node::class, $document->children()->type());
     }
 
     public function testEncoding()
@@ -147,11 +146,11 @@ class DocumentTest extends TestCase
         $this->assertSame($document->encoding(), $document2->encoding());
         $this->assertCount(3, $document->children());
         $this->assertCount(2, $document2->children());
-        $this->assertSame(
+        $this->assertEquals(
             $document->children()->get(0),
             $document2->children()->get(0),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $document->children()->get(2),
             $document2->children()->get(1),
         );
@@ -194,16 +193,22 @@ class DocumentTest extends TestCase
         $this->assertSame($document->encoding(), $document2->encoding());
         $this->assertCount(3, $document->children());
         $this->assertCount(3, $document2->children());
-        $this->assertSame(
+        $this->assertEquals(
             $document->children()->get(0),
             $document2->children()->get(0),
         );
-        $this->assertNotSame(
+        $this->assertNotEquals(
             $document->children()->get(1),
             $document2->children()->get(1),
         );
-        $this->assertSame($node, $document2->children()->get(1));
         $this->assertSame(
+            $node,
+            $document2->children()->get(1)->match(
+                static fn($node) => $node,
+                static fn() => null,
+            ),
+        );
+        $this->assertEquals(
             $document->children()->get(2),
             $document2->children()->get(2),
         );
@@ -251,17 +256,20 @@ class DocumentTest extends TestCase
         $this->assertCount(4, $document2->children());
         $this->assertSame(
             $node,
-            $document2->children()->get(0),
+            $document2->children()->get(0)->match(
+                static fn($node) => $node,
+                static fn() => null,
+            ),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $document->children()->get(0),
             $document2->children()->get(1),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $document->children()->get(1),
             $document2->children()->get(2),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $document->children()->get(2),
             $document2->children()->get(3),
         );
@@ -290,21 +298,24 @@ class DocumentTest extends TestCase
         $this->assertNotSame($document->children(), $document2->children());
         $this->assertCount(3, $document->children());
         $this->assertCount(4, $document2->children());
-        $this->assertSame(
+        $this->assertEquals(
             $document->children()->get(0),
             $document2->children()->get(0),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $document->children()->get(1),
             $document2->children()->get(1),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $document->children()->get(2),
             $document2->children()->get(2),
         );
         $this->assertSame(
             $node,
-            $document2->children()->get(3),
+            $document2->children()->get(3)->match(
+                static fn($node) => $node,
+                static fn() => null,
+            ),
         );
     }
 }

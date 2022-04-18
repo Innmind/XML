@@ -8,7 +8,6 @@ use Innmind\Xml\{
     Exception\UnknownNodeType,
 };
 use Innmind\Immutable\Map;
-use function Innmind\Immutable\assertMap;
 
 final class Translator
 {
@@ -22,20 +21,18 @@ final class Translator
      */
     public function __construct(Map $translators)
     {
-        assertMap('int', NodeTranslator::class, $translators, 1);
-
         $this->translators = $translators;
     }
 
     public function __invoke(\DOMNode $node): Node
     {
-        if (!$this->translators->contains($node->nodeType)) {
-            throw new UnknownNodeType($node->nodeName);
-        }
-
         return $this
             ->translators
-            ->get($node->nodeType)($node, $this);
+            ->get($node->nodeType)
+            ->match(
+                fn($translate) => $translate($node, $this),
+                static fn() => throw new UnknownNodeType($node->nodeName),
+            );
     }
 
     public static function default(): self

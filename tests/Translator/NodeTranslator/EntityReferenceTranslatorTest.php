@@ -28,9 +28,7 @@ class EntityReferenceTranslatorTest extends TestCase
         $translate = new EntityReferenceTranslator;
         $node = $translate(
             new \DOMEntityReference('gt'),
-            new Translator(
-                Map::of('int', NodeTranslator::class),
-            ),
+            new Translator(Map::of()),
         );
 
         $this->assertInstanceOf(EntityReference::class, $node);
@@ -43,9 +41,7 @@ class EntityReferenceTranslatorTest extends TestCase
 
         (new EntityReferenceTranslator)(
             new \DOMNode,
-            new Translator(
-                Map::of('int', NodeTranslator::class),
-            )
+            new Translator(Map::of()),
         );
     }
 }

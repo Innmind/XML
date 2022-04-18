@@ -35,16 +35,24 @@ XML;
         $res = \fopen('php://temp', 'r+');
         \fwrite($res, $xml);
         $tree = ($this->read)(
-            new Stream($res)
+            Stream::of($res)
         );
         $parent = $tree
             ->children()
             ->get(0)
-            ->children()
-            ->get(0);
+            ->map(static fn($node) => $node->children())
+            ->flatMap(static fn($children) => $children->get(0))
+            ->match(
+                static fn($parent) => $parent,
+                static fn() => null,
+            );
         $node = $parent
             ->children()
-            ->get(1);
+            ->get(1)
+            ->match(
+                static fn($node) => $node,
+                static fn() => null,
+            );
 
         $this->assertSame(
             $parent,

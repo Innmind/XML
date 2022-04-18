@@ -38,9 +38,7 @@ XML
                 ->item(0)
                 ->childNodes
                 ->item(0),
-            new Translator(
-                Map::of('int', NodeTranslator::class),
-            ),
+            new Translator(Map::of()),
         );
 
         $this->assertInstanceOf(Comment::class, $node);
@@ -53,9 +51,7 @@ XML
 
         (new CommentTranslator)(
             new \DOMNode,
-            new Translator(
-                Map::of('int', NodeTranslator::class),
-            )
+            new Translator(Map::of()),
         );
     }
 }

@@ -19,7 +19,7 @@ final class CharacterData implements Node
     {
         $this->value = $value;
         /** @var Sequence<Node> */
-        $this->children = Sequence::of(Node::class);
+        $this->children = Sequence::of();
     }
 
     public function children(): Sequence

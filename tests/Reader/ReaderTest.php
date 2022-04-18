@@ -58,7 +58,7 @@ class ReaderTest extends TestCase
 XML;
         $res = \fopen('php://temp', 'r+');
         \fwrite($res, $xml);
-        $node = ($this->read)(new Stream($res));
+        $node = ($this->read)(Stream::of($res));
 
         $this->assertSame($xml, $node->toString());
     }
