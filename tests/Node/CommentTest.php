@@ -17,7 +17,7 @@ class CommentTest extends TestCase
     {
         $this->assertInstanceOf(
             Node::class,
-            new Comment('foo')
+            new Comment('foo'),
         );
     }
 
@@ -35,7 +35,7 @@ class CommentTest extends TestCase
     {
         $this->assertSame(
             ' foo ',
-            (new Comment(' foo '))->content()
+            (new Comment(' foo '))->content(),
         );
     }
 
@@ -52,7 +52,7 @@ class CommentTest extends TestCase
 
         (new Comment('foo'))->replaceChild(
             0,
-            $this->createMock(Node::class)
+            $this->createMock(Node::class),
         );
     }
 
@@ -61,7 +61,7 @@ class CommentTest extends TestCase
         $this->expectException(LogicException::class);
 
         (new Comment('foo'))->prependChild(
-            $this->createMock(Node::class)
+            $this->createMock(Node::class),
         );
     }
 
@@ -70,7 +70,7 @@ class CommentTest extends TestCase
         $this->expectException(LogicException::class);
 
         (new Comment('foo'))->appendChild(
-            $this->createMock(Node::class)
+            $this->createMock(Node::class),
         );
     }
 

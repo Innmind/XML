@@ -21,8 +21,8 @@ class ChildrenTest extends TestCase
 
         $children = (new Children(
             new Translator(
-                NodeTranslators::defaults()
-            )
+                NodeTranslators::defaults(),
+            ),
         ))($document->childNodes->item(0));
 
         $this->assertInstanceOf(Sequence::class, $children);
@@ -37,8 +37,8 @@ class ChildrenTest extends TestCase
 
         $children = (new Children(
             new Translator(
-                NodeTranslators::defaults()
-            )
+                NodeTranslators::defaults(),
+            ),
         ))($document->childNodes->item(0));
 
         $this->assertInstanceOf(Sequence::class, $children);

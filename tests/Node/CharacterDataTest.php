@@ -17,7 +17,7 @@ class CharacterDataTest extends TestCase
     {
         $this->assertInstanceOf(
             Node::class,
-            new CharacterData('foo')
+            new CharacterData('foo'),
         );
     }
 
@@ -35,7 +35,7 @@ class CharacterDataTest extends TestCase
     {
         $this->assertSame(
             ' foo ',
-            (new CharacterData(' foo '))->content()
+            (new CharacterData(' foo '))->content(),
         );
     }
 
@@ -52,7 +52,7 @@ class CharacterDataTest extends TestCase
 
         (new CharacterData('foo'))->replaceChild(
             0,
-            $this->createMock(Node::class)
+            $this->createMock(Node::class),
         );
     }
 
@@ -61,7 +61,7 @@ class CharacterDataTest extends TestCase
         $this->expectException(LogicException::class);
 
         (new CharacterData('foo'))->prependChild(
-            $this->createMock(Node::class)
+            $this->createMock(Node::class),
         );
     }
 
@@ -70,7 +70,7 @@ class CharacterDataTest extends TestCase
         $this->expectException(LogicException::class);
 
         (new CharacterData('foo'))->appendChild(
-            $this->createMock(Node::class)
+            $this->createMock(Node::class),
         );
     }
 

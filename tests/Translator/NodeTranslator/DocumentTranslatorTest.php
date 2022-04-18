@@ -21,7 +21,7 @@ class DocumentTranslatorTest extends TestCase
     {
         $this->assertInstanceOf(
             NodeTranslator::class,
-            new DocumentTranslator
+            new DocumentTranslator,
         );
     }
 
@@ -56,8 +56,8 @@ XML
                                 return $this->foo;
                             }
                         }
-                    )
-            )
+                    ),
+            ),
         );
 
         $this->assertInstanceOf(Document::class, $node);
@@ -71,7 +71,7 @@ XML
         (new DocumentTranslator)(
             new \DOMNode,
             new Translator(
-                Map::of('int', NodeTranslator::class)
+                Map::of('int', NodeTranslator::class),
             )
         );
     }

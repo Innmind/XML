@@ -17,7 +17,7 @@ class EntityReferenceTest extends TestCase
     {
         $this->assertInstanceOf(
             Node::class,
-            new EntityReference('foo')
+            new EntityReference('foo'),
         );
     }
 
@@ -35,7 +35,7 @@ class EntityReferenceTest extends TestCase
     {
         $this->assertSame(
             ' foo ',
-            (new EntityReference(' foo '))->content()
+            (new EntityReference(' foo '))->content(),
         );
     }
 
@@ -52,7 +52,7 @@ class EntityReferenceTest extends TestCase
 
         (new EntityReference('foo'))->replaceChild(
             0,
-            $this->createMock(Node::class)
+            $this->createMock(Node::class),
         );
     }
 
@@ -61,7 +61,7 @@ class EntityReferenceTest extends TestCase
         $this->expectException(LogicException::class);
 
         (new EntityReference('foo'))->prependChild(
-            $this->createMock(Node::class)
+            $this->createMock(Node::class),
         );
     }
 
@@ -70,7 +70,7 @@ class EntityReferenceTest extends TestCase
         $this->expectException(LogicException::class);
 
         (new EntityReference('foo'))->appendChild(
-            $this->createMock(Node::class)
+            $this->createMock(Node::class),
         );
     }
 

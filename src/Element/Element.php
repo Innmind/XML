@@ -38,7 +38,7 @@ class Element implements ElementInterface
     public function __construct(
         string $name,
         Set $attributes = null,
-        Node ...$children
+        Node ...$children,
     ) {
         /** @var Set<Attribute> */
         $attributes ??= Set::of(Attribute::class);

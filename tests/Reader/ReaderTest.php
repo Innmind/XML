@@ -21,8 +21,8 @@ class ReaderTest extends TestCase
     {
         $this->read = new Reader(
             new Translator(
-                NodeTranslators::defaults()
-            )
+                NodeTranslators::defaults(),
+            ),
         );
     }
 
@@ -30,7 +30,7 @@ class ReaderTest extends TestCase
     {
         $this->assertInstanceOf(
             ReaderInterface::class,
-            $this->read
+            $this->read,
         );
     }
 

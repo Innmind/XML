@@ -15,7 +15,7 @@ final class CharacterDataTranslator implements NodeTranslator
 {
     public function __invoke(
         \DOMNode $node,
-        Translator $translate
+        Translator $translate,
     ): Node {
         if (!$node instanceof \DOMCharacterData) {
             throw new InvalidArgumentException;

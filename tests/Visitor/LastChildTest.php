@@ -22,8 +22,8 @@ class LastChildTest extends TestCase
     {
         $this->read = new Reader(
             new Translator(
-                NodeTranslators::defaults()
-            )
+                NodeTranslators::defaults(),
+            ),
         );
     }
 
@@ -46,7 +46,7 @@ XML;
 
         $this->assertSame(
             $bar,
-            (new LastChild)($div)
+            (new LastChild)($div),
         );
 
         $xml = <<<XML
@@ -66,7 +66,7 @@ XML;
 
         $this->assertSame(
             $foo,
-            (new LastChild)($div)
+            (new LastChild)($div),
         );
     }
 

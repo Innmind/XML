@@ -15,7 +15,7 @@ final class TextTranslator implements NodeTranslator
 {
     public function __invoke(
         \DOMNode $node,
-        Translator $translate
+        Translator $translate,
     ): Node {
         if (!$node instanceof \DOMText) {
             throw new InvalidArgumentException;

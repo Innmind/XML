@@ -9,6 +9,6 @@ interface NodeTranslator
 {
     public function __invoke(
         \DOMNode $node,
-        Translator $translate
+        Translator $translate,
     ): Node;
 }

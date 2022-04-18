@@ -20,8 +20,8 @@ class TextTest extends TestCase
     {
         $this->read = new Reader(
             new Translator(
-                NodeTranslators::defaults()
-            )
+                NodeTranslators::defaults(),
+            ),
         );
     }
 
@@ -53,7 +53,7 @@ XML;
             '        '."\n".
             '    '."\n".
             '    42'."\n",
-            (new Text)($tree)
+            (new Text)($tree),
         );
     }
 }

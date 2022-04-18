@@ -25,7 +25,7 @@ class TranslatorTest extends TestCase
     public function setUp(): void
     {
         $this->translate = new Translator(
-            NodeTranslators::defaults()
+            NodeTranslators::defaults(),
         );
     }
 
@@ -69,11 +69,11 @@ XML
         $this->assertSame('html', $node->type()->name());
         $this->assertSame(
             '-//W3C//DTD HTML 4.01//EN',
-            $node->type()->publicId()
+            $node->type()->publicId(),
         );
         $this->assertSame(
             'http://www.w3.org/TR/html4/strict.dtd',
-            $node->type()->systemId()
+            $node->type()->systemId(),
         );
         $this->assertCount(1, $node->children());
         $foo = $node->children()->get(0);
@@ -122,7 +122,7 @@ XML
         $this->expectException(UnknownNodeType::class);
 
         (new Translator(
-            Map::of('int', NodeTranslator::class)
+            Map::of('int', NodeTranslator::class),
         ))(new \DOMDocument);
     }
 }

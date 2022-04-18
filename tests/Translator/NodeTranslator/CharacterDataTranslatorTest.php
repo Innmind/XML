@@ -19,7 +19,7 @@ class CharacterDataTranslatorTest extends TestCase
     {
         $this->assertInstanceOf(
             NodeTranslator::class,
-            new CharacterDataTranslator
+            new CharacterDataTranslator,
         );
     }
 
@@ -39,8 +39,8 @@ XML
                 ->childNodes
                 ->item(0),
             new Translator(
-                Map::of('int', NodeTranslator::class)
-            )
+                Map::of('int', NodeTranslator::class),
+            ),
         );
 
         $this->assertInstanceOf(CharacterData::class, $node);
@@ -54,7 +54,7 @@ XML
         (new CharacterDataTranslator)(
             new \DOMNode,
             new Translator(
-                Map::of('int', NodeTranslator::class)
+                Map::of('int', NodeTranslator::class),
             )
         );
     }

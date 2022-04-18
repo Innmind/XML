@@ -17,7 +17,7 @@ class TextTest extends TestCase
     {
         $this->assertInstanceOf(
             Node::class,
-            new Text('foo')
+            new Text('foo'),
         );
     }
 
@@ -35,7 +35,7 @@ class TextTest extends TestCase
     {
         $this->assertSame(
             ' foo ',
-            (new Text(' foo '))->content()
+            (new Text(' foo '))->content(),
         );
     }
 
@@ -52,7 +52,7 @@ class TextTest extends TestCase
 
         (new Text('foo'))->replaceChild(
             0,
-            $this->createMock(Node::class)
+            $this->createMock(Node::class),
         );
     }
 
@@ -61,7 +61,7 @@ class TextTest extends TestCase
         $this->expectException(LogicException::class);
 
         (new Text('foo'))->prependChild(
-            $this->createMock(Node::class)
+            $this->createMock(Node::class),
         );
     }
 
@@ -70,7 +70,7 @@ class TextTest extends TestCase
         $this->expectException(LogicException::class);
 
         (new Text('foo'))->appendChild(
-            $this->createMock(Node::class)
+            $this->createMock(Node::class),
         );
     }
 

@@ -19,7 +19,7 @@ class CommentTranslatorTest extends TestCase
     {
         $this->assertInstanceOf(
             NodeTranslator::class,
-            new CommentTranslator
+            new CommentTranslator,
         );
     }
 
@@ -39,8 +39,8 @@ XML
                 ->childNodes
                 ->item(0),
             new Translator(
-                Map::of('int', NodeTranslator::class)
-            )
+                Map::of('int', NodeTranslator::class),
+            ),
         );
 
         $this->assertInstanceOf(Comment::class, $node);
@@ -54,7 +54,7 @@ XML
         (new CommentTranslator)(
             new \DOMNode,
             new Translator(
-                Map::of('int', NodeTranslator::class)
+                Map::of('int', NodeTranslator::class),
             )
         );
     }

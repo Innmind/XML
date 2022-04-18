@@ -23,7 +23,7 @@ final class DocumentTranslator implements NodeTranslator
 {
     public function __invoke(
         \DOMNode $node,
-        Translator $translate
+        Translator $translate,
     ): Node {
         if (!$node instanceof \DOMDocument) {
             throw new InvalidArgumentException;
@@ -65,7 +65,7 @@ final class DocumentTranslator implements NodeTranslator
      */
     private function buildChildren(
         \DOMNodeList $nodes,
-        Translator $translate
+        Translator $translate,
     ): Sequence {
         /** @var Sequence<Node> */
         $children = Sequence::of(Node::class);

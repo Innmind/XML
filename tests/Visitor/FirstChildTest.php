@@ -22,8 +22,8 @@ class FirstChildTest extends TestCase
     {
         $this->read = new Reader(
             new Translator(
-                NodeTranslators::defaults()
-            )
+                NodeTranslators::defaults(),
+            ),
         );
     }
 
@@ -46,7 +46,7 @@ XML;
 
         $this->assertSame(
             $foo,
-            (new FirstChild)($div)
+            (new FirstChild)($div),
         );
     }
 

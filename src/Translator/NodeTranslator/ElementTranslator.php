@@ -19,7 +19,7 @@ final class ElementTranslator implements NodeTranslator
 {
     public function __invoke(
         \DOMNode $node,
-        Translator $translate
+        Translator $translate,
     ): Node {
         if (!$node instanceof \DOMElement) {
             throw new InvalidArgumentException;

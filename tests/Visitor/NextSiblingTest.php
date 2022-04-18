@@ -22,8 +22,8 @@ class NextSiblingTest extends TestCase
     {
         $this->read = new Reader(
             new Translator(
-                NodeTranslators::defaults()
-            )
+                NodeTranslators::defaults(),
+            ),
         );
     }
 
@@ -49,7 +49,7 @@ XML;
 
         $this->assertSame(
             $bar,
-            (new NextSibling($baz))($tree)
+            (new NextSibling($baz))($tree),
         );
     }
 

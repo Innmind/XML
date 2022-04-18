@@ -15,7 +15,7 @@ final class CommentTranslator implements NodeTranslator
 {
     public function __invoke(
         \DOMNode $node,
-        Translator $translate
+        Translator $translate,
     ): Node {
         if (!$node instanceof \DOMComment) {
             throw new InvalidArgumentException;

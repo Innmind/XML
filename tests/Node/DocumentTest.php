@@ -25,14 +25,14 @@ class DocumentTest extends TestCase
     {
         $this->assertInstanceOf(
             Node::class,
-            new Document(new Version(1))
+            new Document(new Version(1)),
         );
     }
 
     public function testVersion()
     {
         $document = new Document(
-            $version = new Version(1)
+            $version = new Version(1),
         );
 
         $this->assertSame($version, $document->version());
@@ -45,7 +45,7 @@ class DocumentTest extends TestCase
 
         $document = new Document(
             new Version(1),
-            $type = new Type('html')
+            $type = new Type('html'),
         );
         $this->assertTrue($document->hasType());
         $this->assertSame($type, $document->type());
@@ -77,7 +77,7 @@ class DocumentTest extends TestCase
     {
         $this->assertSame(
             '',
-            (new Document(new Version(1)))->content()
+            (new Document(new Version(1)))->content(),
         );
     }
 
@@ -90,7 +90,7 @@ class DocumentTest extends TestCase
                 null,
                 null,
                 new Element('foo'),
-            ))->content()
+            ))->content(),
         );
     }
 
@@ -149,11 +149,11 @@ class DocumentTest extends TestCase
         $this->assertCount(2, $document2->children());
         $this->assertSame(
             $document->children()->get(0),
-            $document2->children()->get(0)
+            $document2->children()->get(0),
         );
         $this->assertSame(
             $document->children()->get(2),
-            $document2->children()->get(1)
+            $document2->children()->get(1),
         );
     }
 
@@ -184,7 +184,7 @@ class DocumentTest extends TestCase
 
         $document2 = $document->replaceChild(
             1,
-            $node = $this->createMock(Node::class)
+            $node = $this->createMock(Node::class),
         );
 
         $this->assertNotSame($document, $document2);
@@ -196,16 +196,16 @@ class DocumentTest extends TestCase
         $this->assertCount(3, $document2->children());
         $this->assertSame(
             $document->children()->get(0),
-            $document2->children()->get(0)
+            $document2->children()->get(0),
         );
         $this->assertNotSame(
             $document->children()->get(1),
-            $document2->children()->get(1)
+            $document2->children()->get(1),
         );
         $this->assertSame($node, $document2->children()->get(1));
         $this->assertSame(
             $document->children()->get(2),
-            $document2->children()->get(2)
+            $document2->children()->get(2),
         );
     }
 
@@ -222,7 +222,7 @@ class DocumentTest extends TestCase
             new Element('baz'),
         ))->replaceChild(
             3,
-            $this->createMock(Node::class)
+            $this->createMock(Node::class),
         );
     }
 
@@ -238,7 +238,7 @@ class DocumentTest extends TestCase
         );
 
         $document2 = $document->prependChild(
-            $node = $this->createMock(Node::class)
+            $node = $this->createMock(Node::class),
         );
 
         $this->assertNotSame($document, $document2);
@@ -251,19 +251,19 @@ class DocumentTest extends TestCase
         $this->assertCount(4, $document2->children());
         $this->assertSame(
             $node,
-            $document2->children()->get(0)
+            $document2->children()->get(0),
         );
         $this->assertSame(
             $document->children()->get(0),
-            $document2->children()->get(1)
+            $document2->children()->get(1),
         );
         $this->assertSame(
             $document->children()->get(1),
-            $document2->children()->get(2)
+            $document2->children()->get(2),
         );
         $this->assertSame(
             $document->children()->get(2),
-            $document2->children()->get(3)
+            $document2->children()->get(3),
         );
     }
 
@@ -279,7 +279,7 @@ class DocumentTest extends TestCase
         );
 
         $document2 = $document->appendChild(
-            $node = $this->createMock(Node::class)
+            $node = $this->createMock(Node::class),
         );
 
         $this->assertNotSame($document, $document2);
@@ -292,19 +292,19 @@ class DocumentTest extends TestCase
         $this->assertCount(4, $document2->children());
         $this->assertSame(
             $document->children()->get(0),
-            $document2->children()->get(0)
+            $document2->children()->get(0),
         );
         $this->assertSame(
             $document->children()->get(1),
-            $document2->children()->get(1)
+            $document2->children()->get(1),
         );
         $this->assertSame(
             $document->children()->get(2),
-            $document2->children()->get(2)
+            $document2->children()->get(2),
         );
         $this->assertSame(
             $node,
-            $document2->children()->get(3)
+            $document2->children()->get(3),
         );
     }
 }

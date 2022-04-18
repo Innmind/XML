@@ -28,7 +28,7 @@ final class Document implements Node
         Version $version,
         Type $type = null,
         Encoding $encoding = null,
-        Node ...$children
+        Node ...$children,
     ) {
         $this->version = $version;
         $this->type = $type;

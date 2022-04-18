@@ -16,7 +16,7 @@ final class Type
     public function __construct(
         string $name,
         string $publicId = '',
-        string $systemId = ''
+        string $systemId = '',
     ) {
         if (Str::of($name)->empty()) {
             throw new DomainException;

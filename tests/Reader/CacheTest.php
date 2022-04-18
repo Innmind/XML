@@ -20,8 +20,8 @@ class CacheTest extends TestCase
             Reader::class,
             new Cache(
                 $this->createMock(Reader::class),
-                new Storage
-            )
+                new Storage,
+            ),
         );
     }
 
@@ -30,7 +30,7 @@ class CacheTest extends TestCase
         $stream = $this->createMock(Readable::class);
         $read = new Cache(
             $reader = $this->createMock(Reader::class),
-            $storage = new Storage
+            $storage = new Storage,
         );
         $reader
             ->expects($this->exactly(2))

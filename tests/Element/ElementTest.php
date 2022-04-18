@@ -24,7 +24,7 @@ class ElementTest extends TestCase
     {
         $this->assertInstanceOf(
             Node::class,
-            new Element('foo')
+            new Element('foo'),
         );
     }
 
@@ -58,7 +58,7 @@ class ElementTest extends TestCase
         $this->assertSame('string', (string) $node->attributes()->keyType());
         $this->assertSame(
             Attribute::class,
-            (string) $node->attributes()->valueType()
+            (string) $node->attributes()->valueType(),
         );
     }
 
@@ -101,7 +101,7 @@ class ElementTest extends TestCase
         $this->assertTrue($node2->attributes()->contains('bar'));
         $this->assertSame(
             $node->attributes()->get('bar'),
-            $node2->attributes()->get('bar')
+            $node2->attributes()->get('bar'),
         );
     }
 
@@ -131,7 +131,7 @@ class ElementTest extends TestCase
         );
 
         $node2 = $node->addAttribute(
-            $attribute = new Attribute('foo', 'baz')
+            $attribute = new Attribute('foo', 'baz'),
         );
 
         $this->assertNotSame($node, $node2);
@@ -147,11 +147,11 @@ class ElementTest extends TestCase
         $this->assertTrue($node2->attributes()->contains('bar'));
         $this->assertSame(
             $node->attributes()->get('bar'),
-            $node2->attributes()->get('bar')
+            $node2->attributes()->get('bar'),
         );
         $this->assertSame(
             $attribute,
-            $node2->attributes()->get('foo')
+            $node2->attributes()->get('foo'),
         );
     }
 
@@ -167,7 +167,7 @@ class ElementTest extends TestCase
         );
 
         $node2 = $node->addAttribute(
-            $attribute = new Attribute('baz', 'baz')
+            $attribute = new Attribute('baz', 'baz'),
         );
 
         $this->assertNotSame($node, $node2);
@@ -183,15 +183,15 @@ class ElementTest extends TestCase
         $this->assertTrue($node2->attributes()->contains('bar'));
         $this->assertSame(
             $node->attributes()->get('bar'),
-            $node2->attributes()->get('bar')
+            $node2->attributes()->get('bar'),
         );
         $this->assertSame(
             $node->attributes()->get('foo'),
-            $node2->attributes()->get('foo')
+            $node2->attributes()->get('foo'),
         );
         $this->assertSame(
             $attribute,
-            $node2->attributes()->get('baz')
+            $node2->attributes()->get('baz'),
         );
     }
 
@@ -235,11 +235,11 @@ class ElementTest extends TestCase
         $this->assertCount(2, $element2->children());
         $this->assertSame(
             $element->children()->get(0),
-            $element2->children()->get(0)
+            $element2->children()->get(0),
         );
         $this->assertSame(
             $element->children()->get(2),
-            $element2->children()->get(1)
+            $element2->children()->get(1),
         );
     }
 
@@ -268,7 +268,7 @@ class ElementTest extends TestCase
 
         $element2 = $element->replaceChild(
             1,
-            $node = $this->createMock(Node::class)
+            $node = $this->createMock(Node::class),
         );
 
         $this->assertNotSame($element, $element2);
@@ -279,16 +279,16 @@ class ElementTest extends TestCase
         $this->assertCount(3, $element2->children());
         $this->assertSame(
             $element->children()->get(0),
-            $element2->children()->get(0)
+            $element2->children()->get(0),
         );
         $this->assertNotSame(
             $element->children()->get(1),
-            $element2->children()->get(1)
+            $element2->children()->get(1),
         );
         $this->assertSame($node, $element2->children()->get(1));
         $this->assertSame(
             $element->children()->get(2),
-            $element2->children()->get(2)
+            $element2->children()->get(2),
         );
     }
 
@@ -304,7 +304,7 @@ class ElementTest extends TestCase
             new Element('baz'),
         ))->replaceChild(
             3,
-            $this->createMock(Node::class)
+            $this->createMock(Node::class),
         );
     }
 
@@ -319,7 +319,7 @@ class ElementTest extends TestCase
         );
 
         $element2 = $element->prependChild(
-            $node = $this->createMock(Node::class)
+            $node = $this->createMock(Node::class),
         );
 
         $this->assertNotSame($element, $element2);
@@ -331,19 +331,19 @@ class ElementTest extends TestCase
         $this->assertCount(4, $element2->children());
         $this->assertSame(
             $node,
-            $element2->children()->get(0)
+            $element2->children()->get(0),
         );
         $this->assertSame(
             $element->children()->get(0),
-            $element2->children()->get(1)
+            $element2->children()->get(1),
         );
         $this->assertSame(
             $element->children()->get(1),
-            $element2->children()->get(2)
+            $element2->children()->get(2),
         );
         $this->assertSame(
             $element->children()->get(2),
-            $element2->children()->get(3)
+            $element2->children()->get(3),
         );
     }
 
@@ -358,7 +358,7 @@ class ElementTest extends TestCase
         );
 
         $element2 = $element->appendChild(
-            $node = $this->createMock(Node::class)
+            $node = $this->createMock(Node::class),
         );
 
         $this->assertNotSame($element, $element2);
@@ -370,19 +370,19 @@ class ElementTest extends TestCase
         $this->assertCount(4, $element2->children());
         $this->assertSame(
             $element->children()->get(0),
-            $element2->children()->get(0)
+            $element2->children()->get(0),
         );
         $this->assertSame(
             $element->children()->get(1),
-            $element2->children()->get(1)
+            $element2->children()->get(1),
         );
         $this->assertSame(
             $element->children()->get(2),
-            $element2->children()->get(2)
+            $element2->children()->get(2),
         );
         $this->assertSame(
             $node,
-            $element2->children()->get(3)
+            $element2->children()->get(3),
         );
     }
 
@@ -390,7 +390,7 @@ class ElementTest extends TestCase
     {
         $this->assertSame(
             '',
-            (new Element('foo'))->content()
+            (new Element('foo'))->content(),
         );
     }
 
@@ -404,7 +404,7 @@ class ElementTest extends TestCase
 
         $this->assertSame(
             '<bar></bar>',
-            $node->content()
+            $node->content(),
         );
     }
 

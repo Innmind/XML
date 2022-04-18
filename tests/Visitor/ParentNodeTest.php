@@ -22,8 +22,8 @@ class ParentNodeTest extends TestCase
     {
         $this->read = new Reader(
             new Translator(
-                NodeTranslators::defaults()
-            )
+                NodeTranslators::defaults(),
+            ),
         );
     }
 
@@ -48,7 +48,7 @@ XML;
 
         $this->assertSame(
             $parent,
-            (new ParentNode($node))($tree)
+            (new ParentNode($node))($tree),
         );
     }
 

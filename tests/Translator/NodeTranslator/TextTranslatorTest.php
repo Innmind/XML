@@ -19,7 +19,7 @@ class TextTranslatorTest extends TestCase
     {
         $this->assertInstanceOf(
             NodeTranslator::class,
-            new TextTranslator
+            new TextTranslator,
         );
     }
 
@@ -39,8 +39,8 @@ XML
                 ->childNodes
                 ->item(0),
             new Translator(
-                Map::of('int', NodeTranslator::class)
-            )
+                Map::of('int', NodeTranslator::class),
+            ),
         );
 
         $this->assertInstanceOf(Text::class, $node);
@@ -54,7 +54,7 @@ XML
         (new TextTranslator)(
             new \DOMNode,
             new Translator(
-                Map::of('int', NodeTranslator::class)
+                Map::of('int', NodeTranslator::class),
             )
         );
     }

@@ -15,7 +15,7 @@ final class EntityReferenceTranslator implements NodeTranslator
 {
     public function __invoke(
         \DOMNode $node,
-        Translator $translate
+        Translator $translate,
     ): Node {
         if (!$node instanceof \DOMEntityReference) {
             throw new InvalidArgumentException;

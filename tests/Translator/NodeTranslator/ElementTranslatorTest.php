@@ -21,7 +21,7 @@ class ElementTranslatorTest extends TestCase
     {
         $this->assertInstanceOf(
             NodeTranslator::class,
-            new ElementTranslator
+            new ElementTranslator,
         );
     }
 
@@ -54,8 +54,8 @@ XML
                                 return $this->foo;
                             }
                         }
-                    )
-            )
+                    ),
+            ),
         );
 
         $this->assertInstanceOf(Element::class, $node);
@@ -69,7 +69,7 @@ XML
         (new ElementTranslator)(
             new \DOMNode,
             new Translator(
-                Map::of('int', NodeTranslator::class)
+                Map::of('int', NodeTranslator::class),
             )
         );
     }
