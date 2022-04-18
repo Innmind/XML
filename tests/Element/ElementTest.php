@@ -53,7 +53,7 @@ class ElementTest extends TestCase
     {
         $node = new Element(
             'foo',
-            Set::of($expected = new Attribute('foo')),
+            Set::of($expected = Attribute::of('foo')),
         );
 
         $this->assertSame($expected, $node->attribute('foo')->match(
@@ -67,8 +67,8 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             Set::of(
-                new Attribute('foo'),
-                new Attribute('bar'),
+                Attribute::of('foo'),
+                Attribute::of('bar'),
             ),
         );
 
@@ -96,8 +96,8 @@ class ElementTest extends TestCase
         $element = new Element(
             'foo',
             Set::of(
-                new Attribute('foo'),
-                new Attribute('bar'),
+                Attribute::of('foo'),
+                Attribute::of('bar'),
             ),
         );
 
@@ -109,13 +109,13 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             Set::of(
-                new Attribute('foo'),
-                new Attribute('bar'),
+                Attribute::of('foo'),
+                Attribute::of('bar'),
             ),
         );
 
         $node2 = $node->addAttribute(
-            $attribute = new Attribute('foo', 'baz'),
+            $attribute = Attribute::of('foo', 'baz'),
         );
 
         $this->assertNotSame($node, $node2);
@@ -147,13 +147,13 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             Set::of(
-                new Attribute('foo'),
-                new Attribute('bar'),
+                Attribute::of('foo'),
+                Attribute::of('bar'),
             ),
         );
 
         $node2 = $node->addAttribute(
-            $attribute = new Attribute('baz', 'baz'),
+            $attribute = Attribute::of('baz', 'baz'),
         );
 
         $this->assertNotSame($node, $node2);
@@ -419,8 +419,8 @@ class ElementTest extends TestCase
             (new Element(
                 'foo',
                 Set::of(
-                    new Attribute('bar', 'baz'),
-                    new Attribute('baz', 'foo'),
+                    Attribute::of('bar', 'baz'),
+                    Attribute::of('baz', 'foo'),
                 ),
             ))->toString(),
         );
@@ -429,8 +429,8 @@ class ElementTest extends TestCase
             (new Element(
                 'foo',
                 Set::of(
-                    new Attribute('bar', 'baz'),
-                    new Attribute('baz', 'foo'),
+                    Attribute::of('bar', 'baz'),
+                    Attribute::of('baz', 'foo'),
                 ),
                 new Element('bar'),
                 new Element('baz'),

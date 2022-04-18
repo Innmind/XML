@@ -24,7 +24,7 @@ use Innmind\Immutable\{
 class Element implements ElementInterface
 {
     private string $name;
-    /** @var Map<string, Attribute> */
+    /** @var Map<non-empty-string, Attribute> */
     private Map $attributes;
     /** @var Sequence<Node> */
     private Sequence $children;

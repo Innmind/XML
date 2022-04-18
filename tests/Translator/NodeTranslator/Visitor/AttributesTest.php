@@ -14,7 +14,10 @@ class AttributesTest extends TestCase
 {
     public function testSimpleNode()
     {
-        $attributes = (new Attributes)(new \DOMNode);
+        $attributes = (new Attributes)(new \DOMNode)->match(
+            static fn($attributes) => $attributes,
+            static fn() => null,
+        );
 
         $this->assertInstanceOf(Set::class, $attributes);
         $this->assertCount(0, $attributes);
@@ -25,7 +28,10 @@ class AttributesTest extends TestCase
         $document = new \DOMDocument;
         $document->loadXML('<foo/>');
 
-        $attributes = (new Attributes)($document->childNodes->item(0));
+        $attributes = (new Attributes)($document->childNodes->item(0))->match(
+            static fn($attributes) => $attributes,
+            static fn() => null,
+        );
 
         $this->assertInstanceOf(Set::class, $attributes);
         $this->assertCount(0, $attributes);
@@ -36,7 +42,10 @@ class AttributesTest extends TestCase
         $document = new \DOMDocument;
         $document->loadXML('<hr bar="baz" foobar=""/>');
 
-        $attributes = (new Attributes)($document->childNodes->item(0));
+        $attributes = (new Attributes)($document->childNodes->item(0))->match(
+            static fn($attributes) => $attributes,
+            static fn() => null,
+        );
 
         $this->assertInstanceOf(Set::class, $attributes);
         $this->assertCount(2, $attributes);

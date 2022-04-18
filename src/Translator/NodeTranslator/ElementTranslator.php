@@ -12,7 +12,11 @@ use Innmind\Xml\{
     Element\SelfClosingElement,
     Element\Element,
 };
-use Innmind\Immutable\Maybe;
+use Innmind\Immutable\{
+    Maybe,
+    Set,
+    Sequence,
+};
 
 /**
  * @psalm-immutable
@@ -25,18 +29,24 @@ final class ElementTranslator implements NodeTranslator
         $node = Maybe::just($node)
             ->filter(static fn($node) => $node instanceof \DOMElement);
 
-        /** @var Maybe<Node> */
+        /**
+         * @psalm-suppress MixedArgumentTypeCoercion
+         * @psalm-suppress MixedArgument
+         * @var Maybe<Node>
+         */
         return $node
             ->filter(static fn($node) => $node->childNodes->length === 0)
-            ->map(static fn($node) => new SelfClosingElement(
-                $node->nodeName,
-                (new Attributes)($node),
+            ->flatMap(static fn($node) => (new Attributes)($node)->map(
+                static fn($attributes) => new SelfClosingElement(
+                    $node->nodeName,
+                    $attributes,
+                ),
             ))
             ->otherwise(static fn() => $node->flatMap(
-                static fn($node) => (new Children($translate))($node)->map(
-                    static fn($children) => new Element(
+                static fn($node) => Maybe::all((new Attributes)($node), (new Children($translate))($node))->map(
+                    static fn(Set $attributes, Sequence $children) => new Element(
                         $node->nodeName,
-                        (new Attributes)($node),
+                        $attributes,
                         ...$children->toList(),
                     ),
                 ),
