@@ -9,7 +9,6 @@ use Innmind\Xml\{
     Element\Element,
     Translator\Translator,
     Translator\NodeTranslators,
-    Exception\NoPreviousSibling,
 };
 use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
@@ -57,11 +56,14 @@ XML;
 
         $this->assertSame(
             $baz,
-            (new PreviousSibling($bar))($tree),
+            (new PreviousSibling($bar))($tree)->match(
+                static fn($node) => $node,
+                static fn() => null,
+            ),
         );
     }
 
-    public function testThrowWhenNoPreviousSibling()
+    public function testReturnNothingWhenNoPreviousSibling()
     {
         $xml = <<<XML
 <div><foo /><baz /><bar /></div>
@@ -82,8 +84,9 @@ XML;
                 static fn() => null,
             );
 
-        $this->expectException(NoPreviousSibling::class);
-
-        (new PreviousSibling($foo))($tree);
+        $this->assertNull((new PreviousSibling($foo))($tree)->match(
+            static fn($node) => $node,
+            static fn() => null,
+        ));
     }
 }

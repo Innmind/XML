@@ -9,7 +9,6 @@ use Innmind\Xml\{
     Element\Element,
     Translator\Translator,
     Translator\NodeTranslators,
-    Exception\NodeHasNoParent,
 };
 use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
@@ -56,14 +55,18 @@ XML;
 
         $this->assertSame(
             $parent,
-            (new ParentNode($node))($tree),
+            (new ParentNode($node))($tree)->match(
+                static fn($node) => $node,
+                static fn() => null,
+            ),
         );
     }
 
-    public function testThrowWhenNoParentFound()
+    public function testReturnNothingWhenNoParentFound()
     {
-        $this->expectException(NodeHasNoParent::class);
-
-        (new ParentNode(new Element('foo')))(new Element('bar'));
+        $this->assertNull((new ParentNode(new Element('foo')))(new Element('bar'))->match(
+            static fn($node) => $node,
+            static fn() => null,
+        ));
     }
 }

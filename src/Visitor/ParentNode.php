@@ -3,10 +3,8 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Visitor;
 
-use Innmind\Xml\{
-    Node,
-    Exception\NodeHasNoParent,
-};
+use Innmind\Xml\Node;
+use Innmind\Immutable\Maybe;
 
 /**
  * @psalm-immutable
@@ -20,27 +18,24 @@ final class ParentNode
         $this->node = $node;
     }
 
-    public function __invoke(Node $tree): Node
+    /**
+     * @return Maybe<Node>
+     */
+    public function __invoke(Node $tree): Maybe
     {
-        $parent = $tree->children()->reduce(
-            null,
-            function(?Node $parent, Node $child) use ($tree): ?Node {
+        /** @var Maybe<Node> */
+        $parent = Maybe::nothing();
+
+        /** @var Maybe<Node> */
+        return $tree->children()->reduce(
+            $parent,
+            function(Maybe $parent, Node $child) use ($tree): Maybe {
                 if ($child === $this->node) {
-                    return $tree;
+                    return Maybe::just($tree);
                 }
 
-                try {
-                    return $parent ?? $this($child);
-                } catch (NodeHasNoParent $e) {
-                    return null;
-                }
+                return $parent->otherwise(fn() => $this($child));
             },
         );
-
-        if ($parent instanceof Node) {
-            return $parent;
-        }
-
-        throw new NodeHasNoParent;
     }
 }
