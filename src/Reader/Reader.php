@@ -22,6 +22,7 @@ final class Reader implements ReaderInterface
     public function __invoke(Readable $content): Node
     {
         $xml = new \DOMDocument;
+        /** @psalm-suppress ArgumentTypeCoercion */
         $xml->loadXML($content->toString());
         $xml->normalizeDocument();
 
