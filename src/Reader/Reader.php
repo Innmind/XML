@@ -25,13 +25,22 @@ final class Reader implements ReaderInterface
         return $content
             ->toString()
             ->filter(static fn($content) => $content !== '')
-            ->map(static function($content): \DOMDocument {
+            ->flatMap(static function($content): Maybe {
                 $xml = new \DOMDocument;
                 /** @psalm-suppress ArgumentTypeCoercion */
-                $xml->loadXML($content);
+                $success = $xml->loadXML(
+                    $content,
+                    \LIBXML_ERR_ERROR | \LIBXML_NOWARNING | \LIBXML_NOERROR,
+                );
+
+                if (!$success) {
+                    /** @var Maybe<\DOMDocument> */
+                    return Maybe::nothing();
+                }
+
                 $xml->normalizeDocument();
 
-                return $xml;
+                return Maybe::just($xml);
             })
             ->flatMap($this->translate);
     }

@@ -76,4 +76,16 @@ XML;
 
         $this->assertNull($node);
     }
+
+    public function testReturnNothingWhenInvalidXml()
+    {
+        $res = \fopen('php://temp', 'r+');
+        \fwrite($res, "<?xml version=\"1.0\"?>\n");
+        $node = ($this->read)(Stream::of($res))->match(
+            static fn($node) => $node,
+            static fn() => null,
+        );
+
+        $this->assertNull($node);
+    }
 }
