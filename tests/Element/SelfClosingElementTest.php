@@ -56,7 +56,10 @@ class SelfClosingElementTest extends TestCase
             Set::of($expected = new Attribute('foo')),
         );
 
-        $this->assertSame($expected, $node->attribute('foo'));
+        $this->assertSame($expected, $node->attribute('foo')->match(
+            static fn($attribute) => $attribute,
+            static fn() => null,
+        ));
     }
 
     public function testRemoveAttribute()

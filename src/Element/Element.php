@@ -15,6 +15,7 @@ use Innmind\Immutable\{
     Sequence,
     Set,
     Str,
+    Maybe,
 };
 
 /**
@@ -66,12 +67,9 @@ class Element implements ElementInterface
         return $this->attributes;
     }
 
-    public function attribute(string $name): Attribute
+    public function attribute(string $name): Maybe
     {
-        return $this->attributes->get($name)->match(
-            static fn($attribute) => $attribute,
-            static fn() => throw new \LogicException,
-        );
+        return $this->attributes->get($name);
     }
 
     public function removeAttribute(string $name): ElementInterface

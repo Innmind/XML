@@ -75,7 +75,10 @@ XML
         $this->assertInstanceOf(Element::class, $foo);
         $this->assertSame('foo', $foo->name());
         $this->assertCount(1, $foo->attributes());
-        $this->assertSame('baz', $foo->attribute('bar')->value());
+        $this->assertSame('baz', $foo->attribute('bar')->match(
+            static fn($attribute) => $attribute->value(),
+            static fn() => null,
+        ));
         $this->assertCount(7, $foo->children());
         $linebreak = $foo->children()->get(0)->match(
             static fn($node) => $node,
