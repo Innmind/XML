@@ -50,7 +50,6 @@ class Element implements ElementInterface
         }
 
         $this->name = $name;
-        /** @var Map<string, Attribute> */
         $this->attributes = $attributes->toMapOf(
             'string',
             Attribute::class,
@@ -58,7 +57,6 @@ class Element implements ElementInterface
                 yield $attribute->name() => $attribute;
             },
         );
-        /** @var Sequence<Node> */
         $this->children = Sequence::of(Node::class, ...$children);
     }
 
@@ -144,7 +142,6 @@ class Element implements ElementInterface
     public function prependChild(Node $child): Node
     {
         $element = clone $this;
-        /** @var Sequence<Node> */
         $element->children = Sequence::of(
             Node::class,
             $child,

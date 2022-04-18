@@ -33,7 +33,6 @@ final class Document implements Node
         $this->version = $version;
         $this->type = $type;
         $this->encoding = $encoding;
-        /** @var Sequence<Node> */
         $this->children = Sequence::of(Node::class, ...$children);
     }
 
@@ -98,7 +97,6 @@ final class Document implements Node
     public function prependChild(Node $child): Node
     {
         $document = clone $this;
-        /** @var Sequence<Node> */
         $document->children = Sequence::of(
             Node::class,
             $child,

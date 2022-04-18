@@ -20,10 +20,6 @@ final class Attributes
             return $attributes;
         }
 
-        /**
-         * @var string $name
-         * @var \DOMAttr $attribute
-         */
         foreach ($node->attributes as $name => $attribute) {
             $attributes = ($attributes)(
                 new Attribute(
