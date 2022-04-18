@@ -9,6 +9,7 @@ use Innmind\Xml\{
     Translator\Translator,
 };
 use Innmind\Stream\Readable;
+use Innmind\Immutable\Maybe;
 
 final class Reader implements ReaderInterface
 {
@@ -19,16 +20,19 @@ final class Reader implements ReaderInterface
         $this->translate = $translate ?? Translator::default();
     }
 
-    public function __invoke(Readable $content): Node
+    public function __invoke(Readable $content): Maybe
     {
-        $xml = new \DOMDocument;
-        /** @psalm-suppress ArgumentTypeCoercion */
-        $xml->loadXML($content->toString()->match(
-            static fn($string) => $string,
-            static fn() => '',
-        ));
-        $xml->normalizeDocument();
+        return $content
+            ->toString()
+            ->filter(static fn($content) => $content !== '')
+            ->map(static function($content): \DOMDocument {
+                $xml = new \DOMDocument;
+                /** @psalm-suppress ArgumentTypeCoercion */
+                $xml->loadXML($content);
+                $xml->normalizeDocument();
 
-        return ($this->translate)($xml);
+                return $xml;
+            })
+            ->flatMap($this->translate);
     }
 }

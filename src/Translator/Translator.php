@@ -3,11 +3,11 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Translator;
 
-use Innmind\Xml\{
-    Node,
-    Exception\UnknownNodeType,
+use Innmind\Xml\Node;
+use Innmind\Immutable\{
+    Map,
+    Maybe,
 };
-use Innmind\Immutable\Map;
 
 /**
  * @psalm-immutable
@@ -25,15 +25,15 @@ final class Translator
         $this->translators = $translators;
     }
 
-    public function __invoke(\DOMNode $node): Node
+    /**
+     * @return Maybe<Node>
+     */
+    public function __invoke(\DOMNode $node): Maybe
     {
         return $this
             ->translators
             ->get($node->nodeType)
-            ->match(
-                fn($translate) => $translate($node, $this),
-                static fn() => throw new UnknownNodeType($node->nodeName),
-            );
+            ->flatMap(fn($translate) => $translate($node, $this));
     }
 
     /**

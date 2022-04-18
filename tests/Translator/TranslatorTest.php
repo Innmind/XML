@@ -13,7 +13,6 @@ use Innmind\Xml\{
     Node\Text,
     Node\CharacterData,
     Node\Comment,
-    Exception\UnknownNodeType,
 };
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
@@ -53,7 +52,10 @@ class TranslatorTest extends TestCase
 </foo>
 XML
         );
-        $node = ($this->translate)($document);
+        $node = ($this->translate)($document)->match(
+            static fn($node) => $node,
+            static fn() => null,
+        );
 
         $this->assertInstanceOf(Document::class, $node);
         $this->assertSame('1.0', $node->version()->toString());
@@ -145,10 +147,11 @@ XML
         $this->assertSame($xml, $node->toString());
     }
 
-    public function testThrowWhenNoTranslatorFoundForANodeType()
+    public function testReturnNothingWhenNoTranslatorFoundForANodeType()
     {
-        $this->expectException(UnknownNodeType::class);
-
-        (new Translator(Map::of()))(new \DOMDocument);
+        $this->assertNull((new Translator(Map::of()))(new \DOMDocument)->match(
+            static fn($node) => $node,
+            static fn() => null,
+        ));
     }
 }

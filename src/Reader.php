@@ -4,8 +4,12 @@ declare(strict_types = 1);
 namespace Innmind\Xml;
 
 use Innmind\Stream\Readable;
+use Innmind\Immutable\Maybe;
 
 interface Reader
 {
-    public function __invoke(Readable $content): Node;
+    /**
+     * @return Maybe<Node>
+     */
+    public function __invoke(Readable $content): Maybe;
 }

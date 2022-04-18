@@ -7,23 +7,23 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
     Node,
-    Exception\InvalidArgumentException,
     Node\Text,
 };
+use Innmind\Immutable\Maybe;
 
 /**
  * @psalm-immutable
  */
 final class TextTranslator implements NodeTranslator
 {
-    public function __invoke(
-        \DOMNode $node,
-        Translator $translate,
-    ): Node {
-        if (!$node instanceof \DOMText) {
-            throw new InvalidArgumentException;
-        }
-
-        return new Text($node->data);
+    public function __invoke(\DOMNode $node, Translator $translate): Maybe
+    {
+        /**
+         * @psalm-suppress ArgumentTypeCoercion
+         * @var Maybe<Node>
+         */
+        return Maybe::just($node)
+            ->filter(static fn($node) => $node instanceof \DOMText)
+            ->map(static fn(\DOMText $node) => new Text($node->data));
     }
 }

@@ -35,6 +35,9 @@ XML;
         \fwrite($res, $xml);
         $tree = ($this->read)(
             Stream::of($res)
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
         );
         $parent = $tree
             ->children()

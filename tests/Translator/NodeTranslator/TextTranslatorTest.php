@@ -8,7 +8,6 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
     Node\Text,
-    Exception\InvalidArgumentException,
 };
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
@@ -39,19 +38,23 @@ XML
                 ->childNodes
                 ->item(0),
             new Translator(Map::of()),
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
         );
 
         $this->assertInstanceOf(Text::class, $node);
         $this->assertSame('foo', $node->content());
     }
 
-    public function testThrowWhenInvalidNode()
+    public function testReturnNothingWhenInvalidNode()
     {
-        $this->expectException(InvalidArgumentException::class);
-
-        (new TextTranslator)(
+        $this->assertNull((new TextTranslator)(
             new \DOMNode,
             new Translator(Map::of()),
-        );
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
+        ));
     }
 }

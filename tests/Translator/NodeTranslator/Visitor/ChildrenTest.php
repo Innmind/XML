@@ -23,7 +23,10 @@ class ChildrenTest extends TestCase
             new Translator(
                 NodeTranslators::defaults(),
             ),
-        ))($document->childNodes->item(0));
+        ))($document->childNodes->item(0))->match(
+            static fn($children) => $children,
+            static fn() => null,
+        );
 
         $this->assertInstanceOf(Sequence::class, $children);
         $this->assertCount(0, $children);
@@ -38,7 +41,10 @@ class ChildrenTest extends TestCase
             new Translator(
                 NodeTranslators::defaults(),
             ),
-        ))($document->childNodes->item(0));
+        ))($document->childNodes->item(0))->match(
+            static fn($children) => $children,
+            static fn() => null,
+        );
 
         $this->assertInstanceOf(Sequence::class, $children);
         $this->assertCount(2, $children);

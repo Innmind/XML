@@ -9,41 +9,37 @@ use Innmind\Xml\{
     Translator\NodeTranslator\Visitor\Attributes,
     Translator\NodeTranslator\Visitor\Children,
     Node,
-    Exception\InvalidArgumentException,
     Element\SelfClosingElement,
     Element\Element,
 };
+use Innmind\Immutable\Maybe;
 
 /**
  * @psalm-immutable
  */
 final class ElementTranslator implements NodeTranslator
 {
-    public function __invoke(
-        \DOMNode $node,
-        Translator $translate,
-    ): Node {
-        if (!$node instanceof \DOMElement) {
-            throw new InvalidArgumentException;
-        }
+    public function __invoke(\DOMNode $node, Translator $translate): Maybe
+    {
+        /** @var Maybe<\DOMElement> */
+        $node = Maybe::just($node)
+            ->filter(static fn($node) => $node instanceof \DOMElement);
 
-        $attributes = (new Attributes)($node);
-
-        /** @psalm-suppress RedundantCondition */
-        if (
-            $node->childNodes instanceof \DOMNodeList &&
-            $node->childNodes->length === 0
-        ) {
-            return new SelfClosingElement(
+        /** @var Maybe<Node> */
+        return $node
+            ->filter(static fn($node) => $node->childNodes->length === 0)
+            ->map(static fn($node) => new SelfClosingElement(
                 $node->nodeName,
-                $attributes,
-            );
-        }
-
-        return new Element(
-            $node->nodeName,
-            $attributes,
-            ...(new Children($translate))($node)->toList(),
-        );
+                (new Attributes)($node),
+            ))
+            ->otherwise(static fn() => $node->flatMap(
+                static fn($node) => (new Children($translate))($node)->map(
+                    static fn($children) => new Element(
+                        $node->nodeName,
+                        (new Attributes)($node),
+                        ...$children->toList(),
+                    ),
+                ),
+            ));
     }
 }

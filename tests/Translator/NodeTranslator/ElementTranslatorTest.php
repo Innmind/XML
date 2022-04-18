@@ -10,9 +10,11 @@ use Innmind\Xml\{
     Node,
     Element\Element,
     Element\SelfClosingElement,
-    Exception\InvalidArgumentException,
 };
-use Innmind\Immutable\Map;
+use Innmind\Immutable\{
+    Map,
+    Maybe,
+};
 use PHPUnit\Framework\TestCase;
 
 class ElementTranslatorTest extends TestCase
@@ -48,26 +50,30 @@ XML
                             $this->foo = $foo;
                         }
 
-                        public function __invoke(\DOMNode $node, Translator $translate): Node
+                        public function __invoke(\DOMNode $node, Translator $translate): Maybe
                         {
-                            return $this->foo;
+                            return Maybe::just($this->foo);
                         }
                     },
                 ]),
             ),
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
         );
 
         $this->assertInstanceOf(Element::class, $node);
         $this->assertSame($xml, $node->toString());
     }
 
-    public function testThrowWhenInvalidNode()
+    public function testReturnNothingWhenInvalidNode()
     {
-        $this->expectException(InvalidArgumentException::class);
-
-        (new ElementTranslator)(
+        $this->assertNull((new ElementTranslator)(
             new \DOMNode,
             new Translator(Map::of()),
-        );
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
+        ));
     }
 }

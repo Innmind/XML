@@ -58,8 +58,22 @@ class ReaderTest extends TestCase
 XML;
         $res = \fopen('php://temp', 'r+');
         \fwrite($res, $xml);
-        $node = ($this->read)(Stream::of($res));
+        $node = ($this->read)(Stream::of($res))->match(
+            static fn($node) => $node,
+            static fn() => null,
+        );
 
         $this->assertSame($xml, $node->toString());
+    }
+
+    public function testReturnNothingWhenEmpty()
+    {
+        $res = \fopen('php://temp', 'r+');
+        $node = ($this->read)(Stream::of($res))->match(
+            static fn($node) => $node,
+            static fn() => null,
+        );
+
+        $this->assertNull($node);
     }
 }

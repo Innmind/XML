@@ -7,7 +7,6 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
     Node,
-    Exception\InvalidArgumentException,
     Node\Document\Type,
     Node\Document\Version,
     Node\Document\Encoding,
@@ -16,6 +15,7 @@ use Innmind\Xml\{
 use Innmind\Immutable\{
     Map,
     Sequence,
+    Maybe,
 };
 
 /**
@@ -23,24 +23,26 @@ use Innmind\Immutable\{
  */
 final class DocumentTranslator implements NodeTranslator
 {
-    public function __invoke(
-        \DOMNode $node,
-        Translator $translate,
-    ): Node {
-        if (!$node instanceof \DOMDocument) {
-            throw new InvalidArgumentException;
-        }
-
+    public function __invoke(\DOMNode $node, Translator $translate): Maybe
+    {
         /**
-         * @psalm-suppress RedundantCondition DOMNode type declarations cannot be trusted
+         * @psalm-suppress ArgumentTypeCoercion
+         * @psalm-suppress RedundantCondition
          * @psalm-suppress TypeDoesNotContainType
+         * @var Maybe<Node>
          */
-        return new Document(
-            $this->buildVersion($node),
-            $node->doctype ? $this->buildDoctype($node->doctype) : null,
-            $node->encoding ? $this->buildEncoding($node->encoding) : null,
-            ...($node->childNodes ? $this->buildChildren($node->childNodes, $translate)->toList() : []),
-        );
+        return Maybe::just($node)
+            ->filter(static fn($node) => $node instanceof \DOMDocument)
+            ->flatMap(
+                fn(\DOMDocument $node) => $this
+                    ->buildChildren($node->childNodes, $translate)
+                    ->map(fn($children) => new Document(
+                        $this->buildVersion($node),
+                        $node->doctype ? $this->buildDoctype($node->doctype) : null,
+                        $node->encoding ? $this->buildEncoding($node->encoding) : null,
+                        ...$children->toList(),
+                    )),
+            );
     }
 
     private function buildVersion(\DOMDocument $document): Version
@@ -63,22 +65,24 @@ final class DocumentTranslator implements NodeTranslator
     }
 
     /**
-     * @return Sequence<Node>
+     * @return Maybe<Sequence<Node>>
      */
     private function buildChildren(
         \DOMNodeList $nodes,
         Translator $translate,
-    ): Sequence {
-        /** @var Sequence<Node> */
-        $children = Sequence::of();
+    ): Maybe {
+        /** @var Maybe<Sequence<Node>> */
+        $children = Maybe::just(Sequence::of());
 
         foreach ($nodes as $child) {
             if ($child->nodeType === \XML_DOCUMENT_TYPE_NODE) {
                 continue;
             }
 
-            $children = ($children)(
-                $translate($child),
+            $children = $children->flatMap(
+                static fn($children) => $translate($child)->map(
+                    static fn($node) => ($children)($node),
+                ),
             );
         }
 

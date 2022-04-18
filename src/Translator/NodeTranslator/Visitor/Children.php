@@ -7,7 +7,10 @@ use Innmind\Xml\{
     Translator\Translator,
     Node,
 };
-use Innmind\Immutable\Sequence;
+use Innmind\Immutable\{
+    Sequence,
+    Maybe,
+};
 
 /**
  * @psalm-immutable
@@ -22,16 +25,18 @@ final class Children
     }
 
     /**
-     * @return Sequence<Node>
+     * @return Maybe<Sequence<Node>>
      */
-    public function __invoke(\DOMNode $node): Sequence
+    public function __invoke(\DOMNode $node): Maybe
     {
-        /** @var Sequence<Node> */
-        $children = Sequence::of();
+        /** @var Maybe<Sequence<Node>> */
+        $children = Maybe::just(Sequence::of());
 
         foreach ($node->childNodes as $child) {
-            $children = ($children)(
-                ($this->translate)($child),
+            $children = $children->flatMap(
+                fn($children) => ($this->translate)($child)->map(
+                    static fn($node) => ($children)($node),
+                ),
             );
         }
 
