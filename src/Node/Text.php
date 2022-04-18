@@ -9,6 +9,9 @@ use Innmind\Xml\{
 };
 use Innmind\Immutable\Sequence;
 
+/**
+ * @psalm-immutable
+ */
 final class Text implements Node
 {
     private CharacterData $data;

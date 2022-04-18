@@ -8,6 +8,9 @@ use Innmind\Xml\{
     Exception\NodeHasNoParent,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class ParentNode
 {
     private Node $node;

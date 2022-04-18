@@ -13,10 +13,11 @@ use Innmind\Immutable\{
     Str,
 };
 
+/**
+ * @psalm-immutable
+ */
 class SelfClosingElement extends Element
 {
-    private ?string $string = null;
-
     /**
      * @param Set<Attribute>|null $attributes
      */
@@ -57,21 +58,17 @@ class SelfClosingElement extends Element
 
     public function toString(): string
     {
-        if ($this->string === null) {
-            $attributes = $this
-                ->attributes()
-                ->values()
-                ->map(
-                    static fn(Attribute $attribute): string => $attribute->toString(),
-                );
-
-            $this->string = \sprintf(
-                '<%s%s/>',
-                $this->name(),
-                !$this->attributes()->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
+        $attributes = $this
+            ->attributes()
+            ->values()
+            ->map(
+                static fn(Attribute $attribute): string => $attribute->toString(),
             );
-        }
 
-        return $this->string;
+        return \sprintf(
+            '<%s%s/>',
+            $this->name(),
+            !$this->attributes()->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
+        );
     }
 }

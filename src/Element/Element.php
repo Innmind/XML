@@ -17,6 +17,9 @@ use Innmind\Immutable\{
     Str,
 };
 
+/**
+ * @psalm-immutable
+ */
 class Element implements ElementInterface
 {
     private string $name;
@@ -24,8 +27,6 @@ class Element implements ElementInterface
     private Map $attributes;
     /** @var Sequence<Node> */
     private Sequence $children;
-    private ?string $content = null;
-    private ?string $string = null;
 
     /**
      * @no-named-arguments
@@ -160,36 +161,28 @@ class Element implements ElementInterface
 
     public function content(): string
     {
-        if ($this->content === null) {
-            $children = $this->children->map(
-                static fn(Node $node): string => $node->toString(),
-            );
+        $children = $this->children->map(
+            static fn(Node $node): string => $node->toString(),
+        );
 
-            $this->content = Str::of('')->join($children)->toString();
-        }
-
-        return $this->content;
+        return Str::of('')->join($children)->toString();
     }
 
     public function toString(): string
     {
-        if ($this->string === null) {
-            $attributes = $this
-                ->attributes
-                ->values()
-                ->map(
-                    static fn(Attribute $attribute): string => $attribute->toString(),
-                );
-
-            $this->string = \sprintf(
-                '<%s%s>%s</%s>',
-                $this->name(),
-                !$this->attributes()->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
-                $this->content(),
-                $this->name(),
+        $attributes = $this
+            ->attributes
+            ->values()
+            ->map(
+                static fn(Attribute $attribute): string => $attribute->toString(),
             );
-        }
 
-        return $this->string;
+        return \sprintf(
+            '<%s%s>%s</%s>',
+            $this->name(),
+            !$this->attributes()->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
+            $this->content(),
+            $this->name(),
+        );
     }
 }

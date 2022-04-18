@@ -14,6 +14,9 @@ use Innmind\Xml\{
     Element\Element,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class ElementTranslator implements NodeTranslator
 {
     public function __invoke(

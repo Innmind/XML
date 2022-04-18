@@ -7,6 +7,7 @@ use Innmind\Xml\Node;
 
 /**
  * Extract whole text of a tree
+ * @psalm-immutable
  */
 final class Text
 {

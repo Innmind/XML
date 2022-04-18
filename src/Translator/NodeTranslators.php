@@ -16,6 +16,8 @@ use Innmind\Immutable\Map;
 final class NodeTranslators
 {
     /**
+     * @psalm-pure
+     *
      * @return Map<int, NodeTranslator>
      */
     public static function defaults(): Map

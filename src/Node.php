@@ -5,6 +5,9 @@ namespace Innmind\Xml;
 
 use Innmind\Immutable\Sequence;
 
+/**
+ * @psalm-immutable
+ */
 interface Node
 {
     /**

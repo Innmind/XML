@@ -11,6 +11,9 @@ use Innmind\Xml\{
     Node\Comment,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class CommentTranslator implements NodeTranslator
 {
     public function __invoke(

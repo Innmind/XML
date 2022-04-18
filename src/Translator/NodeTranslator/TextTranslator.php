@@ -11,6 +11,9 @@ use Innmind\Xml\{
     Node\Text,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class TextTranslator implements NodeTranslator
 {
     public function __invoke(

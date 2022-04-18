@@ -18,6 +18,9 @@ use Innmind\Immutable\{
     Sequence,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class DocumentTranslator implements NodeTranslator
 {
     public function __invoke(

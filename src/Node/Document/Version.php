@@ -5,6 +5,9 @@ namespace Innmind\Xml\Node\Document;
 
 use Innmind\Xml\Exception\DomainException;
 
+/**
+ * @psalm-immutable
+ */
 final class Version
 {
     private int $major;

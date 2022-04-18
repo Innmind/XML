@@ -5,6 +5,9 @@ namespace Innmind\Xml;
 
 use Innmind\Immutable\Map;
 
+/**
+ * @psalm-immutable
+ */
 interface Element extends Node
 {
     public function name(): string;

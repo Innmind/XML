@@ -15,6 +15,9 @@ use Innmind\Immutable\{
     Str,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class Document implements Node
 {
     private Version $version;

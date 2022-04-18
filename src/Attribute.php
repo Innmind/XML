@@ -6,11 +6,13 @@ namespace Innmind\Xml;
 use Innmind\Xml\Exception\DomainException;
 use Innmind\Immutable\Str;
 
+/**
+ * @psalm-immutable
+ */
 class Attribute
 {
     private string $name;
     private string $value;
-    private ?string $string = null;
 
     public function __construct(string $name, string $value = '')
     {
@@ -34,17 +36,15 @@ class Attribute
 
     public function toString(): string
     {
-        if ($this->string === null) {
-            $this->string = $this->name;
+        $string = $this->name;
 
-            if (!Str::of($this->value)->empty()) {
-                $this->string .= \sprintf(
-                    '="%s"',
-                    $this->value,
-                );
-            }
+        if (!Str::of($this->value)->empty()) {
+            $string .= \sprintf(
+                '="%s"',
+                $this->value,
+            );
         }
 
-        return $this->string;
+        return $string;
     }
 }

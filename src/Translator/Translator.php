@@ -9,10 +9,11 @@ use Innmind\Xml\{
 };
 use Innmind\Immutable\Map;
 
+/**
+ * @psalm-immutable
+ */
 final class Translator
 {
-    private static ?self $default = null;
-
     /** @var Map<int, NodeTranslator> */
     private Map $translators;
 
@@ -35,8 +36,11 @@ final class Translator
             );
     }
 
+    /**
+     * @psalm-pure
+     */
     public static function default(): self
     {
-        return self::$default ??= new self(NodeTranslators::defaults());
+        return new self(NodeTranslators::defaults());
     }
 }

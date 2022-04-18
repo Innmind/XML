@@ -8,6 +8,9 @@ use Innmind\Xml\{
     Exception\NoNextSibling,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class NextSibling
 {
     private Node $node;

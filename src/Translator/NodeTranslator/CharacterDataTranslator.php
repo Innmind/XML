@@ -11,6 +11,9 @@ use Innmind\Xml\{
     Node\CharacterData,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class CharacterDataTranslator implements NodeTranslator
 {
     public function __invoke(

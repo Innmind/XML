@@ -9,6 +9,9 @@ use Innmind\Xml\{
 };
 use Innmind\Immutable\Sequence;
 
+/**
+ * @psalm-immutable
+ */
 final class Comment implements Node
 {
     private string $value;

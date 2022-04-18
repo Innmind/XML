@@ -11,6 +11,9 @@ use Innmind\Xml\{
     Node\EntityReference,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class EntityReferenceTranslator implements NodeTranslator
 {
     public function __invoke(

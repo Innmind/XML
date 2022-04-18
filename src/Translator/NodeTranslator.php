@@ -5,6 +5,9 @@ namespace Innmind\Xml\Translator;
 
 use Innmind\Xml\Node;
 
+/**
+ * @psalm-immutable
+ */
 interface NodeTranslator
 {
     public function __invoke(

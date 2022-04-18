@@ -8,6 +8,9 @@ use Innmind\Xml\{
     Exception\NodeDoesntHaveChildren,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class LastChild
 {
     public function __invoke(Node $node): Node

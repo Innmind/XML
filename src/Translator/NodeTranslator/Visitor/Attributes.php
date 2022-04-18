@@ -6,6 +6,9 @@ namespace Innmind\Xml\Translator\NodeTranslator\Visitor;
 use Innmind\Xml\Attribute;
 use Innmind\Immutable\Set;
 
+/**
+ * @psalm-immutable
+ */
 final class Attributes
 {
     /**

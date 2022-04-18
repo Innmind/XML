@@ -6,6 +6,9 @@ namespace Innmind\Xml\Node\Document;
 use Innmind\Xml\Exception\DomainException;
 use Innmind\Immutable\Str;
 
+/**
+ * @psalm-immutable
+ */
 final class Type
 {
     private string $name;
