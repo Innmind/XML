@@ -23,11 +23,6 @@ final class Text implements Node
         return $this->data->children();
     }
 
-    public function hasChildren(): bool
-    {
-        return false;
-    }
-
     public function removeChild(int $position): Node
     {
         throw new LogicException('Operation not applicable');

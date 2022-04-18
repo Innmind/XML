@@ -27,7 +27,6 @@ class EntityReferenceTest extends TestCase
 
         $this->assertInstanceOf(Sequence::class, $node->children());
         $this->assertCount(0, $node->children());
-        $this->assertFalse($node->hasChildren());
     }
 
     public function testContent()

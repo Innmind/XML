@@ -27,11 +27,6 @@ final class EntityReference implements Node
         return $this->children;
     }
 
-    public function hasChildren(): bool
-    {
-        return false;
-    }
-
     public function removeChild(int $position): Node
     {
         throw new LogicException('Operation not applicable');

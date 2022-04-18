@@ -11,7 +11,6 @@ interface Node
      * @return Sequence<Node>
      */
     public function children(): Sequence;
-    public function hasChildren(): bool;
     public function removeChild(int $position): self;
     public function replaceChild(int $position, self $child): self;
     public function prependChild(self $child): self;

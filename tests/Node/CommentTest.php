@@ -27,7 +27,6 @@ class CommentTest extends TestCase
 
         $this->assertInstanceOf(Sequence::class, $comment->children());
         $this->assertCount(0, $comment->children());
-        $this->assertFalse($comment->hasChildren());
     }
 
     public function testContent()

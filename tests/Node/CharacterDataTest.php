@@ -27,7 +27,6 @@ class CharacterDataTest extends TestCase
 
         $this->assertInstanceOf(Sequence::class, $characterData->children());
         $this->assertCount(0, $characterData->children());
-        $this->assertFalse($characterData->hasChildren());
     }
 
     public function testContent()
