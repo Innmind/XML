@@ -8,7 +8,7 @@ use Innmind\Xml\{
     Reader as ReaderInterface,
     Element\Element,
 };
-use Innmind\Stream\Readable\Stream;
+use Innmind\Filesystem\File\Content;
 use PHPUnit\Framework\TestCase;
 
 class ReaderTest extends TestCase
@@ -50,9 +50,7 @@ class ReaderTest extends TestCase
     hey!
 </foo>
 XML;
-        $res = \fopen('php://temp', 'r+');
-        \fwrite($res, $xml);
-        $node = ($this->read)(Stream::of($res))->match(
+        $node = ($this->read)(Content\Lines::ofContent($xml))->match(
             static fn($node) => $node,
             static fn() => null,
         );
@@ -62,8 +60,7 @@ XML;
 
     public function testReturnNothingWhenEmpty()
     {
-        $res = \fopen('php://temp', 'r+');
-        $node = ($this->read)(Stream::of($res))->match(
+        $node = ($this->read)(Content\None::of())->match(
             static fn($node) => $node,
             static fn() => null,
         );
@@ -73,9 +70,7 @@ XML;
 
     public function testReturnNothingWhenInvalidXml()
     {
-        $res = \fopen('php://temp', 'r+');
-        \fwrite($res, "<?xml version=\"1.0\"?>\n");
-        $node = ($this->read)(Stream::of($res))->match(
+        $node = ($this->read)(Content\Lines::ofContent("<?xml version=\"1.0\"?>\n"))->match(
             static fn($node) => $node,
             static fn() => null,
         );

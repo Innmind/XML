@@ -21,13 +21,13 @@ use Innmind\Xml\{
     Reader\Reader,
     Node,
 };
-use Innmind\Stream\Readable\Stream;
+use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\Maybe;
 
 $read = Reader::of();
 
 $tree = $read(
-    Stream::ofContent('<root><foo some="attribute"/></root>')
+    Content\Lines::ofContent('<root><foo some="attribute"/></root>')
 ); // Maybe<Node>
 ```
 

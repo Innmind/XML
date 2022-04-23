@@ -8,7 +8,7 @@ use Innmind\Xml\{
     Reader\Reader,
     Element\Element,
 };
-use Innmind\Stream\Readable\Stream;
+use Innmind\Filesystem\File\Content;
 use PHPUnit\Framework\TestCase;
 
 class NextSiblingTest extends TestCase
@@ -25,10 +25,8 @@ class NextSiblingTest extends TestCase
         $xml = <<<XML
 <div><foo /><baz /><bar /></div>
 XML;
-        $res = \fopen('php://temp', 'r+');
-        \fwrite($res, $xml);
         $tree = ($this->read)(
-            Stream::of($res)
+            Content\Lines::ofContent($xml),
         )->match(
             static fn($node) => $node,
             static fn() => null,
@@ -65,10 +63,8 @@ XML;
         $xml = <<<XML
 <div><foo /><baz /><bar /></div>
 XML;
-        $res = \fopen('php://temp', 'r+');
-        \fwrite($res, $xml);
         $tree = ($this->read)(
-            Stream::of($res)
+            Content\Lines::ofContent($xml),
         )->match(
             static fn($node) => $node,
             static fn() => null,

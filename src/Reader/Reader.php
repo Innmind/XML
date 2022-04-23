@@ -8,7 +8,7 @@ use Innmind\Xml\{
     Node,
     Translator\Translator,
 };
-use Innmind\Stream\Readable;
+use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\Maybe;
 
 final class Reader implements ReaderInterface
@@ -20,10 +20,9 @@ final class Reader implements ReaderInterface
         $this->translate = $translate ?? Translator::default();
     }
 
-    public function __invoke(Readable $content): Maybe
+    public function __invoke(Content $content): Maybe
     {
-        return $content
-            ->toString()
+        return Maybe::just($content->toString())
             ->filter(static fn($content) => $content !== '')
             ->flatMap(static function($content): Maybe {
                 $xml = new \DOMDocument;
