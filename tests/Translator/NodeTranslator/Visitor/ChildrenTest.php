@@ -19,14 +19,16 @@ class ChildrenTest extends TestCase
         $document = new \DOMDocument;
         $document->loadXML('<root></root>');
 
-        $children = (new Children(
-            new Translator(
-                NodeTranslators::defaults()
-            )
-        ))($document->childNodes->item(0));
+        $children = Children::of(
+            Translator::of(
+                NodeTranslators::defaults(),
+            ),
+        )($document->childNodes->item(0))->match(
+            static fn($children) => $children,
+            static fn() => null,
+        );
 
         $this->assertInstanceOf(Sequence::class, $children);
-        $this->assertSame(Node::class, $children->type());
         $this->assertCount(0, $children);
     }
 
@@ -35,14 +37,16 @@ class ChildrenTest extends TestCase
         $document = new \DOMDocument;
         $document->loadXML('<root><foo/><bar/></root>');
 
-        $children = (new Children(
-            new Translator(
-                NodeTranslators::defaults()
-            )
-        ))($document->childNodes->item(0));
+        $children = Children::of(
+            Translator::of(
+                NodeTranslators::defaults(),
+            ),
+        )($document->childNodes->item(0))->match(
+            static fn($children) => $children,
+            static fn() => null,
+        );
 
         $this->assertInstanceOf(Sequence::class, $children);
-        $this->assertSame(Node::class, $children->type());
         $this->assertCount(2, $children);
     }
 }

@@ -3,9 +3,16 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml;
 
-use Innmind\Stream\Readable;
+use Innmind\Filesystem\File\Content;
+use Innmind\Immutable\Maybe;
 
+/**
+ * @psalm-immutable
+ */
 interface Reader
 {
-    public function __invoke(Readable $content): Node;
+    /**
+     * @return Maybe<Node>
+     */
+    public function __invoke(Content $content): Maybe;
 }

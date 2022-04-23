@@ -7,11 +7,8 @@ use Innmind\Xml\{
     Visitor\NextSibling,
     Reader\Reader,
     Element\Element,
-    Translator\Translator,
-    Translator\NodeTranslators,
-    Exception\NoNextSibling,
 };
-use Innmind\Stream\Readable\Stream;
+use Innmind\Filesystem\File\Content;
 use PHPUnit\Framework\TestCase;
 
 class NextSiblingTest extends TestCase
@@ -20,11 +17,7 @@ class NextSiblingTest extends TestCase
 
     public function setUp(): void
     {
-        $this->read = new Reader(
-            new Translator(
-                NodeTranslators::defaults()
-            )
-        );
+        $this->read = Reader::of();
     }
 
     public function testInterface()
@@ -32,46 +25,64 @@ class NextSiblingTest extends TestCase
         $xml = <<<XML
 <div><foo /><baz /><bar /></div>
 XML;
-        $res = \fopen('php://temp', 'r+');
-        \fwrite($res, $xml);
         $tree = ($this->read)(
-            new Stream($res)
+            Content\Lines::ofContent($xml),
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
         );
         $div = $tree
             ->children()
             ->get(0);
         $bar = $div
-            ->children()
-            ->get(2);
+            ->map(static fn($div) => $div->children())
+            ->flatMap(static fn($children) => $children->get(2))
+            ->match(
+                static fn($node) => $node,
+                static fn() => null,
+            );
         $baz = $div
-            ->children()
-            ->get(1);
+            ->map(static fn($div) => $div->children())
+            ->flatMap(static fn($children) => $children->get(1))
+            ->match(
+                static fn($node) => $node,
+                static fn() => null,
+            );
 
         $this->assertSame(
             $bar,
-            (new NextSibling($baz))($tree)
+            NextSibling::of($baz)($tree)->match(
+                static fn($node) => $node,
+                static fn() => null,
+            ),
         );
     }
 
-    public function testThrowWhenNoNextSibling()
+    public function testReturnNothingWhenNoNextSibling()
     {
         $xml = <<<XML
 <div><foo /><baz /><bar /></div>
 XML;
-        $res = \fopen('php://temp', 'r+');
-        \fwrite($res, $xml);
         $tree = ($this->read)(
-            new Stream($res)
+            Content\Lines::ofContent($xml),
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
         );
         $div = $tree
             ->children()
             ->get(0);
         $bar = $div
-            ->children()
-            ->get(2);
+            ->map(static fn($div) => $div->children())
+            ->flatMap(static fn($children) => $children->get(2))
+            ->match(
+                static fn($node) => $node,
+                static fn() => null,
+            );
 
-        $this->expectException(NoNextSibling::class);
-
-        (new NextSibling($bar))($tree);
+        $this->assertNull(NextSibling::of($bar)($tree)->match(
+            static fn($node) => $node,
+            static fn() => null,
+        ));
     }
 }

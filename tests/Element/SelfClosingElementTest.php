@@ -8,8 +8,6 @@ use Innmind\Xml\{
     Node,
     Attribute,
     Exception\DomainException,
-    Exception\LogicException,
-    Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
     Map,
@@ -17,20 +15,26 @@ use Innmind\Immutable\{
     Sequence,
 };
 use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\{
+    PHPUnit\BlackBox,
+    Set as DataSet,
+};
 
 class SelfClosingElementTest extends TestCase
 {
+    use BlackBox;
+
     public function testInterface()
     {
         $this->assertInstanceOf(
             Node::class,
-            new SelfClosingElement('foo')
+            SelfClosingElement::of('foo'),
         );
     }
 
     public function testName()
     {
-        $node = new SelfClosingElement('foo');
+        $node = SelfClosingElement::of('foo');
 
         $this->assertSame('foo', $node->name());
     }
@@ -39,50 +43,36 @@ class SelfClosingElementTest extends TestCase
     {
         $this->expectException(DomainException::class);
 
-        new SelfClosingElement('');
-    }
-
-    public function testThrowWhenInvalidAttributes()
-    {
-        $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 2 must be of type Set<Innmind\Xml\Attribute>');
-
-        new SelfClosingElement('foo', Set::of('string'));
+        SelfClosingElement::of('');
     }
 
     public function testDefaultAttributes()
     {
-        $node = new SelfClosingElement('foo');
+        $node = SelfClosingElement::of('foo');
 
         $this->assertInstanceOf(Map::class, $node->attributes());
-        $this->assertSame('string', (string) $node->attributes()->keyType());
-        $this->assertSame(
-            Attribute::class,
-            (string) $node->attributes()->valueType()
-        );
     }
 
     public function testAttribute()
     {
-        $node = new SelfClosingElement(
+        $node = SelfClosingElement::of(
             'foo',
-            Set::of(
-                Attribute::class,
-                $expected = new Attribute('foo'),
-            ),
+            Set::of($expected = Attribute::of('foo')),
         );
 
-        $this->assertSame($expected, $node->attribute('foo'));
+        $this->assertSame($expected, $node->attribute('foo')->match(
+            static fn($attribute) => $attribute,
+            static fn() => null,
+        ));
     }
 
     public function testRemoveAttribute()
     {
-        $node = new SelfClosingElement(
+        $node = SelfClosingElement::of(
             'foo',
             Set::of(
-                Attribute::class,
-                new Attribute('foo'),
-                new Attribute('bar'),
+                Attribute::of('foo'),
+                Attribute::of('bar'),
             ),
         );
 
@@ -91,7 +81,7 @@ class SelfClosingElementTest extends TestCase
         $this->assertNotSame($node, $node2);
         $this->assertInstanceOf(SelfClosingElement::class, $node2);
         $this->assertSame($node->name(), $node2->name());
-        $this->assertSame($node->children(), $node2->children());
+        $this->assertTrue($node2->children()->empty());
         $this->assertNotSame($node->attributes(), $node2->attributes());
         $this->assertCount(2, $node->attributes());
         $this->assertCount(1, $node2->attributes());
@@ -99,45 +89,43 @@ class SelfClosingElementTest extends TestCase
         $this->assertTrue($node->attributes()->contains('bar'));
         $this->assertFalse($node2->attributes()->contains('foo'));
         $this->assertTrue($node2->attributes()->contains('bar'));
-        $this->assertSame(
+        $this->assertEquals(
             $node->attributes()->get('bar'),
-            $node2->attributes()->get('bar')
+            $node2->attributes()->get('bar'),
         );
     }
 
     public function testDoNothingWhenRemovingUnknownAttribute()
     {
-        $element = new SelfClosingElement(
+        $element = SelfClosingElement::of(
             'foo',
             Set::of(
-                Attribute::class,
-                new Attribute('foo'),
-                new Attribute('bar'),
+                Attribute::of('foo'),
+                Attribute::of('bar'),
             ),
         );
 
-        $this->assertSame($element, $element->removeAttribute('baz'));
+        $this->assertEquals($element, $element->removeAttribute('baz'));
     }
 
     public function testReplaceAttribute()
     {
-        $node = new SelfClosingElement(
+        $node = SelfClosingElement::of(
             'foo',
             Set::of(
-                Attribute::class,
-                new Attribute('foo'),
-                new Attribute('bar'),
+                Attribute::of('foo'),
+                Attribute::of('bar'),
             ),
         );
 
         $node2 = $node->addAttribute(
-            $attribute = new Attribute('foo', 'baz')
+            $attribute = Attribute::of('foo', 'baz'),
         );
 
         $this->assertNotSame($node, $node2);
         $this->assertInstanceOf(SelfClosingElement::class, $node2);
         $this->assertSame($node->name(), $node2->name());
-        $this->assertSame($node->children(), $node2->children());
+        $this->assertTrue($node2->children()->empty());
         $this->assertNotSame($node->attributes(), $node2->attributes());
         $this->assertCount(2, $node->attributes());
         $this->assertCount(2, $node2->attributes());
@@ -145,35 +133,37 @@ class SelfClosingElementTest extends TestCase
         $this->assertTrue($node->attributes()->contains('bar'));
         $this->assertTrue($node2->attributes()->contains('foo'));
         $this->assertTrue($node2->attributes()->contains('bar'));
-        $this->assertSame(
+        $this->assertEquals(
             $node->attributes()->get('bar'),
-            $node2->attributes()->get('bar')
+            $node2->attributes()->get('bar'),
         );
         $this->assertSame(
             $attribute,
-            $node2->attributes()->get('foo')
+            $node2->attributes()->get('foo')->match(
+                static fn($attribute) => $attribute,
+                static fn() => null,
+            ),
         );
     }
 
     public function testAddAttribute()
     {
-        $node = new SelfClosingElement(
+        $node = SelfClosingElement::of(
             'foo',
             Set::of(
-                Attribute::class,
-                new Attribute('foo'),
-                new Attribute('bar'),
+                Attribute::of('foo'),
+                Attribute::of('bar'),
             ),
         );
 
         $node2 = $node->addAttribute(
-            $attribute = new Attribute('baz', 'baz')
+            $attribute = Attribute::of('baz', 'baz'),
         );
 
         $this->assertNotSame($node, $node2);
         $this->assertInstanceOf(SelfClosingElement::class, $node2);
         $this->assertSame($node->name(), $node2->name());
-        $this->assertSame($node->children(), $node2->children());
+        $this->assertTrue($node2->children()->empty());
         $this->assertNotSame($node->attributes(), $node2->attributes());
         $this->assertCount(2, $node->attributes());
         $this->assertCount(3, $node2->attributes());
@@ -181,69 +171,61 @@ class SelfClosingElementTest extends TestCase
         $this->assertTrue($node->attributes()->contains('bar'));
         $this->assertTrue($node2->attributes()->contains('foo'));
         $this->assertTrue($node2->attributes()->contains('bar'));
-        $this->assertSame(
+        $this->assertEquals(
             $node->attributes()->get('bar'),
-            $node2->attributes()->get('bar')
+            $node2->attributes()->get('bar'),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $node->attributes()->get('foo'),
-            $node2->attributes()->get('foo')
+            $node2->attributes()->get('foo'),
         );
         $this->assertSame(
             $attribute,
-            $node2->attributes()->get('baz')
+            $node2->attributes()->get('baz')->match(
+                static fn($attribute) => $attribute,
+                static fn() => null,
+            ),
         );
     }
 
     public function testChildren()
     {
-        $node = new SelfClosingElement('foo');
+        $node = SelfClosingElement::of('foo');
 
         $this->assertTrue(
             $node
                 ->children()
-                ->equals(Sequence::of(Node::class)),
+                ->equals(Sequence::of()),
         );
     }
 
     public function testHasChildren()
     {
-        $node = new SelfClosingElement('foo');
-        $this->assertFalse($node->hasChildren());
+        $node = SelfClosingElement::of('foo');
+        $this->assertTrue($node->children()->empty());
     }
 
-    public function testThrowWhenRemovingChild()
+    public function testDoNothingWhenPrependingChild()
     {
-        $this->expectException(LogicException::class);
+        $node = SelfClosingElement::of('foo');
 
-        (new SelfClosingElement('foo'))->removeChild(0);
-    }
-
-    public function testThrowWhenReplacingChild()
-    {
-        $this->expectException(LogicException::class);
-
-        (new SelfClosingElement('foo'))->replaceChild(
-            0,
-            $this->createMock(Node::class)
+        $this->assertSame(
+            $node,
+            $node->prependChild(
+                $this->createMock(Node::class),
+            ),
         );
     }
 
-    public function testThrowWhenPrependingChild()
+    public function testDoNothingWhenAppendingChild()
     {
-        $this->expectException(LogicException::class);
+        $node = SelfClosingElement::of('foo');
 
-        (new SelfClosingElement('foo'))->prependChild(
-            $this->createMock(Node::class)
-        );
-    }
-
-    public function testThrowWhenAppendingChild()
-    {
-        $this->expectException(LogicException::class);
-
-        (new SelfClosingElement('foo'))->appendChild(
-            $this->createMock(Node::class)
+        $this->assertSame(
+            $node,
+            $node->appendChild(
+                $this->createMock(Node::class),
+            ),
         );
     }
 
@@ -251,7 +233,7 @@ class SelfClosingElementTest extends TestCase
     {
         $this->assertSame(
             '',
-            (new SelfClosingElement('foo'))->content()
+            SelfClosingElement::of('foo')->content(),
         );
     }
 
@@ -259,18 +241,45 @@ class SelfClosingElementTest extends TestCase
     {
         $this->assertSame(
             '<foo/>',
-            (new SelfClosingElement('foo'))->toString(),
+            SelfClosingElement::of('foo')->toString(),
         );
         $this->assertSame(
             '<foo bar="baz" baz="foo"/>',
-            (new SelfClosingElement(
+            SelfClosingElement::of(
                 'foo',
                 Set::of(
-                    Attribute::class,
-                    new Attribute('bar', 'baz'),
-                    new Attribute('baz', 'foo'),
+                    Attribute::of('bar', 'baz'),
+                    Attribute::of('baz', 'foo'),
                 ),
-            ))->toString(),
+            )->toString(),
         );
+    }
+
+    public function testFilterChild()
+    {
+        $this
+            ->forAll(DataSet\Unicode::lengthBetween(1, 255))
+            ->then(function($name) {
+                $element = SelfClosingElement::of($name);
+
+                $this->assertSame(
+                    $element,
+                    $element->filterChild(static fn() => true),
+                );
+            });
+    }
+
+    public function testMapChild()
+    {
+        $this
+            ->forAll(DataSet\Unicode::lengthBetween(1, 255))
+            ->then(function($name) {
+                $element = SelfClosingElement::of($name);
+
+                $this->assertSame(
+                    $element,
+                    $element->mapChild(static fn($child) => $child),
+                );
+            });
     }
 }

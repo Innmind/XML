@@ -5,7 +5,6 @@ namespace Tests\Innmind\Xml\Translator;
 
 use Innmind\Xml\Translator\{
     NodeTranslators,
-    NodeTranslator,
     NodeTranslator\DocumentTranslator,
     NodeTranslator\ElementTranslator,
     NodeTranslator\CharacterDataTranslator,
@@ -23,35 +22,48 @@ class NodeTranslatorsTest extends TestCase
         $defaults = NodeTranslators::defaults();
 
         $this->assertInstanceOf(Map::class, $defaults);
-        $this->assertSame('int', (string) $defaults->keyType());
-        $this->assertSame(
-            NodeTranslator::class,
-            (string) $defaults->valueType()
-        );
         $this->assertCount(6, $defaults);
         $this->assertInstanceOf(
             DocumentTranslator::class,
-            $defaults->get(\XML_DOCUMENT_NODE)
+            $defaults->get(\XML_DOCUMENT_NODE)->match(
+                static fn($translator) => $translator,
+                static fn() => null,
+            ),
         );
         $this->assertInstanceOf(
             ElementTranslator::class,
-            $defaults->get(\XML_ELEMENT_NODE)
+            $defaults->get(\XML_ELEMENT_NODE)->match(
+                static fn($translator) => $translator,
+                static fn() => null,
+            ),
         );
         $this->assertInstanceOf(
             CharacterDataTranslator::class,
-            $defaults->get(\XML_CDATA_SECTION_NODE)
+            $defaults->get(\XML_CDATA_SECTION_NODE)->match(
+                static fn($translator) => $translator,
+                static fn() => null,
+            ),
         );
         $this->assertInstanceOf(
             CommentTranslator::class,
-            $defaults->get(\XML_COMMENT_NODE)
+            $defaults->get(\XML_COMMENT_NODE)->match(
+                static fn($translator) => $translator,
+                static fn() => null,
+            ),
         );
         $this->assertInstanceOf(
             TextTranslator::class,
-            $defaults->get(\XML_TEXT_NODE)
+            $defaults->get(\XML_TEXT_NODE)->match(
+                static fn($translator) => $translator,
+                static fn() => null,
+            ),
         );
         $this->assertInstanceOf(
             EntityReferenceTranslator::class,
-            $defaults->get(\XML_ENTITY_REF_NODE)
+            $defaults->get(\XML_ENTITY_REF_NODE)->match(
+                static fn($translator) => $translator,
+                static fn() => null,
+            ),
         );
     }
 }

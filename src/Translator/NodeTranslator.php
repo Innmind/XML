@@ -4,11 +4,15 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Translator;
 
 use Innmind\Xml\Node;
+use Innmind\Immutable\Maybe;
 
+/**
+ * @psalm-immutable
+ */
 interface NodeTranslator
 {
-    public function __invoke(
-        \DOMNode $node,
-        Translator $translate
-    ): Node;
+    /**
+     * @return Maybe<Node>
+     */
+    public function __invoke(\DOMNode $node, Translator $translate): Maybe;
 }

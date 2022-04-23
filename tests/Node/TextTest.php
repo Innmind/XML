@@ -6,71 +6,63 @@ namespace Tests\Innmind\Xml\Node;
 use Innmind\Xml\{
     Node\Text,
     Node,
-    Exception\LogicException,
 };
 use Innmind\Immutable\Sequence;
 use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\{
+    PHPUnit\BlackBox,
+    Set,
+};
 
 class TextTest extends TestCase
 {
+    use BlackBox;
+
     public function testInterface()
     {
         $this->assertInstanceOf(
             Node::class,
-            new Text('foo')
+            Text::of('foo'),
         );
     }
 
     public function testChildren()
     {
-        $text = new Text('foo');
+        $text = Text::of('foo');
 
         $this->assertInstanceOf(Sequence::class, $text->children());
-        $this->assertSame(Node::class, $text->children()->type());
         $this->assertCount(0, $text->children());
-        $this->assertFalse($text->hasChildren());
     }
 
     public function testContent()
     {
         $this->assertSame(
             ' foo ',
-            (new Text(' foo '))->content()
+            Text::of(' foo ')->content(),
         );
     }
 
-    public function testThrowWhenRemovingChild()
+    public function testDoNothingWhenPrependingChild()
     {
-        $this->expectException(LogicException::class);
+        $node = Text::of('foo');
 
-        (new Text('foo'))->removeChild(0);
-    }
-
-    public function testThrowWhenReplacingChild()
-    {
-        $this->expectException(LogicException::class);
-
-        (new Text('foo'))->replaceChild(
-            0,
-            $this->createMock(Node::class)
+        $this->assertSame(
+            $node,
+            $node->prependChild(
+                $this->createMock(Node::class),
+            ),
         );
     }
 
-    public function testThrowWhenPrependingChild()
+    public function testDoNothingWhenAppendingChild()
     {
-        $this->expectException(LogicException::class);
+        $node = Text::of('foo');
 
-        (new Text('foo'))->prependChild(
-            $this->createMock(Node::class)
-        );
-    }
-
-    public function testThrowWhenAppendingChild()
-    {
-        $this->expectException(LogicException::class);
-
-        (new Text('foo'))->appendChild(
-            $this->createMock(Node::class)
+        $this->assertSame(
+            $node,
+            $node->appendChild(
+                $this->createMock(Node::class),
+            ),
         );
     }
 
@@ -78,7 +70,35 @@ class TextTest extends TestCase
     {
         $this->assertSame(
             'foo',
-            (new Text('foo'))->toString(),
+            Text::of('foo')->toString(),
         );
+    }
+
+    public function testFilterChild()
+    {
+        $this
+            ->forAll(Set\Unicode::strings())
+            ->then(function($data) {
+                $text = Text::of($data);
+
+                $this->assertSame(
+                    $text,
+                    $text->filterChild(static fn() => true),
+                );
+            });
+    }
+
+    public function testMapChild()
+    {
+        $this
+            ->forAll(Set\Unicode::strings())
+            ->then(function($data) {
+                $text = Text::of($data);
+
+                $this->assertSame(
+                    $text,
+                    $text->mapChild(static fn($child) => $child),
+                );
+            });
     }
 }

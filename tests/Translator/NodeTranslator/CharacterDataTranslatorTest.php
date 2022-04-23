@@ -8,7 +8,6 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
     Node\CharacterData,
-    Exception\InvalidArgumentException,
 };
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +18,7 @@ class CharacterDataTranslatorTest extends TestCase
     {
         $this->assertInstanceOf(
             NodeTranslator::class,
-            new CharacterDataTranslator
+            CharacterDataTranslator::of(),
         );
     }
 
@@ -31,31 +30,31 @@ class CharacterDataTranslatorTest extends TestCase
 XML
         );
 
-        $translate = new CharacterDataTranslator;
+        $translate = CharacterDataTranslator::of();
         $node = $translate(
             $document
                 ->childNodes
                 ->item(0)
                 ->childNodes
                 ->item(0),
-            new Translator(
-                Map::of('int', NodeTranslator::class)
-            )
+            Translator::of(Map::of()),
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
         );
 
         $this->assertInstanceOf(CharacterData::class, $node);
         $this->assertSame('foo', $node->content());
     }
 
-    public function testThrowWhenInvalidNode()
+    public function testReturnNothingWhenInvalidNode()
     {
-        $this->expectException(InvalidArgumentException::class);
-
-        (new CharacterDataTranslator)(
+        $this->assertNull(CharacterDataTranslator::of()(
             new \DOMNode,
-            new Translator(
-                Map::of('int', NodeTranslator::class)
-            )
-        );
+            Translator::of(Map::of()),
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
+        ));
     }
 }

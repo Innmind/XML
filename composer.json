@@ -8,34 +8,31 @@
     "authors": [
         {
             "name": "Baptiste Langlade",
-            "email": "langlade.baptiste@gmail.com"
+            "email": "baptiste.langlade@hey.com"
         }
     ],
     "support": {
         "issues": "http://github.com/Innmind/XML/issues"
     },
     "require": {
-        "php": "~7.4|~8.0",
-        "innmind/immutable": "~3.0",
-        "innmind/stream": "~2.0"
+        "php": "~8.1",
+        "innmind/immutable": "~4.2",
+        "innmind/filesystem": "~5.1"
     },
     "autoload": {
         "psr-4": {
             "Innmind\\Xml\\": "src/"
-        },
-        "files": ["src/bootstrap.php"]
+        }
     },
     "autoload-dev": {
         "psr-4": {
             "Tests\\Innmind\\Xml\\": "tests/"
         }
     },
-    "scripts": {
-        "test": "vendor/bin/phpunit --colors=always"
-    },
     "require-dev": {
         "phpunit/phpunit": "~9.0",
-        "vimeo/psalm": "~4.1",
-        "innmind/coding-standard": "^1.1"
+        "vimeo/psalm": "~4.22",
+        "innmind/coding-standard": "~2.0",
+        "innmind/black-box": "^4.18"
     }
 }

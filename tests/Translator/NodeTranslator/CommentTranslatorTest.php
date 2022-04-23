@@ -8,7 +8,6 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
     Node\Comment,
-    Exception\InvalidArgumentException,
 };
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
@@ -19,7 +18,7 @@ class CommentTranslatorTest extends TestCase
     {
         $this->assertInstanceOf(
             NodeTranslator::class,
-            new CommentTranslator
+            CommentTranslator::of(),
         );
     }
 
@@ -31,31 +30,31 @@ class CommentTranslatorTest extends TestCase
 XML
         );
 
-        $translate = new CommentTranslator;
+        $translate = CommentTranslator::of();
         $node = $translate(
             $document
                 ->childNodes
                 ->item(0)
                 ->childNodes
                 ->item(0),
-            new Translator(
-                Map::of('int', NodeTranslator::class)
-            )
+            Translator::of(Map::of()),
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
         );
 
         $this->assertInstanceOf(Comment::class, $node);
         $this->assertSame('foo', $node->content());
     }
 
-    public function testThrowWhenInvalidNode()
+    public function testReturnNothingWhenInvalidNode()
     {
-        $this->expectException(InvalidArgumentException::class);
-
-        (new CommentTranslator)(
+        $this->assertNull(CommentTranslator::of()(
             new \DOMNode,
-            new Translator(
-                Map::of('int', NodeTranslator::class)
-            )
-        );
+            Translator::of(Map::of()),
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
+        ));
     }
 }

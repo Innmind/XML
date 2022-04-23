@@ -6,71 +6,63 @@ namespace Tests\Innmind\Xml\Node;
 use Innmind\Xml\{
     Node\EntityReference,
     Node,
-    Exception\LogicException,
 };
 use Innmind\Immutable\Sequence;
 use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\{
+    PHPUnit\BlackBox,
+    Set,
+};
 
 class EntityReferenceTest extends TestCase
 {
+    use BlackBox;
+
     public function testInterface()
     {
         $this->assertInstanceOf(
             Node::class,
-            new EntityReference('foo')
+            EntityReference::of('foo'),
         );
     }
 
     public function testChildren()
     {
-        $node = new EntityReference('foo');
+        $node = EntityReference::of('foo');
 
         $this->assertInstanceOf(Sequence::class, $node->children());
-        $this->assertSame(Node::class, $node->children()->type());
         $this->assertCount(0, $node->children());
-        $this->assertFalse($node->hasChildren());
     }
 
     public function testContent()
     {
         $this->assertSame(
             ' foo ',
-            (new EntityReference(' foo '))->content()
+            EntityReference::of(' foo ')->content(),
         );
     }
 
-    public function testThrowWhenRemovingChild()
+    public function testDoNothingWhenPrependingChild()
     {
-        $this->expectException(LogicException::class);
+        $node = EntityReference::of('foo');
 
-        (new EntityReference('foo'))->removeChild(0);
-    }
-
-    public function testThrowWhenReplacingChild()
-    {
-        $this->expectException(LogicException::class);
-
-        (new EntityReference('foo'))->replaceChild(
-            0,
-            $this->createMock(Node::class)
+        $this->assertSame(
+            $node,
+            $node->prependChild(
+                $this->createMock(Node::class),
+            ),
         );
     }
 
-    public function testThrowWhenPrependingChild()
+    public function testDoNothingWhenAppendingChild()
     {
-        $this->expectException(LogicException::class);
+        $node = EntityReference::of('foo');
 
-        (new EntityReference('foo'))->prependChild(
-            $this->createMock(Node::class)
-        );
-    }
-
-    public function testThrowWhenAppendingChild()
-    {
-        $this->expectException(LogicException::class);
-
-        (new EntityReference('foo'))->appendChild(
-            $this->createMock(Node::class)
+        $this->assertSame(
+            $node,
+            $node->appendChild(
+                $this->createMock(Node::class),
+            ),
         );
     }
 
@@ -78,7 +70,35 @@ class EntityReferenceTest extends TestCase
     {
         $this->assertSame(
             '&foo;',
-            (new EntityReference('foo'))->toString(),
+            EntityReference::of('foo')->toString(),
         );
+    }
+
+    public function testFilterChild()
+    {
+        $this
+            ->forAll(Set\Unicode::strings())
+            ->then(function($data) {
+                $reference = EntityReference::of($data);
+
+                $this->assertSame(
+                    $reference,
+                    $reference->filterChild(static fn() => true),
+                );
+            });
+    }
+
+    public function testMapChild()
+    {
+        $this
+            ->forAll(Set\Unicode::strings())
+            ->then(function($data) {
+                $reference = EntityReference::of($data);
+
+                $this->assertSame(
+                    $reference,
+                    $reference->mapChild(static fn($child) => $child),
+                );
+            });
     }
 }

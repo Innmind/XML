@@ -7,11 +7,8 @@ use Innmind\Xml\{
     Visitor\ParentNode,
     Reader\Reader,
     Element\Element,
-    Translator\Translator,
-    Translator\NodeTranslators,
-    Exception\NodeHasNoParent,
 };
-use Innmind\Stream\Readable\Stream;
+use Innmind\Filesystem\File\Content;
 use PHPUnit\Framework\TestCase;
 
 class ParentNodeTest extends TestCase
@@ -20,11 +17,7 @@ class ParentNodeTest extends TestCase
 
     public function setUp(): void
     {
-        $this->read = new Reader(
-            new Translator(
-                NodeTranslators::defaults()
-            )
-        );
+        $this->read = Reader::of();
     }
 
     public function testInterface()
@@ -32,30 +25,43 @@ class ParentNodeTest extends TestCase
         $xml = <<<XML
 <div><div><foo /><bar /></div></div>
 XML;
-        $res = \fopen('php://temp', 'r+');
-        \fwrite($res, $xml);
         $tree = ($this->read)(
-            new Stream($res)
+            Content\Lines::ofContent($xml),
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
         );
         $parent = $tree
             ->children()
             ->get(0)
-            ->children()
-            ->get(0);
+            ->map(static fn($node) => $node->children())
+            ->flatMap(static fn($children) => $children->get(0))
+            ->match(
+                static fn($parent) => $parent,
+                static fn() => null,
+            );
         $node = $parent
             ->children()
-            ->get(1);
+            ->get(1)
+            ->match(
+                static fn($node) => $node,
+                static fn() => null,
+            );
 
         $this->assertSame(
             $parent,
-            (new ParentNode($node))($tree)
+            ParentNode::of($node)($tree)->match(
+                static fn($node) => $node,
+                static fn() => null,
+            ),
         );
     }
 
-    public function testThrowWhenNoParentFound()
+    public function testReturnNothingWhenNoParentFound()
     {
-        $this->expectException(NodeHasNoParent::class);
-
-        (new ParentNode(new Element('foo')))(new Element('bar'));
+        $this->assertNull(ParentNode::of(Element::of('foo'))(Element::of('bar'))->match(
+            static fn($node) => $node,
+            static fn() => null,
+        ));
     }
 }

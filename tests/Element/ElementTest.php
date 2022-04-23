@@ -8,8 +8,6 @@ use Innmind\Xml\{
     Node,
     Attribute,
     Exception\DomainException,
-    Exception\LogicException,
-    Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
     Map,
@@ -17,20 +15,26 @@ use Innmind\Immutable\{
     Sequence,
 };
 use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\{
+    PHPUnit\BlackBox,
+    Set as DataSet,
+};
 
 class ElementTest extends TestCase
 {
+    use BlackBox;
+
     public function testInterface()
     {
         $this->assertInstanceOf(
             Node::class,
-            new Element('foo')
+            Element::of('foo'),
         );
     }
 
     public function testName()
     {
-        $node = new Element('foo');
+        $node = Element::of('foo');
 
         $this->assertSame('foo', $node->name());
     }
@@ -39,50 +43,36 @@ class ElementTest extends TestCase
     {
         $this->expectException(DomainException::class);
 
-        new Element('');
-    }
-
-    public function testThrowWhenInvalidAttributes()
-    {
-        $this->expectException(\TypeError::class);
-        $this->expectExceptionMessage('Argument 2 must be of type Set<Innmind\Xml\Attribute>');
-
-        new Element('foo', Set::of('string'));
+        Element::of('');
     }
 
     public function testDefaultAttributes()
     {
-        $node = new Element('foo');
+        $node = Element::of('foo');
 
         $this->assertInstanceOf(Map::class, $node->attributes());
-        $this->assertSame('string', (string) $node->attributes()->keyType());
-        $this->assertSame(
-            Attribute::class,
-            (string) $node->attributes()->valueType()
-        );
     }
 
     public function testAttribute()
     {
-        $node = new Element(
+        $node = Element::of(
             'foo',
-            Set::of(
-                Attribute::class,
-                $expected = new Attribute('foo'),
-            ),
+            Set::of($expected = Attribute::of('foo')),
         );
 
-        $this->assertSame($expected, $node->attribute('foo'));
+        $this->assertSame($expected, $node->attribute('foo')->match(
+            static fn($attribute) => $attribute,
+            static fn() => null,
+        ));
     }
 
     public function testRemoveAttribute()
     {
-        $node = new Element(
+        $node = Element::of(
             'foo',
             Set::of(
-                Attribute::class,
-                new Attribute('foo'),
-                new Attribute('bar'),
+                Attribute::of('foo'),
+                Attribute::of('bar'),
             ),
         );
 
@@ -99,20 +89,19 @@ class ElementTest extends TestCase
         $this->assertTrue($node->attributes()->contains('bar'));
         $this->assertFalse($node2->attributes()->contains('foo'));
         $this->assertTrue($node2->attributes()->contains('bar'));
-        $this->assertSame(
+        $this->assertEquals(
             $node->attributes()->get('bar'),
-            $node2->attributes()->get('bar')
+            $node2->attributes()->get('bar'),
         );
     }
 
     public function testDoNothingWhenRemovingUnknownAttribute()
     {
-        $element = new Element(
+        $element = Element::of(
             'foo',
             Set::of(
-                Attribute::class,
-                new Attribute('foo'),
-                new Attribute('bar'),
+                Attribute::of('foo'),
+                Attribute::of('bar'),
             ),
         );
 
@@ -121,17 +110,16 @@ class ElementTest extends TestCase
 
     public function testReplaceAttribute()
     {
-        $node = new Element(
+        $node = Element::of(
             'foo',
             Set::of(
-                Attribute::class,
-                new Attribute('foo'),
-                new Attribute('bar'),
+                Attribute::of('foo'),
+                Attribute::of('bar'),
             ),
         );
 
         $node2 = $node->addAttribute(
-            $attribute = new Attribute('foo', 'baz')
+            $attribute = Attribute::of('foo', 'baz'),
         );
 
         $this->assertNotSame($node, $node2);
@@ -145,29 +133,31 @@ class ElementTest extends TestCase
         $this->assertTrue($node->attributes()->contains('bar'));
         $this->assertTrue($node2->attributes()->contains('foo'));
         $this->assertTrue($node2->attributes()->contains('bar'));
-        $this->assertSame(
+        $this->assertEquals(
             $node->attributes()->get('bar'),
-            $node2->attributes()->get('bar')
+            $node2->attributes()->get('bar'),
         );
         $this->assertSame(
             $attribute,
-            $node2->attributes()->get('foo')
+            $node2->attributes()->get('foo')->match(
+                static fn($attribute) => $attribute,
+                static fn() => null,
+            ),
         );
     }
 
     public function testAddAttribute()
     {
-        $node = new Element(
+        $node = Element::of(
             'foo',
             Set::of(
-                Attribute::class,
-                new Attribute('foo'),
-                new Attribute('bar'),
+                Attribute::of('foo'),
+                Attribute::of('bar'),
             ),
         );
 
         $node2 = $node->addAttribute(
-            $attribute = new Attribute('baz', 'baz')
+            $attribute = Attribute::of('baz', 'baz'),
         );
 
         $this->assertNotSame($node, $node2);
@@ -181,145 +171,56 @@ class ElementTest extends TestCase
         $this->assertTrue($node->attributes()->contains('bar'));
         $this->assertTrue($node2->attributes()->contains('foo'));
         $this->assertTrue($node2->attributes()->contains('bar'));
-        $this->assertSame(
+        $this->assertEquals(
             $node->attributes()->get('bar'),
-            $node2->attributes()->get('bar')
+            $node2->attributes()->get('bar'),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $node->attributes()->get('foo'),
-            $node2->attributes()->get('foo')
+            $node2->attributes()->get('foo'),
         );
         $this->assertSame(
             $attribute,
-            $node2->attributes()->get('baz')
+            $node2->attributes()->get('baz')->match(
+                static fn($attribute) => $attribute,
+                static fn() => null,
+            ),
         );
     }
 
     public function testDefaultChildren()
     {
-        $node = new Element('foo');
+        $node = Element::of('foo');
 
         $this->assertInstanceOf(Sequence::class, $node->children());
-        $this->assertSame(Node::class, $node->children()->type());
     }
 
     public function testHasChildren()
     {
-        $node = new Element(
+        $node = Element::of(
             'foo',
             null,
-            new Element('bar'),
+            Sequence::of(Element::of('bar')),
         );
-        $this->assertTrue($node->hasChildren());
+        $this->assertFalse($node->children()->empty());
 
-        $this->assertFalse((new Element('foo'))->hasChildren());
-    }
-
-    public function testRemoveChild()
-    {
-        $element = new Element(
-            'foobar',
-            null,
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
-        );
-
-        $element2 = $element->removeChild(1);
-
-        $this->assertNotSame($element, $element2);
-        $this->assertInstanceOf(Element::class, $element2);
-        $this->assertSame($element->name(), $element2->name());
-        $this->assertSame($element->attributes(), $element2->attributes());
-        $this->assertCount(3, $element->children());
-        $this->assertCount(2, $element2->children());
-        $this->assertSame(
-            $element->children()->get(0),
-            $element2->children()->get(0)
-        );
-        $this->assertSame(
-            $element->children()->get(2),
-            $element2->children()->get(1)
-        );
-    }
-
-    public function testThrowWhenRemovingUnknownChild()
-    {
-        $this->expectException(OutOfBoundsException::class);
-
-        (new Element(
-            'foobar',
-            null,
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
-        ))->removeChild(3);
-    }
-
-    public function testReplaceChild()
-    {
-        $element = new Element(
-            'foobar',
-            null,
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
-        );
-
-        $element2 = $element->replaceChild(
-            1,
-            $node = $this->createMock(Node::class)
-        );
-
-        $this->assertNotSame($element, $element2);
-        $this->assertInstanceOf(Element::class, $element2);
-        $this->assertSame($element->name(), $element2->name());
-        $this->assertSame($element->attributes(), $element2->attributes());
-        $this->assertCount(3, $element->children());
-        $this->assertCount(3, $element2->children());
-        $this->assertSame(
-            $element->children()->get(0),
-            $element2->children()->get(0)
-        );
-        $this->assertNotSame(
-            $element->children()->get(1),
-            $element2->children()->get(1)
-        );
-        $this->assertSame($node, $element2->children()->get(1));
-        $this->assertSame(
-            $element->children()->get(2),
-            $element2->children()->get(2)
-        );
-    }
-
-    public function testThrowWhenReplacingUnknownChild()
-    {
-        $this->expectException(OutOfBoundsException::class);
-
-        (new Element(
-            'foobar',
-            null,
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
-        ))->replaceChild(
-            3,
-            $this->createMock(Node::class)
-        );
+        $this->assertTrue(Element::of('foo')->children()->empty());
     }
 
     public function testPrependChild()
     {
-        $element = new Element(
+        $element = Element::of(
             'foobar',
             null,
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
+            Sequence::of(
+                Element::of('foo'),
+                Element::of('bar'),
+                Element::of('baz'),
+            ),
         );
 
         $element2 = $element->prependChild(
-            $node = $this->createMock(Node::class)
+            $node = $this->createMock(Node::class),
         );
 
         $this->assertNotSame($element, $element2);
@@ -331,34 +232,39 @@ class ElementTest extends TestCase
         $this->assertCount(4, $element2->children());
         $this->assertSame(
             $node,
-            $element2->children()->get(0)
+            $element2->children()->get(0)->match(
+                static fn($node) => $node,
+                static fn() => null,
+            ),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $element->children()->get(0),
-            $element2->children()->get(1)
+            $element2->children()->get(1),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $element->children()->get(1),
-            $element2->children()->get(2)
+            $element2->children()->get(2),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $element->children()->get(2),
-            $element2->children()->get(3)
+            $element2->children()->get(3),
         );
     }
 
     public function testAppendChild()
     {
-        $element = new Element(
+        $element = Element::of(
             'foobar',
             null,
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
+            Sequence::of(
+                Element::of('foo'),
+                Element::of('bar'),
+                Element::of('baz'),
+            ),
         );
 
         $element2 = $element->appendChild(
-            $node = $this->createMock(Node::class)
+            $node = $this->createMock(Node::class),
         );
 
         $this->assertNotSame($element, $element2);
@@ -368,21 +274,24 @@ class ElementTest extends TestCase
         $this->assertNotSame($element->children(), $element2->children());
         $this->assertCount(3, $element->children());
         $this->assertCount(4, $element2->children());
-        $this->assertSame(
+        $this->assertEquals(
             $element->children()->get(0),
-            $element2->children()->get(0)
+            $element2->children()->get(0),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $element->children()->get(1),
-            $element2->children()->get(1)
+            $element2->children()->get(1),
         );
-        $this->assertSame(
+        $this->assertEquals(
             $element->children()->get(2),
-            $element2->children()->get(2)
+            $element2->children()->get(2),
         );
         $this->assertSame(
             $node,
-            $element2->children()->get(3)
+            $element2->children()->get(3)->match(
+                static fn($node) => $node,
+                static fn() => null,
+            ),
         );
     }
 
@@ -390,21 +299,21 @@ class ElementTest extends TestCase
     {
         $this->assertSame(
             '',
-            (new Element('foo'))->content()
+            Element::of('foo')->content(),
         );
     }
 
     public function testContentWithChildren()
     {
-        $node = new Element(
+        $node = Element::of(
             'foo',
             null,
-            new Element('bar'),
+            Sequence::of(Element::of('bar')),
         );
 
         $this->assertSame(
             '<bar></bar>',
-            $node->content()
+            $node->content(),
         );
     }
 
@@ -412,31 +321,94 @@ class ElementTest extends TestCase
     {
         $this->assertSame(
             '<foo></foo>',
-            (new Element('foo'))->toString(),
+            Element::of('foo')->toString(),
         );
         $this->assertSame(
             '<foo bar="baz" baz="foo"></foo>',
-            (new Element(
+            Element::of(
                 'foo',
                 Set::of(
-                    Attribute::class,
-                    new Attribute('bar', 'baz'),
-                    new Attribute('baz', 'foo'),
+                    Attribute::of('bar', 'baz'),
+                    Attribute::of('baz', 'foo'),
                 ),
-            ))->toString(),
+            )->toString(),
         );
         $this->assertSame(
             '<foo bar="baz" baz="foo"><bar></bar><baz></baz></foo>',
-            (new Element(
+            Element::of(
                 'foo',
                 Set::of(
-                    Attribute::class,
-                    new Attribute('bar', 'baz'),
-                    new Attribute('baz', 'foo'),
+                    Attribute::of('bar', 'baz'),
+                    Attribute::of('baz', 'foo'),
                 ),
-                new Element('bar'),
-                new Element('baz'),
-            ))->toString(),
+                Sequence::of(
+                    Element::of('bar'),
+                    Element::of('baz'),
+                ),
+            )->toString(),
         );
+    }
+
+    public function testFilterChild()
+    {
+        $this
+            ->forAll(
+                DataSet\Unicode::lengthBetween(1, 255),
+                DataSet\Sequence::of(
+                    DataSet\Decorate::immutable(
+                        static fn($name) => Element::of($name),
+                        DataSet\Unicode::lengthBetween(1, 10),
+                    ),
+                    DataSet\Integers::between(0, 10),
+                ),
+            )
+            ->then(function($name, $children) {
+                $element = Element::of(
+                    $name,
+                    null,
+                    Sequence::of(...$children),
+                );
+
+                $element2 = $element->filterChild(static fn() => false);
+                $element3 = $element->filterChild(static fn() => true);
+
+                $this->assertSame($name, $element2->name());
+                $this->assertSame($name, $element3->name());
+                $this->assertTrue($element2->children()->empty());
+                $this->assertTrue($element3->children()->equals($element->children()));
+            });
+    }
+
+    public function testMapChild()
+    {
+        $this
+            ->forAll(
+                DataSet\Unicode::lengthBetween(1, 255),
+                DataSet\Sequence::of(
+                    DataSet\Decorate::immutable(
+                        static fn($name) => Element::of($name),
+                        DataSet\Unicode::lengthBetween(1, 10),
+                    ),
+                    DataSet\Integers::between(1, 10),
+                ),
+                DataSet\Decorate::immutable(
+                    static fn($name) => Element::of($name),
+                    DataSet\Unicode::lengthBetween(1, 10),
+                ),
+            )
+            ->then(function($name, $children, $replacement) {
+                $element = Element::of(
+                    $name,
+                    null,
+                    Sequence::of(...$children),
+                );
+
+                $element2 = $element->mapChild(static fn($child) => $replacement);
+
+                $this->assertSame($name, $element2->name());
+                $this->assertFalse($element2->children()->equals($element->children()));
+                $this->assertSame($element->children()->size(), $element2->children()->size());
+                $this->assertTrue($element2->children()->contains($replacement));
+            });
     }
 }

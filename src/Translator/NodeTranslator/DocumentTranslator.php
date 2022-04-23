@@ -7,7 +7,6 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
     Node,
-    Exception\InvalidArgumentException,
     Node\Document\Type,
     Node\Document\Version,
     Node\Document\Encoding,
@@ -16,44 +15,67 @@ use Innmind\Xml\{
 use Innmind\Immutable\{
     Map,
     Sequence,
+    Maybe,
 };
-use function Innmind\Immutable\unwrap;
 
+/**
+ * @psalm-immutable
+ */
 final class DocumentTranslator implements NodeTranslator
 {
-    public function __invoke(
-        \DOMNode $node,
-        Translator $translate
-    ): Node {
-        if (!$node instanceof \DOMDocument) {
-            throw new InvalidArgumentException;
-        }
-
-        /**
-         * @psalm-suppress RedundantCondition DOMNode type declarations cannot be trusted
-         * @psalm-suppress TypeDoesNotContainType
-         */
-        return new Document(
-            $this->buildVersion($node),
-            $node->doctype ? $this->buildDoctype($node->doctype) : null,
-            $node->encoding ? $this->buildEncoding($node->encoding) : null,
-            ...($node->childNodes ? unwrap($this->buildChildren($node->childNodes, $translate)) : []),
-        );
+    private function __construct()
+    {
     }
 
-    private function buildVersion(\DOMDocument $document): Version
+    public function __invoke(\DOMNode $node, Translator $translate): Maybe
+    {
+        /**
+         * @psalm-suppress ArgumentTypeCoercion
+         * @psalm-suppress MixedArgumentTypeCoercion
+         * @var Maybe<Node>
+         */
+        return Maybe::just($node)
+            ->filter(static fn($node) => $node instanceof \DOMDocument)
+            ->flatMap(
+                fn(\DOMDocument $node) => Maybe::all(
+                    $this->buildVersion($node),
+                    $this->buildChildren($node->childNodes, $translate),
+                )->map(fn(Version $version, Sequence $children) => Document::of(
+                    $version,
+                    Maybe::of($node->doctype)->flatMap($this->buildDoctype(...)),
+                    Maybe::of($node->encoding)->flatMap($this->buildEncoding(...)),
+                    $children,
+                )),
+            );
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(): self
+    {
+        return new self;
+    }
+
+    /**
+     * @return Maybe<Version>
+     */
+    private function buildVersion(\DOMDocument $document): Maybe
     {
         [$major, $minor] = \explode('.', $document->xmlVersion);
 
-        return new Version(
+        return Version::maybe(
             (int) $major,
             (int) $minor,
         );
     }
 
-    private function buildDoctype(\DOMDocumentType $type): Type
+    /**
+     * @return Maybe<Type>
+     */
+    private function buildDoctype(\DOMDocumentType $type): Maybe
     {
-        return new Type(
+        return Type::maybe(
             $type->name,
             $type->publicId,
             $type->systemId,
@@ -61,30 +83,35 @@ final class DocumentTranslator implements NodeTranslator
     }
 
     /**
-     * @return Sequence<Node>
+     * @return Maybe<Sequence<Node>>
      */
     private function buildChildren(
         \DOMNodeList $nodes,
-        Translator $translate
-    ): Sequence {
-        /** @var Sequence<Node> */
-        $children = Sequence::of(Node::class);
+        Translator $translate,
+    ): Maybe {
+        /** @var Maybe<Sequence<Node>> */
+        $children = Maybe::just(Sequence::of());
 
         foreach ($nodes as $child) {
             if ($child->nodeType === \XML_DOCUMENT_TYPE_NODE) {
                 continue;
             }
 
-            $children = ($children)(
-                $translate($child),
+            $children = $children->flatMap(
+                static fn($children) => $translate($child)->map(
+                    static fn($node) => ($children)($node),
+                ),
             );
         }
 
         return $children;
     }
 
-    private function buildEncoding(string $encoding): Encoding
+    /**
+     * @return Maybe<Encoding>
+     */
+    private function buildEncoding(string $encoding): Maybe
     {
-        return new Encoding($encoding);
+        return Encoding::maybe($encoding);
     }
 }

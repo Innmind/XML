@@ -3,43 +3,54 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Translator;
 
-use Innmind\Xml\{
-    Node,
-    Exception\UnknownNodeType,
+use Innmind\Xml\Node;
+use Innmind\Immutable\{
+    Map,
+    Maybe,
 };
-use Innmind\Immutable\Map;
-use function Innmind\Immutable\assertMap;
 
+/**
+ * @psalm-immutable
+ */
 final class Translator
 {
-    private static ?self $default = null;
-
     /** @var Map<int, NodeTranslator> */
     private Map $translators;
 
     /**
      * @param Map<int, NodeTranslator> $translators
      */
-    public function __construct(Map $translators)
+    private function __construct(Map $translators)
     {
-        assertMap('int', NodeTranslator::class, $translators, 1);
-
         $this->translators = $translators;
     }
 
-    public function __invoke(\DOMNode $node): Node
+    /**
+     * @return Maybe<Node>
+     */
+    public function __invoke(\DOMNode $node): Maybe
     {
-        if (!$this->translators->contains($node->nodeType)) {
-            throw new UnknownNodeType($node->nodeName);
-        }
-
         return $this
             ->translators
-            ->get($node->nodeType)($node, $this);
+            ->get($node->nodeType)
+            ->flatMap(fn($translate) => $translate($node, $this));
     }
 
+    /**
+     * @psalm-pure
+     *
+     * @param Map<int, NodeTranslator> $translators
+     */
+    public static function of(Map $translators): self
+    {
+        return new self($translators);
+    }
+
+    /**
+     * @psalm-pure
+     */
     public static function default(): self
     {
-        return self::$default ??= new self(NodeTranslators::defaults());
+        return new self(NodeTranslators::defaults());
     }
 }

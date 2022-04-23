@@ -3,53 +3,58 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Node;
 
-use Innmind\Xml\{
-    Node,
-    Exception\LogicException,
-};
+use Innmind\Xml\Node;
 use Innmind\Immutable\Sequence;
 
+/**
+ * @psalm-immutable
+ */
 final class EntityReference implements Node
 {
     private string $data;
-    /** @var Sequence<Node> */
-    private Sequence $children;
 
-    public function __construct(string $data)
+    private function __construct(string $data)
     {
         $this->data = $data;
-        /** @var Sequence<Node> */
-        $this->children = Sequence::of(Node::class);
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(string $data): self
+    {
+        return new self($data);
     }
 
     public function children(): Sequence
     {
-        return $this->children;
+        return Sequence::of();
     }
 
-    public function hasChildren(): bool
+    public function filterChild(callable $filter): self
     {
-        return false;
+        return $this;
     }
 
-    public function removeChild(int $position): Node
+    public function mapChild(callable $map): self
     {
-        throw new LogicException('Operation not applicable');
+        return $this;
     }
 
-    public function replaceChild(int $position, Node $child): Node
-    {
-        throw new LogicException('Operation not applicable');
-    }
-
+    /**
+     * This operation will do nothing
+     */
     public function prependChild(Node $child): Node
     {
-        throw new LogicException('Operation not applicable');
+        return $this;
     }
 
+    /**
+     * This operation will do nothing
+     */
     public function appendChild(Node $child): Node
     {
-        throw new LogicException('Operation not applicable');
+        return $this;
     }
 
     public function content(): string

@@ -8,58 +8,97 @@ use Innmind\Xml\{
     Attribute,
     Node,
     Exception\DomainException,
-    Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
     Map,
     Sequence,
     Set,
     Str,
-};
-use function Innmind\Immutable\{
-    assertSet,
-    join,
-    unwrap,
+    Maybe,
 };
 
+/**
+ * @psalm-immutable
+ */
 class Element implements ElementInterface
 {
+    /** @var non-empty-string */
     private string $name;
-    /** @var Map<string, Attribute> */
+    /** @var Map<non-empty-string, Attribute> */
     private Map $attributes;
     /** @var Sequence<Node> */
     private Sequence $children;
-    private ?string $content = null;
-    private ?string $string = null;
 
     /**
-     * @param Set<Attribute>|null $attributes
+     * @param non-empty-string $name
+     * @param Map<non-empty-string, Attribute> $attributes
+     * @param Sequence<Node> $children
      */
-    public function __construct(
+    private function __construct(
+        string $name,
+        Map $attributes,
+        Sequence $children,
+    ) {
+        $this->name = $name;
+        $this->attributes = $attributes;
+        $this->children = $children;
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @param non-empty-string $name
+     * @param Set<Attribute>|null $attributes
+     * @param Sequence<Node>|null $children
+     *
+     * @throws DomainException If the name is empty
+     */
+    public static function of(
         string $name,
         Set $attributes = null,
-        Node ...$children
-    ) {
-        /** @var Set<Attribute> */
-        $attributes ??= Set::of(Attribute::class);
+        Sequence $children = null,
+    ): self {
+        return self::maybe($name, $attributes, $children)->match(
+            static fn($self) => $self,
+            static fn() => throw new DomainException,
+        );
+    }
 
-        assertSet(Attribute::class, $attributes, 2);
-
-        if (Str::of($name)->empty()) {
-            throw new DomainException;
+    /**
+     * @psalm-pure
+     *
+     * @param Set<Attribute>|null $attributes
+     * @param Sequence<Node>|null $children
+     *
+     * @return Maybe<self>
+     */
+    public static function maybe(
+        string $name,
+        Set $attributes = null,
+        Sequence $children = null,
+    ): Maybe {
+        if ($name === '') {
+            /** @var Maybe<self> */
+            return Maybe::nothing();
         }
 
-        $this->name = $name;
-        /** @var Map<string, Attribute> */
-        $this->attributes = $attributes->toMapOf(
-            'string',
-            Attribute::class,
-            static function(Attribute $attribute): \Generator {
-                yield $attribute->name() => $attribute;
-            },
-        );
+        /** @var Set<Attribute> */
+        $attributes ??= Set::of();
         /** @var Sequence<Node> */
-        $this->children = Sequence::of(Node::class, ...$children);
+        $children ??= Sequence::of();
+
+        return Maybe::just(new self(
+            $name,
+            Map::of(
+                ...$attributes
+                    ->map(static fn($attribute) => [
+                        $attribute->name(),
+                        $attribute,
+                    ])
+                    ->toList(),
+            ),
+            $children,
+        ));
     }
 
     public function name(): string
@@ -72,7 +111,7 @@ class Element implements ElementInterface
         return $this->attributes;
     }
 
-    public function attribute(string $name): Attribute
+    public function attribute(string $name): Maybe
     {
         return $this->attributes->get($name);
     }
@@ -105,50 +144,30 @@ class Element implements ElementInterface
         return $this->children;
     }
 
-    public function hasChildren(): bool
+    public function filterChild(callable $filter): self
     {
-        return !$this->children->empty();
+        return new self(
+            $this->name,
+            $this->attributes,
+            $this->children->filter($filter),
+        );
     }
 
-    public function removeChild(int $position): Node
+    public function mapChild(callable $map): self
     {
-        if (!$this->children->indices()->contains($position)) {
-            throw new OutOfBoundsException((string) $position);
-        }
-
-        $element = clone $this;
-        $element->children = $this
-            ->children
-            ->take($position)
-            ->append($this->children->drop($position + 1));
-
-        return $element;
-    }
-
-    public function replaceChild(int $position, Node $child): Node
-    {
-        if (!$this->children->indices()->contains($position)) {
-            throw new OutOfBoundsException((string) $position);
-        }
-
-        $element = clone $this;
-        $element->children = $this
-            ->children
-            ->take($position)
-            ->add($child)
-            ->append($this->children->drop($position + 1));
-
-        return $element;
+        return new self(
+            $this->name,
+            $this->attributes,
+            $this->children->map($map),
+        );
     }
 
     public function prependChild(Node $child): Node
     {
         $element = clone $this;
-        /** @var Sequence<Node> */
         $element->children = Sequence::of(
-            Node::class,
             $child,
-            ...unwrap($this->children),
+            ...$this->children->toList(),
         );
 
         return $element;
@@ -164,38 +183,28 @@ class Element implements ElementInterface
 
     public function content(): string
     {
-        if ($this->content === null) {
-            $children = $this->children->mapTo(
-                'string',
-                static fn(Node $node): string => $node->toString(),
-            );
+        $children = $this->children->map(
+            static fn(Node $node): string => $node->toString(),
+        );
 
-            $this->content = join('', $children)->toString();
-        }
-
-        return $this->content;
+        return Str::of('')->join($children)->toString();
     }
 
     public function toString(): string
     {
-        if ($this->string === null) {
-            $attributes = $this
-                ->attributes
-                ->values()
-                ->mapTo(
-                    'string',
-                    static fn(Attribute $attribute): string => $attribute->toString(),
-                );
-
-            $this->string = \sprintf(
-                '<%s%s>%s</%s>',
-                $this->name(),
-                !$this->attributes()->empty() ? ' '.join(' ', $attributes)->toString() : '',
-                $this->content(),
-                $this->name(),
+        $attributes = $this
+            ->attributes
+            ->values()
+            ->map(
+                static fn(Attribute $attribute): string => $attribute->toString(),
             );
-        }
 
-        return $this->string;
+        return \sprintf(
+            '<%s%s>%s</%s>',
+            $this->name(),
+            !$this->attributes()->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
+            $this->content(),
+            $this->name(),
+        );
     }
 }

@@ -6,71 +6,63 @@ namespace Tests\Innmind\Xml\Node;
 use Innmind\Xml\{
     Node\CharacterData,
     Node,
-    Exception\LogicException,
 };
 use Innmind\Immutable\Sequence;
 use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\{
+    PHPUnit\BlackBox,
+    Set,
+};
 
 class CharacterDataTest extends TestCase
 {
+    use BlackBox;
+
     public function testInterface()
     {
         $this->assertInstanceOf(
             Node::class,
-            new CharacterData('foo')
+            CharacterData::of('foo'),
         );
     }
 
     public function testChildren()
     {
-        $characterData = new CharacterData('foo');
+        $characterData = CharacterData::of('foo');
 
         $this->assertInstanceOf(Sequence::class, $characterData->children());
-        $this->assertSame(Node::class, $characterData->children()->type());
         $this->assertCount(0, $characterData->children());
-        $this->assertFalse($characterData->hasChildren());
     }
 
     public function testContent()
     {
         $this->assertSame(
             ' foo ',
-            (new CharacterData(' foo '))->content()
+            CharacterData::of(' foo ')->content(),
         );
     }
 
-    public function testThrowWhenRemovingChild()
+    public function testDoNothingWhenPrependingChild()
     {
-        $this->expectException(LogicException::class);
+        $node = CharacterData::of('foo');
 
-        (new CharacterData('foo'))->removeChild(0);
-    }
-
-    public function testThrowWhenReplacingChild()
-    {
-        $this->expectException(LogicException::class);
-
-        (new CharacterData('foo'))->replaceChild(
-            0,
-            $this->createMock(Node::class)
+        $this->assertSame(
+            $node,
+            $node->prependChild(
+                $this->createMock(Node::class),
+            ),
         );
     }
 
-    public function testThrowWhenPrependingChild()
+    public function testDoNothingWhenAppendingChild()
     {
-        $this->expectException(LogicException::class);
+        $node = CharacterData::of('foo');
 
-        (new CharacterData('foo'))->prependChild(
-            $this->createMock(Node::class)
-        );
-    }
-
-    public function testThrowWhenAppendingChild()
-    {
-        $this->expectException(LogicException::class);
-
-        (new CharacterData('foo'))->appendChild(
-            $this->createMock(Node::class)
+        $this->assertSame(
+            $node,
+            $node->appendChild(
+                $this->createMock(Node::class),
+            ),
         );
     }
 
@@ -78,7 +70,35 @@ class CharacterDataTest extends TestCase
     {
         $this->assertSame(
             '<![CDATA[foo]]>',
-            (new CharacterData('foo'))->toString(),
+            CharacterData::of('foo')->toString(),
         );
+    }
+
+    public function testFilterChild()
+    {
+        $this
+            ->forAll(Set\Unicode::strings())
+            ->then(function($data) {
+                $characterData = CharacterData::of($data);
+
+                $this->assertSame(
+                    $characterData,
+                    $characterData->filterChild(static fn() => true),
+                );
+            });
+    }
+
+    public function testMapChild()
+    {
+        $this
+            ->forAll(Set\Unicode::strings())
+            ->then(function($data) {
+                $characterData = CharacterData::of($data);
+
+                $this->assertSame(
+                    $characterData,
+                    $characterData->mapChild(static fn($child) => $child),
+                );
+            });
     }
 }
