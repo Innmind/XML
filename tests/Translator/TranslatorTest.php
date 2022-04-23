@@ -59,15 +59,27 @@ XML
 
         $this->assertInstanceOf(Document::class, $node);
         $this->assertSame('1.0', $node->version()->toString());
-        $this->assertSame('utf-8', $node->encoding()->toString());
-        $this->assertSame('html', $node->type()->name());
+        $this->assertSame('utf-8', $node->encoding()->match(
+            static fn($encoding) => $encoding->toString(),
+            static fn() => null,
+        ));
+        $this->assertSame('html', $node->type()->match(
+            static fn($type) => $type->name(),
+            static fn() => null,
+        ));
         $this->assertSame(
             '-//W3C//DTD HTML 4.01//EN',
-            $node->type()->publicId(),
+            $node->type()->match(
+                static fn($type) => $type->publicId(),
+                static fn() => null,
+            ),
         );
         $this->assertSame(
             'http://www.w3.org/TR/html4/strict.dtd',
-            $node->type()->systemId(),
+            $node->type()->match(
+                static fn($type) => $type->systemId(),
+                static fn() => null,
+            ),
         );
         $this->assertCount(1, $node->children());
         $foo = $node->children()->get(0)->match(

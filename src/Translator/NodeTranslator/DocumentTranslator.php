@@ -38,8 +38,8 @@ final class DocumentTranslator implements NodeTranslator
                     ->buildChildren($node->childNodes, $translate)
                     ->map(fn($children) => new Document(
                         $this->buildVersion($node),
-                        $node->doctype ? $this->buildDoctype($node->doctype) : null,
-                        $node->encoding ? $this->buildEncoding($node->encoding) : null,
+                        Maybe::of($node->doctype)->map($this->buildDoctype(...)),
+                        Maybe::of($node->encoding)->map($this->buildEncoding(...)),
                         $children,
                     )),
             );

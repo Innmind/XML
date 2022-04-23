@@ -13,6 +13,7 @@ use Innmind\Xml\{
 use Innmind\Immutable\{
     Sequence,
     Str,
+    Maybe,
 };
 
 /**
@@ -21,18 +22,22 @@ use Innmind\Immutable\{
 final class Document implements Node
 {
     private Version $version;
-    private ?Type $type = null;
+    /** @var Maybe<Type> */
+    private Maybe $type;
+    /** @var Maybe<Encoding> */
+    private Maybe $encoding;
     /** @var Sequence<Node> */
     private Sequence $children;
-    private ?Encoding $encoding = null;
 
     /**
+     * @param Maybe<Type> $type
+     * @param Maybe<Encoding> $encoding
      * @param Sequence<Node> $children
      */
     public function __construct(
         Version $version,
-        Type $type = null,
-        Encoding $encoding = null,
+        Maybe $type,
+        Maybe $encoding,
         Sequence $children = null,
     ) {
         $this->version = $version;
@@ -46,16 +51,12 @@ final class Document implements Node
         return $this->version;
     }
 
-    /** @psalm-suppress InvalidNullableReturnType */
-    public function type(): Type
+    /**
+     * @return Maybe<Type>
+     */
+    public function type(): Maybe
     {
-        /** @psalm-suppress NullableReturnStatement */
         return $this->type;
-    }
-
-    public function hasType(): bool
-    {
-        return $this->type instanceof Type;
     }
 
     public function children(): Sequence
@@ -115,16 +116,12 @@ final class Document implements Node
         return $document;
     }
 
-    /** @psalm-suppress InvalidNullableReturnType */
-    public function encoding(): Encoding
+    /**
+     * @return Maybe<Encoding>
+     */
+    public function encoding(): Maybe
     {
-        /** @psalm-suppress NullableReturnStatement */
         return $this->encoding;
-    }
-
-    public function encodingIsSpecified(): bool
-    {
-        return $this->encoding instanceof Encoding;
     }
 
     public function content(): string
@@ -141,12 +138,19 @@ final class Document implements Node
         $string = \sprintf(
             '<?xml version="%s"%s?>',
             $this->version->toString(),
-            $this->encoding instanceof Encoding ? ' encoding="'.$this->encoding->toString().'"' : '',
+            $this
+                ->encoding
+                ->map(static fn($encoding) => ' encoding="'.$encoding->toString().'"')
+                ->match(
+                    static fn($encoding) => $encoding,
+                    static fn() => '',
+                ),
         );
 
-        if ($this->type instanceof Type) {
-            $string .= "\n".$this->type->toString();
-        }
+        $string .= $this->type->match(
+            static fn($type) => "\n".$type->toString(),
+            static fn() => '',
+        );
 
         return $string."\n".$this->content();
     }

@@ -16,6 +16,7 @@ use Innmind\Xml\{
 use Innmind\Immutable\{
     Map,
     Sequence,
+    Maybe,
 };
 use PHPUnit\Framework\TestCase;
 
@@ -25,7 +26,7 @@ class DocumentTest extends TestCase
     {
         $this->assertInstanceOf(
             Node::class,
-            new Document(new Version(1)),
+            new Document(new Version(1), Maybe::nothing(), Maybe::nothing()),
         );
     }
 
@@ -33,6 +34,8 @@ class DocumentTest extends TestCase
     {
         $document = new Document(
             $version = new Version(1),
+            Maybe::nothing(),
+            Maybe::nothing(),
         );
 
         $this->assertSame($version, $document->version());
@@ -40,43 +43,54 @@ class DocumentTest extends TestCase
 
     public function testType()
     {
-        $document = new Document(new Version(1));
-        $this->assertFalse($document->hasType());
+        $document = new Document(new Version(1), Maybe::nothing(), Maybe::nothing());
+        $this->assertFalse($document->type()->match(
+            static fn() => true,
+            static fn() => false,
+        ));
 
         $document = new Document(
             new Version(1),
-            $type = new Type('html'),
+            Maybe::just($type = new Type('html')),
+            Maybe::nothing(),
         );
-        $this->assertTrue($document->hasType());
-        $this->assertSame($type, $document->type());
+        $this->assertSame($type, $document->type()->match(
+            static fn($type) => $type,
+            static fn() => null,
+        ));
     }
 
     public function testDefaultChildren()
     {
-        $document = new Document(new Version(1));
+        $document = new Document(new Version(1), Maybe::nothing(), Maybe::nothing());
 
         $this->assertInstanceOf(Sequence::class, $document->children());
     }
 
     public function testEncoding()
     {
-        $document = new Document(new Version(1));
-        $this->assertFalse($document->encodingIsSpecified());
+        $document = new Document(new Version(1), Maybe::nothing(), Maybe::nothing());
+        $this->assertFalse($document->encoding()->match(
+            static fn() => true,
+            static fn() => false,
+        ));
 
         $document = new Document(
             new Version(1),
-            null,
-            $encoding = new Encoding('utf-8'),
+            Maybe::nothing(),
+            Maybe::just($encoding = new Encoding('utf-8')),
         );
-        $this->assertTrue($document->encodingIsSpecified());
-        $this->assertSame($encoding, $document->encoding());
+        $this->assertSame($encoding, $document->encoding()->match(
+            static fn($encoding) => $encoding,
+            static fn() => null,
+        ));
     }
 
     public function testContentWithoutChildren()
     {
         $this->assertSame(
             '',
-            (new Document(new Version(1)))->content(),
+            (new Document(new Version(1), Maybe::nothing(), Maybe::nothing()))->content(),
         );
     }
 
@@ -86,8 +100,8 @@ class DocumentTest extends TestCase
             '<foo></foo>',
             (new Document(
                 new Version(1),
-                null,
-                null,
+                Maybe::nothing(),
+                Maybe::nothing(),
                 Sequence::of(new Element('foo')),
             ))->content(),
         );
@@ -97,30 +111,30 @@ class DocumentTest extends TestCase
     {
         $this->assertSame(
             '<?xml version="2.1"?>'."\n",
-            (new Document(new Version(2, 1)))->toString(),
+            (new Document(new Version(2, 1), Maybe::nothing(), Maybe::nothing()))->toString(),
         );
         $this->assertSame(
             '<?xml version="2.1" encoding="utf-8"?>'."\n",
             (new Document(
                 new Version(2, 1),
-                null,
-                new Encoding('utf-8'),
+                Maybe::nothing(),
+                Maybe::just(new Encoding('utf-8')),
             ))->toString(),
         );
         $this->assertSame(
             '<?xml version="2.1" encoding="utf-8"?>'."\n".'<!DOCTYPE html>'."\n",
             (new Document(
                 new Version(2, 1),
-                new Type('html'),
-                new Encoding('utf-8'),
+                Maybe::just(new Type('html')),
+                Maybe::just(new Encoding('utf-8')),
             ))->toString(),
         );
         $this->assertSame(
             '<?xml version="2.1" encoding="utf-8"?>'."\n".'<!DOCTYPE html>'."\n".'<foo/>',
             (new Document(
                 new Version(2, 1),
-                new Type('html'),
-                new Encoding('utf-8'),
+                Maybe::just(new Type('html')),
+                Maybe::just(new Encoding('utf-8')),
                 Sequence::of(new SelfClosingElement('foo')),
             ))->toString(),
         );
@@ -130,8 +144,8 @@ class DocumentTest extends TestCase
     {
         $document = new Document(
             new Version(1),
-            new Type('html'),
-            new Encoding('utf-8'),
+            Maybe::just(new Type('html')),
+            Maybe::just(new Encoding('utf-8')),
             Sequence::of(
                 new Element('foo'),
                 new Element('bar'),
@@ -164,8 +178,8 @@ class DocumentTest extends TestCase
 
         (new Document(
             new Version(1),
-            new Type('html'),
-            new Encoding('utf-8'),
+            Maybe::just(new Type('html')),
+            Maybe::just(new Encoding('utf-8')),
             Sequence::of(
                 new Element('foo'),
                 new Element('bar'),
@@ -178,8 +192,8 @@ class DocumentTest extends TestCase
     {
         $document = new Document(
             new Version(1),
-            new Type('html'),
-            new Encoding('utf-8'),
+            Maybe::just(new Type('html')),
+            Maybe::just(new Encoding('utf-8')),
             Sequence::of(
                 new Element('foo'),
                 new Element('bar'),
@@ -226,8 +240,8 @@ class DocumentTest extends TestCase
 
         (new Document(
             new Version(1),
-            new Type('html'),
-            new Encoding('utf-8'),
+            Maybe::just(new Type('html')),
+            Maybe::just(new Encoding('utf-8')),
             Sequence::of(
                 new Element('foo'),
                 new Element('bar'),
@@ -243,8 +257,8 @@ class DocumentTest extends TestCase
     {
         $document = new Document(
             new Version(1),
-            new Type('html'),
-            new Encoding('utf-8'),
+            Maybe::just(new Type('html')),
+            Maybe::just(new Encoding('utf-8')),
             Sequence::of(
                 new Element('foo'),
                 new Element('bar'),
@@ -289,8 +303,8 @@ class DocumentTest extends TestCase
     {
         $document = new Document(
             new Version(1),
-            new Type('html'),
-            new Encoding('utf-8'),
+            Maybe::just(new Type('html')),
+            Maybe::just(new Encoding('utf-8')),
             Sequence::of(
                 new Element('foo'),
                 new Element('bar'),
