@@ -6,7 +6,6 @@ namespace Tests\Innmind\Xml\Node;
 use Innmind\Xml\{
     Node\CharacterData,
     Node,
-    Exception\LogicException,
 };
 use Innmind\Immutable\Sequence;
 use PHPUnit\Framework\TestCase;
@@ -43,21 +42,27 @@ class CharacterDataTest extends TestCase
         );
     }
 
-    public function testThrowWhenPrependingChild()
+    public function testDoNothingWhenPrependingChild()
     {
-        $this->expectException(LogicException::class);
+        $node = CharacterData::of('foo');
 
-        CharacterData::of('foo')->prependChild(
-            $this->createMock(Node::class),
+        $this->assertSame(
+            $node,
+            $node->prependChild(
+                $this->createMock(Node::class),
+            ),
         );
     }
 
-    public function testThrowWhenAppendingChild()
+    public function testDoNothingWhenAppendingChild()
     {
-        $this->expectException(LogicException::class);
+        $node = CharacterData::of('foo');
 
-        CharacterData::of('foo')->appendChild(
-            $this->createMock(Node::class),
+        $this->assertSame(
+            $node,
+            $node->appendChild(
+                $this->createMock(Node::class),
+            ),
         );
     }
 

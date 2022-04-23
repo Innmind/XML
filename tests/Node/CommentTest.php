@@ -6,7 +6,6 @@ namespace Tests\Innmind\Xml\Node;
 use Innmind\Xml\{
     Node\Comment,
     Node,
-    Exception\LogicException,
 };
 use Innmind\Immutable\Sequence;
 use PHPUnit\Framework\TestCase;
@@ -43,21 +42,27 @@ class CommentTest extends TestCase
         );
     }
 
-    public function testThrowWhenPrependingChild()
+    public function testDoNothingWhenPrependingChild()
     {
-        $this->expectException(LogicException::class);
+        $node = Comment::of('foo');
 
-        Comment::of('foo')->prependChild(
-            $this->createMock(Node::class),
+        $this->assertSame(
+            $node,
+            $node->prependChild(
+                $this->createMock(Node::class),
+            ),
         );
     }
 
-    public function testThrowWhenAppendingChild()
+    public function testDoNothingWhenAppendingChild()
     {
-        $this->expectException(LogicException::class);
+        $node = Comment::of('foo');
 
-        Comment::of('foo')->appendChild(
-            $this->createMock(Node::class),
+        $this->assertSame(
+            $node,
+            $node->appendChild(
+                $this->createMock(Node::class),
+            ),
         );
     }
 

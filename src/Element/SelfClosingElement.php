@@ -8,7 +8,6 @@ use Innmind\Xml\{
     Node,
     Attribute,
     Exception\DomainException,
-    Exception\LogicException,
 };
 use Innmind\Immutable\{
     Set,
@@ -133,14 +132,20 @@ class SelfClosingElement implements Element
         return $this;
     }
 
+    /**
+     * This operation will do nothing
+     */
     public function prependChild(Node $child): Node
     {
-        throw new LogicException('Operation not applicable');
+        return $this;
     }
 
+    /**
+     * This operation will do nothing
+     */
     public function appendChild(Node $child): Node
     {
-        throw new LogicException('Operation not applicable');
+        return $this;
     }
 
     public function content(): string

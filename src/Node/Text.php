@@ -3,10 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Node;
 
-use Innmind\Xml\{
-    Node,
-    Exception\LogicException,
-};
+use Innmind\Xml\Node;
 use Innmind\Immutable\Sequence;
 
 /**
@@ -44,14 +41,20 @@ final class Text implements Node
         return $this;
     }
 
+    /**
+     * This operation will do nothing
+     */
     public function prependChild(Node $child): Node
     {
-        throw new LogicException('Operation not applicable');
+        return $this;
     }
 
+    /**
+     * This operation will do nothing
+     */
     public function appendChild(Node $child): Node
     {
-        throw new LogicException('Operation not applicable');
+        return $this;
     }
 
     public function content(): string

@@ -8,7 +8,6 @@ use Innmind\Xml\{
     Node,
     Attribute,
     Exception\DomainException,
-    Exception\LogicException,
 };
 use Innmind\Immutable\{
     Map,
@@ -206,21 +205,27 @@ class SelfClosingElementTest extends TestCase
         $this->assertTrue($node->children()->empty());
     }
 
-    public function testThrowWhenPrependingChild()
+    public function testDoNothingWhenPrependingChild()
     {
-        $this->expectException(LogicException::class);
+        $node = SelfClosingElement::of('foo');
 
-        SelfClosingElement::of('foo')->prependChild(
-            $this->createMock(Node::class),
+        $this->assertSame(
+            $node,
+            $node->prependChild(
+                $this->createMock(Node::class),
+            ),
         );
     }
 
-    public function testThrowWhenAppendingChild()
+    public function testDoNothingWhenAppendingChild()
     {
-        $this->expectException(LogicException::class);
+        $node = SelfClosingElement::of('foo');
 
-        SelfClosingElement::of('foo')->appendChild(
-            $this->createMock(Node::class),
+        $this->assertSame(
+            $node,
+            $node->appendChild(
+                $this->createMock(Node::class),
+            ),
         );
     }
 
