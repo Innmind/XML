@@ -13,7 +13,7 @@ final class NextSibling
 {
     private Node $node;
 
-    public function __construct(Node $node)
+    private function __construct(Node $node)
     {
         $this->node = $node;
     }
@@ -23,7 +23,7 @@ final class NextSibling
      */
     public function __invoke(Node $tree): Maybe
     {
-        $children = (new ParentNode($this->node))($tree)->map(
+        $children = ParentNode::of($this->node)($tree)->map(
             static fn($parent) => $parent->children(),
         );
 
@@ -32,5 +32,13 @@ final class NextSibling
             ->flatMap(static fn($position) => $children->flatMap(
                 static fn($children) => $children->get($position + 1),
             ));
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(Node $node): self
+    {
+        return new self($node);
     }
 }

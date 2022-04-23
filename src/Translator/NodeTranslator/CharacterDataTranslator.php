@@ -16,6 +16,10 @@ use Innmind\Immutable\Maybe;
  */
 final class CharacterDataTranslator implements NodeTranslator
 {
+    private function __construct()
+    {
+    }
+
     public function __invoke(\DOMNode $node, Translator $translate): Maybe
     {
         /**
@@ -24,6 +28,14 @@ final class CharacterDataTranslator implements NodeTranslator
          */
         return Maybe::just($node)
             ->filter(static fn($node) => $node instanceof \DOMCharacterData)
-            ->map(static fn(\DOMCharacterData $node) => new CharacterData($node->data));
+            ->map(static fn(\DOMCharacterData $node) => CharacterData::of($node->data));
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(): self
+    {
+        return new self;
     }
 }

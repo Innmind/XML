@@ -18,7 +18,7 @@ class TextTranslatorTest extends TestCase
     {
         $this->assertInstanceOf(
             NodeTranslator::class,
-            new TextTranslator,
+            TextTranslator::of(),
         );
     }
 
@@ -30,14 +30,14 @@ class TextTranslatorTest extends TestCase
 XML
         );
 
-        $translate = new TextTranslator;
+        $translate = TextTranslator::of();
         $node = $translate(
             $document
                 ->childNodes
                 ->item(0)
                 ->childNodes
                 ->item(0),
-            new Translator(Map::of()),
+            Translator::of(Map::of()),
         )->match(
             static fn($node) => $node,
             static fn() => null,
@@ -49,9 +49,9 @@ XML
 
     public function testReturnNothingWhenInvalidNode()
     {
-        $this->assertNull((new TextTranslator)(
+        $this->assertNull(TextTranslator::of()(
             new \DOMNode,
-            new Translator(Map::of()),
+            Translator::of(Map::of()),
         )->match(
             static fn($node) => $node,
             static fn() => null,

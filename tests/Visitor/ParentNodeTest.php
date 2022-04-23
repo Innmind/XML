@@ -7,8 +7,6 @@ use Innmind\Xml\{
     Visitor\ParentNode,
     Reader\Reader,
     Element\Element,
-    Translator\Translator,
-    Translator\NodeTranslators,
 };
 use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
@@ -19,11 +17,7 @@ class ParentNodeTest extends TestCase
 
     public function setUp(): void
     {
-        $this->read = new Reader(
-            new Translator(
-                NodeTranslators::defaults(),
-            ),
-        );
+        $this->read = Reader::of();
     }
 
     public function testInterface()
@@ -58,7 +52,7 @@ XML;
 
         $this->assertSame(
             $parent,
-            (new ParentNode($node))($tree)->match(
+            ParentNode::of($node)($tree)->match(
                 static fn($node) => $node,
                 static fn() => null,
             ),
@@ -67,7 +61,7 @@ XML;
 
     public function testReturnNothingWhenNoParentFound()
     {
-        $this->assertNull((new ParentNode(new Element('foo')))(new Element('bar'))->match(
+        $this->assertNull(ParentNode::of(Element::of('foo'))(Element::of('bar'))->match(
             static fn($node) => $node,
             static fn() => null,
         ));

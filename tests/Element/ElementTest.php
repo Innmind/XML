@@ -28,13 +28,13 @@ class ElementTest extends TestCase
     {
         $this->assertInstanceOf(
             Node::class,
-            new Element('foo'),
+            Element::of('foo'),
         );
     }
 
     public function testName()
     {
-        $node = new Element('foo');
+        $node = Element::of('foo');
 
         $this->assertSame('foo', $node->name());
     }
@@ -43,19 +43,19 @@ class ElementTest extends TestCase
     {
         $this->expectException(DomainException::class);
 
-        new Element('');
+        Element::of('');
     }
 
     public function testDefaultAttributes()
     {
-        $node = new Element('foo');
+        $node = Element::of('foo');
 
         $this->assertInstanceOf(Map::class, $node->attributes());
     }
 
     public function testAttribute()
     {
-        $node = new Element(
+        $node = Element::of(
             'foo',
             Set::of($expected = Attribute::of('foo')),
         );
@@ -68,7 +68,7 @@ class ElementTest extends TestCase
 
     public function testRemoveAttribute()
     {
-        $node = new Element(
+        $node = Element::of(
             'foo',
             Set::of(
                 Attribute::of('foo'),
@@ -97,7 +97,7 @@ class ElementTest extends TestCase
 
     public function testDoNothingWhenRemovingUnknownAttribute()
     {
-        $element = new Element(
+        $element = Element::of(
             'foo',
             Set::of(
                 Attribute::of('foo'),
@@ -110,7 +110,7 @@ class ElementTest extends TestCase
 
     public function testReplaceAttribute()
     {
-        $node = new Element(
+        $node = Element::of(
             'foo',
             Set::of(
                 Attribute::of('foo'),
@@ -148,7 +148,7 @@ class ElementTest extends TestCase
 
     public function testAddAttribute()
     {
-        $node = new Element(
+        $node = Element::of(
             'foo',
             Set::of(
                 Attribute::of('foo'),
@@ -190,32 +190,32 @@ class ElementTest extends TestCase
 
     public function testDefaultChildren()
     {
-        $node = new Element('foo');
+        $node = Element::of('foo');
 
         $this->assertInstanceOf(Sequence::class, $node->children());
     }
 
     public function testHasChildren()
     {
-        $node = new Element(
+        $node = Element::of(
             'foo',
             null,
-            Sequence::of(new Element('bar')),
+            Sequence::of(Element::of('bar')),
         );
         $this->assertFalse($node->children()->empty());
 
-        $this->assertTrue((new Element('foo'))->children()->empty());
+        $this->assertTrue(Element::of('foo')->children()->empty());
     }
 
     public function testPrependChild()
     {
-        $element = new Element(
+        $element = Element::of(
             'foobar',
             null,
             Sequence::of(
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
+                Element::of('foo'),
+                Element::of('bar'),
+                Element::of('baz'),
             ),
         );
 
@@ -253,13 +253,13 @@ class ElementTest extends TestCase
 
     public function testAppendChild()
     {
-        $element = new Element(
+        $element = Element::of(
             'foobar',
             null,
             Sequence::of(
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
+                Element::of('foo'),
+                Element::of('bar'),
+                Element::of('baz'),
             ),
         );
 
@@ -299,16 +299,16 @@ class ElementTest extends TestCase
     {
         $this->assertSame(
             '',
-            (new Element('foo'))->content(),
+            Element::of('foo')->content(),
         );
     }
 
     public function testContentWithChildren()
     {
-        $node = new Element(
+        $node = Element::of(
             'foo',
             null,
-            Sequence::of(new Element('bar')),
+            Sequence::of(Element::of('bar')),
         );
 
         $this->assertSame(
@@ -321,31 +321,31 @@ class ElementTest extends TestCase
     {
         $this->assertSame(
             '<foo></foo>',
-            (new Element('foo'))->toString(),
+            Element::of('foo')->toString(),
         );
         $this->assertSame(
             '<foo bar="baz" baz="foo"></foo>',
-            (new Element(
+            Element::of(
                 'foo',
                 Set::of(
                     Attribute::of('bar', 'baz'),
                     Attribute::of('baz', 'foo'),
                 ),
-            ))->toString(),
+            )->toString(),
         );
         $this->assertSame(
             '<foo bar="baz" baz="foo"><bar></bar><baz></baz></foo>',
-            (new Element(
+            Element::of(
                 'foo',
                 Set::of(
                     Attribute::of('bar', 'baz'),
                     Attribute::of('baz', 'foo'),
                 ),
                 Sequence::of(
-                    new Element('bar'),
-                    new Element('baz'),
+                    Element::of('bar'),
+                    Element::of('baz'),
                 ),
-            ))->toString(),
+            )->toString(),
         );
     }
 
@@ -356,14 +356,14 @@ class ElementTest extends TestCase
                 DataSet\Unicode::lengthBetween(1, 255),
                 DataSet\Sequence::of(
                     DataSet\Decorate::immutable(
-                        static fn($name) => new Element($name),
+                        static fn($name) => Element::of($name),
                         DataSet\Unicode::lengthBetween(1, 10),
                     ),
                     DataSet\Integers::between(0, 10),
                 ),
             )
             ->then(function($name, $children) {
-                $element = new Element(
+                $element = Element::of(
                     $name,
                     null,
                     Sequence::of(...$children),
@@ -386,18 +386,18 @@ class ElementTest extends TestCase
                 DataSet\Unicode::lengthBetween(1, 255),
                 DataSet\Sequence::of(
                     DataSet\Decorate::immutable(
-                        static fn($name) => new Element($name),
+                        static fn($name) => Element::of($name),
                         DataSet\Unicode::lengthBetween(1, 10),
                     ),
                     DataSet\Integers::between(1, 10),
                 ),
                 DataSet\Decorate::immutable(
-                    static fn($name) => new Element($name),
+                    static fn($name) => Element::of($name),
                     DataSet\Unicode::lengthBetween(1, 10),
                 ),
             )
             ->then(function($name, $children, $replacement) {
-                $element = new Element(
+                $element = Element::of(
                     $name,
                     null,
                     Sequence::of(...$children),

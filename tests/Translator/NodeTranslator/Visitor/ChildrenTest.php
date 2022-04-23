@@ -19,11 +19,11 @@ class ChildrenTest extends TestCase
         $document = new \DOMDocument;
         $document->loadXML('<root></root>');
 
-        $children = (new Children(
-            new Translator(
+        $children = Children::of(
+            Translator::of(
                 NodeTranslators::defaults(),
             ),
-        ))($document->childNodes->item(0))->match(
+        )($document->childNodes->item(0))->match(
             static fn($children) => $children,
             static fn() => null,
         );
@@ -37,11 +37,11 @@ class ChildrenTest extends TestCase
         $document = new \DOMDocument;
         $document->loadXML('<root><foo/><bar/></root>');
 
-        $children = (new Children(
-            new Translator(
+        $children = Children::of(
+            Translator::of(
                 NodeTranslators::defaults(),
             ),
-        ))($document->childNodes->item(0))->match(
+        )($document->childNodes->item(0))->match(
             static fn($children) => $children,
             static fn() => null,
         );

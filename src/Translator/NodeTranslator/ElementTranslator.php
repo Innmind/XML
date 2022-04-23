@@ -23,6 +23,10 @@ use Innmind\Immutable\{
  */
 final class ElementTranslator implements NodeTranslator
 {
+    private function __construct()
+    {
+    }
+
     public function __invoke(\DOMNode $node, Translator $translate): Maybe
     {
         /** @var Maybe<\DOMElement> */
@@ -36,20 +40,28 @@ final class ElementTranslator implements NodeTranslator
          */
         return $node
             ->filter(static fn($node) => $node->childNodes->length === 0)
-            ->flatMap(static fn($node) => (new Attributes)($node)->map(
-                static fn($attributes) => new SelfClosingElement(
+            ->flatMap(static fn($node) => Attributes::of()($node)->map(
+                static fn($attributes) => SelfClosingElement::of(
                     $node->nodeName,
                     $attributes,
                 ),
             ))
             ->otherwise(static fn() => $node->flatMap(
-                static fn($node) => Maybe::all((new Attributes)($node), (new Children($translate))($node))->map(
-                    static fn(Set $attributes, Sequence $children) => new Element(
+                static fn($node) => Maybe::all(Attributes::of()($node), Children::of($translate)($node))->map(
+                    static fn(Set $attributes, Sequence $children) => Element::of(
                         $node->nodeName,
                         $attributes,
                         $children,
                     ),
                 ),
             ));
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(): self
+    {
+        return new self;
     }
 }

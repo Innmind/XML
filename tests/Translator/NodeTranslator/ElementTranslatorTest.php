@@ -23,7 +23,7 @@ class ElementTranslatorTest extends TestCase
     {
         $this->assertInstanceOf(
             NodeTranslator::class,
-            new ElementTranslator,
+            ElementTranslator::of(),
         );
     }
 
@@ -35,11 +35,11 @@ class ElementTranslatorTest extends TestCase
 XML
         );
 
-        $translate = new ElementTranslator;
-        $foo = new SelfClosingElement('foo');
+        $translate = ElementTranslator::of();
+        $foo = SelfClosingElement::of('foo');
         $node = $translate(
             $document->childNodes->item(0),
-            new Translator(
+            Translator::of(
                 Map::of([
                     \XML_ELEMENT_NODE,
                     new class($foo) implements NodeTranslator {
@@ -68,9 +68,9 @@ XML
 
     public function testReturnNothingWhenInvalidNode()
     {
-        $this->assertNull((new ElementTranslator)(
+        $this->assertNull(ElementTranslator::of()(
             new \DOMNode,
-            new Translator(Map::of()),
+            Translator::of(Map::of()),
         )->match(
             static fn($node) => $node,
             static fn() => null,

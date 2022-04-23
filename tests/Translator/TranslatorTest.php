@@ -23,7 +23,7 @@ class TranslatorTest extends TestCase
 
     public function setUp(): void
     {
-        $this->translate = new Translator(
+        $this->translate = Translator::of(
             NodeTranslators::defaults(),
         );
     }
@@ -161,7 +161,7 @@ XML
 
     public function testReturnNothingWhenNoTranslatorFoundForANodeType()
     {
-        $this->assertNull((new Translator(Map::of()))(new \DOMDocument)->match(
+        $this->assertNull(Translator::of(Map::of())(new \DOMDocument)->match(
             static fn($node) => $node,
             static fn() => null,
         ));

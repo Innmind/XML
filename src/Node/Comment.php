@@ -18,11 +18,19 @@ final class Comment implements Node
     /** @var Sequence<Node> */
     private Sequence $children;
 
-    public function __construct(string $value)
+    private function __construct(string $value)
     {
         $this->value = $value;
         /** @var Sequence<Node> */
         $this->children = Sequence::of();
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(string $value): self
+    {
+        return new self($value);
     }
 
     public function children(): Sequence

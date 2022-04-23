@@ -23,13 +23,13 @@ class EntityReferenceTest extends TestCase
     {
         $this->assertInstanceOf(
             Node::class,
-            new EntityReference('foo'),
+            EntityReference::of('foo'),
         );
     }
 
     public function testChildren()
     {
-        $node = new EntityReference('foo');
+        $node = EntityReference::of('foo');
 
         $this->assertInstanceOf(Sequence::class, $node->children());
         $this->assertCount(0, $node->children());
@@ -39,7 +39,7 @@ class EntityReferenceTest extends TestCase
     {
         $this->assertSame(
             ' foo ',
-            (new EntityReference(' foo '))->content(),
+            EntityReference::of(' foo ')->content(),
         );
     }
 
@@ -47,7 +47,7 @@ class EntityReferenceTest extends TestCase
     {
         $this->expectException(LogicException::class);
 
-        (new EntityReference('foo'))->prependChild(
+        EntityReference::of('foo')->prependChild(
             $this->createMock(Node::class),
         );
     }
@@ -56,7 +56,7 @@ class EntityReferenceTest extends TestCase
     {
         $this->expectException(LogicException::class);
 
-        (new EntityReference('foo'))->appendChild(
+        EntityReference::of('foo')->appendChild(
             $this->createMock(Node::class),
         );
     }
@@ -65,7 +65,7 @@ class EntityReferenceTest extends TestCase
     {
         $this->assertSame(
             '&foo;',
-            (new EntityReference('foo'))->toString(),
+            EntityReference::of('foo')->toString(),
         );
     }
 
@@ -74,7 +74,7 @@ class EntityReferenceTest extends TestCase
         $this
             ->forAll(Set\Unicode::strings())
             ->then(function($data) {
-                $reference = new EntityReference($data);
+                $reference = EntityReference::of($data);
 
                 $this->assertSame(
                     $reference,
@@ -88,7 +88,7 @@ class EntityReferenceTest extends TestCase
         $this
             ->forAll(Set\Unicode::strings())
             ->then(function($data) {
-                $reference = new EntityReference($data);
+                $reference = EntityReference::of($data);
 
                 $this->assertSame(
                     $reference,

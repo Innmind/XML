@@ -14,7 +14,7 @@ final class Version
     private int $minor;
     private string $string;
 
-    public function __construct(int $major, int $minor = 0)
+    private function __construct(int $major, int $minor)
     {
         if ($major < 0 || $minor < 0) {
             throw new DomainException("$major.$minor");
@@ -23,6 +23,14 @@ final class Version
         $this->major = $major;
         $this->minor = $minor;
         $this->string = $major.'.'.$minor;
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(int $major, int $minor = 0): self
+    {
+        return new self($major, $minor);
     }
 
     public function major(): int

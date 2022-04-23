@@ -23,6 +23,10 @@ use Innmind\Immutable\{
  */
 final class DocumentTranslator implements NodeTranslator
 {
+    private function __construct()
+    {
+    }
+
     public function __invoke(\DOMNode $node, Translator $translate): Maybe
     {
         /**
@@ -36,7 +40,7 @@ final class DocumentTranslator implements NodeTranslator
             ->flatMap(
                 fn(\DOMDocument $node) => $this
                     ->buildChildren($node->childNodes, $translate)
-                    ->map(fn($children) => new Document(
+                    ->map(fn($children) => Document::of(
                         $this->buildVersion($node),
                         Maybe::of($node->doctype)->map($this->buildDoctype(...)),
                         Maybe::of($node->encoding)->map($this->buildEncoding(...)),
@@ -45,11 +49,19 @@ final class DocumentTranslator implements NodeTranslator
             );
     }
 
+    /**
+     * @psalm-pure
+     */
+    public static function of(): self
+    {
+        return new self;
+    }
+
     private function buildVersion(\DOMDocument $document): Version
     {
         [$major, $minor] = \explode('.', $document->xmlVersion);
 
-        return new Version(
+        return Version::of(
             (int) $major,
             (int) $minor,
         );
@@ -57,7 +69,7 @@ final class DocumentTranslator implements NodeTranslator
 
     private function buildDoctype(\DOMDocumentType $type): Type
     {
-        return new Type(
+        return Type::of(
             $type->name,
             $type->publicId,
             $type->systemId,
@@ -91,6 +103,6 @@ final class DocumentTranslator implements NodeTranslator
 
     private function buildEncoding(string $encoding): Encoding
     {
-        return new Encoding($encoding);
+        return Encoding::of($encoding);
     }
 }

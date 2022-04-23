@@ -6,8 +6,6 @@ namespace Tests\Innmind\Xml\Visitor;
 use Innmind\Xml\{
     Visitor\Text,
     Reader\Reader,
-    Translator\Translator,
-    Translator\NodeTranslators,
 };
 use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
@@ -18,11 +16,7 @@ class TextTest extends TestCase
 
     public function setUp(): void
     {
-        $this->read = new Reader(
-            new Translator(
-                NodeTranslators::defaults(),
-            ),
-        );
+        $this->read = Reader::of();
     }
 
     public function testInterface()
@@ -56,7 +50,7 @@ XML;
             '        '."\n".
             '    '."\n".
             '    42'."\n",
-            (new Text)($tree),
+            Text::of()($tree),
         );
     }
 }

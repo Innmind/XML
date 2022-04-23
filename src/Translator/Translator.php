@@ -20,7 +20,7 @@ final class Translator
     /**
      * @param Map<int, NodeTranslator> $translators
      */
-    public function __construct(Map $translators)
+    private function __construct(Map $translators)
     {
         $this->translators = $translators;
     }
@@ -34,6 +34,16 @@ final class Translator
             ->translators
             ->get($node->nodeType)
             ->flatMap(fn($translate) => $translate($node, $this));
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @param Map<int, NodeTranslator> $translators
+     */
+    public static function of(Map $translators): self
+    {
+        return new self($translators);
     }
 
     /**

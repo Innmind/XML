@@ -23,13 +23,13 @@ class CharacterDataTest extends TestCase
     {
         $this->assertInstanceOf(
             Node::class,
-            new CharacterData('foo'),
+            CharacterData::of('foo'),
         );
     }
 
     public function testChildren()
     {
-        $characterData = new CharacterData('foo');
+        $characterData = CharacterData::of('foo');
 
         $this->assertInstanceOf(Sequence::class, $characterData->children());
         $this->assertCount(0, $characterData->children());
@@ -39,7 +39,7 @@ class CharacterDataTest extends TestCase
     {
         $this->assertSame(
             ' foo ',
-            (new CharacterData(' foo '))->content(),
+            CharacterData::of(' foo ')->content(),
         );
     }
 
@@ -47,7 +47,7 @@ class CharacterDataTest extends TestCase
     {
         $this->expectException(LogicException::class);
 
-        (new CharacterData('foo'))->prependChild(
+        CharacterData::of('foo')->prependChild(
             $this->createMock(Node::class),
         );
     }
@@ -56,7 +56,7 @@ class CharacterDataTest extends TestCase
     {
         $this->expectException(LogicException::class);
 
-        (new CharacterData('foo'))->appendChild(
+        CharacterData::of('foo')->appendChild(
             $this->createMock(Node::class),
         );
     }
@@ -65,7 +65,7 @@ class CharacterDataTest extends TestCase
     {
         $this->assertSame(
             '<![CDATA[foo]]>',
-            (new CharacterData('foo'))->toString(),
+            CharacterData::of('foo')->toString(),
         );
     }
 
@@ -74,7 +74,7 @@ class CharacterDataTest extends TestCase
         $this
             ->forAll(Set\Unicode::strings())
             ->then(function($data) {
-                $characterData = new CharacterData($data);
+                $characterData = CharacterData::of($data);
 
                 $this->assertSame(
                     $characterData,
@@ -88,7 +88,7 @@ class CharacterDataTest extends TestCase
         $this
             ->forAll(Set\Unicode::strings())
             ->then(function($data) {
-                $characterData = new CharacterData($data);
+                $characterData = CharacterData::of($data);
 
                 $this->assertSame(
                     $characterData,

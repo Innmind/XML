@@ -13,7 +13,7 @@ final class ParentNode
 {
     private Node $node;
 
-    public function __construct(Node $node)
+    private function __construct(Node $node)
     {
         $this->node = $node;
     }
@@ -37,5 +37,13 @@ final class ParentNode
                 return $parent->otherwise(fn() => $this($child));
             },
         );
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(Node $node): self
+    {
+        return new self($node);
     }
 }

@@ -19,7 +19,7 @@ final class Children
 {
     private Translator $translate;
 
-    public function __construct(Translator $translate)
+    private function __construct(Translator $translate)
     {
         $this->translate = $translate;
     }
@@ -41,5 +41,13 @@ final class Children
         }
 
         return $children;
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(Translator $translate): self
+    {
+        return new self($translate);
     }
 }

@@ -11,6 +11,10 @@ use Innmind\Xml\Node;
  */
 final class Text
 {
+    private function __construct()
+    {
+    }
+
     public function __invoke(Node $tree): string
     {
         return $tree->children()->match(
@@ -20,5 +24,13 @@ final class Text
             ),
             static fn() => $tree->content(),
         );
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(): self
+    {
+        return new self;
     }
 }

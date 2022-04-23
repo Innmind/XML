@@ -7,8 +7,6 @@ use Innmind\Xml\{
     Visitor\PreviousSibling,
     Reader\Reader,
     Element\Element,
-    Translator\Translator,
-    Translator\NodeTranslators,
 };
 use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
@@ -19,11 +17,7 @@ class PreviousSiblingTest extends TestCase
 
     public function setUp(): void
     {
-        $this->read = new Reader(
-            new Translator(
-                NodeTranslators::defaults(),
-            ),
-        );
+        $this->read = Reader::of();
     }
 
     public function testInterface()
@@ -59,7 +53,7 @@ XML;
 
         $this->assertSame(
             $baz,
-            (new PreviousSibling($bar))($tree)->match(
+            PreviousSibling::of($bar)($tree)->match(
                 static fn($node) => $node,
                 static fn() => null,
             ),
@@ -90,7 +84,7 @@ XML;
                 static fn() => null,
             );
 
-        $this->assertNull((new PreviousSibling($foo))($tree)->match(
+        $this->assertNull(PreviousSibling::of($foo)($tree)->match(
             static fn($node) => $node,
             static fn() => null,
         ));

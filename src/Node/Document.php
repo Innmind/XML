@@ -33,16 +33,32 @@ final class Document implements Node
      * @param Maybe<Encoding> $encoding
      * @param Sequence<Node> $children
      */
-    public function __construct(
+    private function __construct(
         Version $version,
         Maybe $type,
         Maybe $encoding,
-        Sequence $children = null,
+        Sequence $children,
     ) {
         $this->version = $version;
         $this->type = $type;
         $this->encoding = $encoding;
-        $this->children = $children ?? Sequence::of();
+        $this->children = $children;
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @param Maybe<Type> $type
+     * @param Maybe<Encoding> $encoding
+     * @param Sequence<Node> $children
+     */
+    public static function of(
+        Version $version,
+        Maybe $type,
+        Maybe $encoding,
+        Sequence $children = null,
+    ): self {
+        return new self($version, $type, $encoding, $children ?? Sequence::of());
     }
 
     public function version(): Version

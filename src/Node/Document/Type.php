@@ -16,10 +16,10 @@ final class Type
     private string $systemId;
     private string $string;
 
-    public function __construct(
+    private function __construct(
         string $name,
-        string $publicId = '',
-        string $systemId = '',
+        string $publicId,
+        string $systemId,
     ) {
         if (Str::of($name)->empty()) {
             throw new DomainException;
@@ -34,6 +34,17 @@ final class Type
             $publicId ? ' PUBLIC "'.$publicId.'"' : '',
             $systemId ? ' "'.$systemId.'"' : '',
         );
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(
+        string $name,
+        string $publicId = '',
+        string $systemId = '',
+    ): self {
+        return new self($name, $publicId, $systemId);
     }
 
     public function name(): string

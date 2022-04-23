@@ -16,6 +16,10 @@ use Innmind\Immutable\Maybe;
  */
 final class EntityReferenceTranslator implements NodeTranslator
 {
+    private function __construct()
+    {
+    }
+
     public function __invoke(\DOMNode $node, Translator $translate): Maybe
     {
         /**
@@ -24,6 +28,14 @@ final class EntityReferenceTranslator implements NodeTranslator
          */
         return Maybe::just($node)
             ->filter(static fn($node) => $node instanceof \DOMEntityReference)
-            ->map(static fn(\DOMEntityReference $node) => new EntityReference($node->nodeName));
+            ->map(static fn(\DOMEntityReference $node) => EntityReference::of($node->nodeName));
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(): self
+    {
+        return new self;
     }
 }

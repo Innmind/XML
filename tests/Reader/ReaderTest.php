@@ -7,8 +7,6 @@ use Innmind\Xml\{
     Reader\Reader,
     Reader as ReaderInterface,
     Element\Element,
-    Translator\Translator,
-    Translator\NodeTranslators,
 };
 use Innmind\Stream\Readable\Stream;
 use PHPUnit\Framework\TestCase;
@@ -19,11 +17,7 @@ class ReaderTest extends TestCase
 
     public function setUp(): void
     {
-        $this->read = new Reader(
-            new Translator(
-                NodeTranslators::defaults(),
-            ),
-        );
+        $this->read = Reader::of();
     }
 
     public function testInterface()
@@ -38,7 +32,7 @@ class ReaderTest extends TestCase
     {
         $this->assertEquals(
             $this->read,
-            new Reader,
+            Reader::of(),
         );
     }
 

@@ -16,9 +16,17 @@ final class Text implements Node
 {
     private CharacterData $data;
 
-    public function __construct(string $data)
+    private function __construct(string $data)
     {
-        $this->data = new CharacterData($data);
+        $this->data = CharacterData::of($data);
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(string $data): self
+    {
+        return new self($data);
     }
 
     public function children(): Sequence

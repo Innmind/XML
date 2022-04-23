@@ -14,7 +14,7 @@ class AttributesTest extends TestCase
 {
     public function testSimpleNode()
     {
-        $attributes = (new Attributes)(new \DOMNode)->match(
+        $attributes = Attributes::of()(new \DOMNode)->match(
             static fn($attributes) => $attributes,
             static fn() => null,
         );
@@ -28,7 +28,7 @@ class AttributesTest extends TestCase
         $document = new \DOMDocument;
         $document->loadXML('<foo/>');
 
-        $attributes = (new Attributes)($document->childNodes->item(0))->match(
+        $attributes = Attributes::of()($document->childNodes->item(0))->match(
             static fn($attributes) => $attributes,
             static fn() => null,
         );
@@ -42,7 +42,7 @@ class AttributesTest extends TestCase
         $document = new \DOMDocument;
         $document->loadXML('<hr bar="baz" foobar=""/>');
 
-        $attributes = (new Attributes)($document->childNodes->item(0))->match(
+        $attributes = Attributes::of()($document->childNodes->item(0))->match(
             static fn($attributes) => $attributes,
             static fn() => null,
         );

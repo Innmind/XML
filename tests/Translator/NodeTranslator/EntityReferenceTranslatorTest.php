@@ -18,16 +18,16 @@ class EntityReferenceTranslatorTest extends TestCase
     {
         $this->assertInstanceOf(
             NodeTranslator::class,
-            new EntityReferenceTranslator,
+            EntityReferenceTranslator::of(),
         );
     }
 
     public function testTranslate()
     {
-        $translate = new EntityReferenceTranslator;
+        $translate = EntityReferenceTranslator::of();
         $node = $translate(
             new \DOMEntityReference('gt'),
-            new Translator(Map::of()),
+            Translator::of(Map::of()),
         )->match(
             static fn($node) => $node,
             static fn() => null,
@@ -39,9 +39,9 @@ class EntityReferenceTranslatorTest extends TestCase
 
     public function testReturnNothingWhenInvalidNode()
     {
-        $this->assertNull((new EntityReferenceTranslator)(
+        $this->assertNull(EntityReferenceTranslator::of()(
             new \DOMNode,
-            new Translator(Map::of()),
+            Translator::of(Map::of()),
         )->match(
             static fn($node) => $node,
             static fn() => null,

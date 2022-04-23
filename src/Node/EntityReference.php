@@ -18,11 +18,19 @@ final class EntityReference implements Node
     /** @var Sequence<Node> */
     private Sequence $children;
 
-    public function __construct(string $data)
+    private function __construct(string $data)
     {
         $this->data = $data;
         /** @var Sequence<Node> */
         $this->children = Sequence::of();
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(string $data): self
+    {
+        return new self($data);
     }
 
     public function children(): Sequence

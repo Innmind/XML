@@ -14,6 +14,10 @@ use Innmind\Immutable\{
  */
 final class Attributes
 {
+    private function __construct()
+    {
+    }
+
     /**
      * @return Maybe<Set<Attribute>>
      */
@@ -35,5 +39,13 @@ final class Attributes
         }
 
         return $attributes;
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(): self
+    {
+        return new self;
     }
 }

@@ -23,13 +23,13 @@ class CommentTest extends TestCase
     {
         $this->assertInstanceOf(
             Node::class,
-            new Comment('foo'),
+            Comment::of('foo'),
         );
     }
 
     public function testChildren()
     {
-        $comment = new Comment('foo');
+        $comment = Comment::of('foo');
 
         $this->assertInstanceOf(Sequence::class, $comment->children());
         $this->assertCount(0, $comment->children());
@@ -39,7 +39,7 @@ class CommentTest extends TestCase
     {
         $this->assertSame(
             ' foo ',
-            (new Comment(' foo '))->content(),
+            Comment::of(' foo ')->content(),
         );
     }
 
@@ -47,7 +47,7 @@ class CommentTest extends TestCase
     {
         $this->expectException(LogicException::class);
 
-        (new Comment('foo'))->prependChild(
+        Comment::of('foo')->prependChild(
             $this->createMock(Node::class),
         );
     }
@@ -56,7 +56,7 @@ class CommentTest extends TestCase
     {
         $this->expectException(LogicException::class);
 
-        (new Comment('foo'))->appendChild(
+        Comment::of('foo')->appendChild(
             $this->createMock(Node::class),
         );
     }
@@ -65,7 +65,7 @@ class CommentTest extends TestCase
     {
         $this->assertSame(
             '<!--foo-->',
-            (new Comment('foo'))->toString(),
+            Comment::of('foo')->toString(),
         );
     }
 
@@ -74,7 +74,7 @@ class CommentTest extends TestCase
         $this
             ->forAll(Set\Unicode::strings())
             ->then(function($data) {
-                $comment = new Comment($data);
+                $comment = Comment::of($data);
 
                 $this->assertSame(
                     $comment,
@@ -88,7 +88,7 @@ class CommentTest extends TestCase
         $this
             ->forAll(Set\Unicode::strings())
             ->then(function($data) {
-                $comment = new Comment($data);
+                $comment = Comment::of($data);
 
                 $this->assertSame(
                     $comment,

@@ -16,7 +16,7 @@ class EncodingTest extends TestCase
      */
     public function testInterface($string)
     {
-        $encoding = new Encoding($string);
+        $encoding = Encoding::of($string);
 
         $this->assertSame($string, $encoding->toString());
     }
@@ -28,7 +28,7 @@ class EncodingTest extends TestCase
     {
         $this->expectException(DomainException::class);
 
-        new Encoding($name);
+        Encoding::of($name);
     }
 
     public function cases(): array

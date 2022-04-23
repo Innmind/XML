@@ -23,13 +23,13 @@ class TextTest extends TestCase
     {
         $this->assertInstanceOf(
             Node::class,
-            new Text('foo'),
+            Text::of('foo'),
         );
     }
 
     public function testChildren()
     {
-        $text = new Text('foo');
+        $text = Text::of('foo');
 
         $this->assertInstanceOf(Sequence::class, $text->children());
         $this->assertCount(0, $text->children());
@@ -39,7 +39,7 @@ class TextTest extends TestCase
     {
         $this->assertSame(
             ' foo ',
-            (new Text(' foo '))->content(),
+            Text::of(' foo ')->content(),
         );
     }
 
@@ -47,7 +47,7 @@ class TextTest extends TestCase
     {
         $this->expectException(LogicException::class);
 
-        (new Text('foo'))->prependChild(
+        Text::of('foo')->prependChild(
             $this->createMock(Node::class),
         );
     }
@@ -56,7 +56,7 @@ class TextTest extends TestCase
     {
         $this->expectException(LogicException::class);
 
-        (new Text('foo'))->appendChild(
+        Text::of('foo')->appendChild(
             $this->createMock(Node::class),
         );
     }
@@ -65,7 +65,7 @@ class TextTest extends TestCase
     {
         $this->assertSame(
             'foo',
-            (new Text('foo'))->toString(),
+            Text::of('foo')->toString(),
         );
     }
 
@@ -74,7 +74,7 @@ class TextTest extends TestCase
         $this
             ->forAll(Set\Unicode::strings())
             ->then(function($data) {
-                $text = new Text($data);
+                $text = Text::of($data);
 
                 $this->assertSame(
                     $text,
@@ -88,7 +88,7 @@ class TextTest extends TestCase
         $this
             ->forAll(Set\Unicode::strings())
             ->then(function($data) {
-                $text = new Text($data);
+                $text = Text::of($data);
 
                 $this->assertSame(
                     $text,

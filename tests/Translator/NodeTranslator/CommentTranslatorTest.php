@@ -18,7 +18,7 @@ class CommentTranslatorTest extends TestCase
     {
         $this->assertInstanceOf(
             NodeTranslator::class,
-            new CommentTranslator,
+            CommentTranslator::of(),
         );
     }
 
@@ -30,14 +30,14 @@ class CommentTranslatorTest extends TestCase
 XML
         );
 
-        $translate = new CommentTranslator;
+        $translate = CommentTranslator::of();
         $node = $translate(
             $document
                 ->childNodes
                 ->item(0)
                 ->childNodes
                 ->item(0),
-            new Translator(Map::of()),
+            Translator::of(Map::of()),
         )->match(
             static fn($node) => $node,
             static fn() => null,
@@ -49,9 +49,9 @@ XML
 
     public function testReturnNothingWhenInvalidNode()
     {
-        $this->assertNull((new CommentTranslator)(
+        $this->assertNull(CommentTranslator::of()(
             new \DOMNode,
-            new Translator(Map::of()),
+            Translator::of(Map::of()),
         )->match(
             static fn($node) => $node,
             static fn() => null,

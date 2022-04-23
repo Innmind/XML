@@ -29,33 +29,51 @@ class Element implements ElementInterface
     private Sequence $children;
 
     /**
-     * @param Set<Attribute>|null $attributes
+     * @param Map<non-empty-string, Attribute> $attributes
      * @param Sequence<Node> $children
      */
-    public function __construct(
+    private function __construct(
         string $name,
-        Set $attributes = null,
-        Sequence $children = null,
+        Map $attributes,
+        Sequence $children,
     ) {
-        /** @var Set<Attribute> */
-        $attributes ??= Set::of();
-        /** @var Sequence<Node> */
-        $children ??= Sequence::of();
-
         if (Str::of($name)->empty()) {
             throw new DomainException;
         }
 
         $this->name = $name;
-        $this->attributes = Map::of(
-            ...$attributes
-                ->map(static fn($attribute) => [
-                    $attribute->name(),
-                    $attribute,
-                ])
-                ->toList(),
-        );
+        $this->attributes = $attributes;
         $this->children = $children;
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @param Set<Attribute>|null $attributes
+     * @param Sequence<Node>|null $children
+     */
+    public static function of(
+        string $name,
+        Set $attributes = null,
+        Sequence $children = null,
+    ): self {
+        /** @var Set<Attribute> */
+        $attributes ??= Set::of();
+        /** @var Sequence<Node> */
+        $children ??= Sequence::of();
+
+        return new self(
+            $name,
+            Map::of(
+                ...$attributes
+                    ->map(static fn($attribute) => [
+                        $attribute->name(),
+                        $attribute,
+                    ])
+                    ->toList(),
+            ),
+            $children,
+        );
     }
 
     public function name(): string
@@ -105,7 +123,7 @@ class Element implements ElementInterface
     {
         return new self(
             $this->name,
-            Set::of(...$this->attributes->values()->toList()),
+            $this->attributes,
             $this->children->filter($filter),
         );
     }
@@ -114,7 +132,7 @@ class Element implements ElementInterface
     {
         return new self(
             $this->name,
-            Set::of(...$this->attributes->values()->toList()),
+            $this->attributes,
             $this->children->map($map),
         );
     }
