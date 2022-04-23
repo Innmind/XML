@@ -14,6 +14,11 @@ interface Node
      * @return Sequence<Node>
      */
     public function children(): Sequence;
+
+    /**
+     * @param callable(Node): bool $filter
+     */
+    public function filterChild(callable $filter): self;
     public function removeChild(int $position): self;
     public function replaceChild(int $position, self $child): self;
     public function prependChild(self $child): self;

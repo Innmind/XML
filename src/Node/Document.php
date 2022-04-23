@@ -64,6 +64,16 @@ final class Document implements Node
         return $this->children;
     }
 
+    public function filterChild(callable $filter): self
+    {
+        return new self(
+            $this->version,
+            $this->type,
+            $this->encoding,
+            $this->children->filter($filter),
+        );
+    }
+
     public function removeChild(int $position): Node
     {
         if (!$this->children->indices()->contains($position)) {

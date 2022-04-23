@@ -19,9 +19,15 @@ use Innmind\Immutable\{
     Maybe,
 };
 use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\{
+    PHPUnit\BlackBox,
+    Set,
+};
 
 class DocumentTest extends TestCase
 {
+    use BlackBox;
+
     public function testInterface()
     {
         $this->assertInstanceOf(
@@ -343,5 +349,37 @@ class DocumentTest extends TestCase
                 static fn() => null,
             ),
         );
+    }
+
+    public function testFilterChild()
+    {
+        $this
+            ->forAll(
+                Set\Integers::between(0, 10),
+                Set\Integers::between(0, 10),
+                Set\Sequence::of(
+                    Set\Decorate::immutable(
+                        static fn($name) => new Element($name),
+                        Set\Unicode::lengthBetween(1, 10),
+                    ),
+                    Set\Integers::between(0, 10),
+                ),
+            )
+            ->then(function($major, $minor, $children) {
+                $element = new Document(
+                    new Version($major, $minor),
+                    Maybe::nothing(),
+                    Maybe::nothing(),
+                    Sequence::of(...$children),
+                );
+
+                $element2 = $element->filterChild(static fn() => false);
+                $element3 = $element->filterChild(static fn() => true);
+
+                $this->assertSame($element->version(), $element2->version());
+                $this->assertSame($element->version(), $element3->version());
+                $this->assertTrue($element2->children()->empty());
+                $this->assertTrue($element3->children()->equals($element->children()));
+            });
     }
 }

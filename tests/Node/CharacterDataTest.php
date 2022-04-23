@@ -10,9 +10,15 @@ use Innmind\Xml\{
 };
 use Innmind\Immutable\Sequence;
 use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\{
+    PHPUnit\BlackBox,
+    Set,
+};
 
 class CharacterDataTest extends TestCase
 {
+    use BlackBox;
+
     public function testInterface()
     {
         $this->assertInstanceOf(
@@ -78,5 +84,19 @@ class CharacterDataTest extends TestCase
             '<![CDATA[foo]]>',
             (new CharacterData('foo'))->toString(),
         );
+    }
+
+    public function testFilterChild()
+    {
+        $this
+            ->forAll(Set\Unicode::strings())
+            ->then(function($data) {
+                $characterData = new CharacterData($data);
+
+                $this->assertSame(
+                    $characterData,
+                    $characterData->filterChild(static fn() => true),
+                );
+            });
     }
 }

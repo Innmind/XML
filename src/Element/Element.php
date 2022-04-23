@@ -102,6 +102,15 @@ class Element implements ElementInterface
         return $this->children;
     }
 
+    public function filterChild(callable $filter): self
+    {
+        return new self(
+            $this->name,
+            Set::of(...$this->attributes->values()->toList()),
+            $this->children->filter($filter),
+        );
+    }
+
     public function removeChild(int $position): Node
     {
         if (!$this->children->indices()->contains($position)) {

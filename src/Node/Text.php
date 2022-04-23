@@ -26,6 +26,11 @@ final class Text implements Node
         return $this->data->children();
     }
 
+    public function filterChild(callable $filter): self
+    {
+        return $this;
+    }
+
     public function removeChild(int $position): Node
     {
         throw new LogicException('Operation not applicable');

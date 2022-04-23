@@ -17,9 +17,15 @@ use Innmind\Immutable\{
     Sequence,
 };
 use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\{
+    PHPUnit\BlackBox,
+    Set as DataSet,
+};
 
 class ElementTest extends TestCase
 {
+    use BlackBox;
+
     public function testInterface()
     {
         $this->assertInstanceOf(
@@ -450,5 +456,35 @@ class ElementTest extends TestCase
                 ),
             ))->toString(),
         );
+    }
+
+    public function testFilterChild()
+    {
+        $this
+            ->forAll(
+                DataSet\Unicode::lengthBetween(1, 255),
+                DataSet\Sequence::of(
+                    DataSet\Decorate::immutable(
+                        static fn($name) => new Element($name),
+                        DataSet\Unicode::lengthBetween(1, 10),
+                    ),
+                    DataSet\Integers::between(0, 10),
+                ),
+            )
+            ->then(function($name, $children) {
+                $element = new Element(
+                    $name,
+                    null,
+                    Sequence::of(...$children),
+                );
+
+                $element2 = $element->filterChild(static fn() => false);
+                $element3 = $element->filterChild(static fn() => true);
+
+                $this->assertSame($name, $element2->name());
+                $this->assertSame($name, $element3->name());
+                $this->assertTrue($element2->children()->empty());
+                $this->assertTrue($element3->children()->equals($element->children()));
+            });
     }
 }

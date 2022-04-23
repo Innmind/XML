@@ -17,9 +17,15 @@ use Innmind\Immutable\{
     Sequence,
 };
 use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\{
+    PHPUnit\BlackBox,
+    Set as DataSet,
+};
 
 class SelfClosingElementTest extends TestCase
 {
+    use BlackBox;
+
     public function testInterface()
     {
         $this->assertInstanceOf(
@@ -260,5 +266,19 @@ class SelfClosingElementTest extends TestCase
                 ),
             ))->toString(),
         );
+    }
+
+    public function testFilterChild()
+    {
+        $this
+            ->forAll(DataSet\Unicode::lengthBetween(1, 255))
+            ->then(function($name) {
+                $element = new SelfClosingElement($name);
+
+                $this->assertSame(
+                    $element,
+                    $element->filterChild(static fn() => true),
+                );
+            });
     }
 }

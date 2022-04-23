@@ -10,9 +10,15 @@ use Innmind\Xml\{
 };
 use Innmind\Immutable\Sequence;
 use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\{
+    PHPUnit\BlackBox,
+    Set,
+};
 
 class EntityReferenceTest extends TestCase
 {
+    use BlackBox;
+
     public function testInterface()
     {
         $this->assertInstanceOf(
@@ -78,5 +84,19 @@ class EntityReferenceTest extends TestCase
             '&foo;',
             (new EntityReference('foo'))->toString(),
         );
+    }
+
+    public function testFilterChild()
+    {
+        $this
+            ->forAll(Set\Unicode::strings())
+            ->then(function($data) {
+                $reference = new EntityReference($data);
+
+                $this->assertSame(
+                    $reference,
+                    $reference->filterChild(static fn() => true),
+                );
+            });
     }
 }

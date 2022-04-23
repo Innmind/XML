@@ -30,6 +30,11 @@ final class EntityReference implements Node
         return $this->children;
     }
 
+    public function filterChild(callable $filter): self
+    {
+        return $this;
+    }
+
     public function removeChild(int $position): Node
     {
         throw new LogicException('Operation not applicable');
