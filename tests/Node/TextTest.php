@@ -99,4 +99,18 @@ class TextTest extends TestCase
                 );
             });
     }
+
+    public function testMapChild()
+    {
+        $this
+            ->forAll(Set\Unicode::strings())
+            ->then(function($data) {
+                $text = new Text($data);
+
+                $this->assertSame(
+                    $text,
+                    $text->mapChild(static fn($child) => $child),
+                );
+            });
+    }
 }

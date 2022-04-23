@@ -111,6 +111,15 @@ class Element implements ElementInterface
         );
     }
 
+    public function mapChild(callable $map): self
+    {
+        return new self(
+            $this->name,
+            Set::of(...$this->attributes->values()->toList()),
+            $this->children->map($map),
+        );
+    }
+
     public function removeChild(int $position): Node
     {
         if (!$this->children->indices()->contains($position)) {

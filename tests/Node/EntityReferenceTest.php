@@ -99,4 +99,18 @@ class EntityReferenceTest extends TestCase
                 );
             });
     }
+
+    public function testMapChild()
+    {
+        $this
+            ->forAll(Set\Unicode::strings())
+            ->then(function($data) {
+                $reference = new EntityReference($data);
+
+                $this->assertSame(
+                    $reference,
+                    $reference->mapChild(static fn($child) => $child),
+                );
+            });
+    }
 }

@@ -99,4 +99,18 @@ class CommentTest extends TestCase
                 );
             });
     }
+
+    public function testMapChild()
+    {
+        $this
+            ->forAll(Set\Unicode::strings())
+            ->then(function($data) {
+                $comment = new Comment($data);
+
+                $this->assertSame(
+                    $comment,
+                    $comment->mapChild(static fn($child) => $child),
+                );
+            });
+    }
 }

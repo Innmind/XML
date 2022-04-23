@@ -382,4 +382,39 @@ class DocumentTest extends TestCase
                 $this->assertTrue($element3->children()->equals($element->children()));
             });
     }
+
+    public function testMapChild()
+    {
+        $this
+            ->forAll(
+                Set\Integers::between(0, 10),
+                Set\Integers::between(0, 10),
+                Set\Sequence::of(
+                    Set\Decorate::immutable(
+                        static fn($name) => new Element($name),
+                        Set\Unicode::lengthBetween(1, 10),
+                    ),
+                    Set\Integers::between(1, 10),
+                ),
+                Set\Decorate::immutable(
+                    static fn($name) => new Element($name),
+                    Set\Unicode::lengthBetween(1, 10),
+                ),
+            )
+            ->then(function($major, $minor, $children, $replacement) {
+                $element = new Document(
+                    new Version($major, $minor),
+                    Maybe::nothing(),
+                    Maybe::nothing(),
+                    Sequence::of(...$children),
+                );
+
+                $element2 = $element->mapChild(static fn($child) => $replacement);
+
+                $this->assertSame($element->version(), $element2->version());
+                $this->assertFalse($element2->children()->equals($element->children()));
+                $this->assertSame($element->children()->size(), $element2->children()->size());
+                $this->assertTrue($element2->children()->contains($replacement));
+            });
+    }
 }

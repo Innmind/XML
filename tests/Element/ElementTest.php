@@ -487,4 +487,37 @@ class ElementTest extends TestCase
                 $this->assertTrue($element3->children()->equals($element->children()));
             });
     }
+
+    public function testMapChild()
+    {
+        $this
+            ->forAll(
+                DataSet\Unicode::lengthBetween(1, 255),
+                DataSet\Sequence::of(
+                    DataSet\Decorate::immutable(
+                        static fn($name) => new Element($name),
+                        DataSet\Unicode::lengthBetween(1, 10),
+                    ),
+                    DataSet\Integers::between(1, 10),
+                ),
+                DataSet\Decorate::immutable(
+                    static fn($name) => new Element($name),
+                    DataSet\Unicode::lengthBetween(1, 10),
+                ),
+            )
+            ->then(function($name, $children, $replacement) {
+                $element = new Element(
+                    $name,
+                    null,
+                    Sequence::of(...$children),
+                );
+
+                $element2 = $element->mapChild(static fn($child) => $replacement);
+
+                $this->assertSame($name, $element2->name());
+                $this->assertFalse($element2->children()->equals($element->children()));
+                $this->assertSame($element->children()->size(), $element2->children()->size());
+                $this->assertTrue($element2->children()->contains($replacement));
+            });
+    }
 }

@@ -19,6 +19,11 @@ interface Node
      * @param callable(Node): bool $filter
      */
     public function filterChild(callable $filter): self;
+
+    /**
+     * @param callable(Node): Node $map
+     */
+    public function mapChild(callable $map): self;
     public function removeChild(int $position): self;
     public function replaceChild(int $position, self $child): self;
     public function prependChild(self $child): self;

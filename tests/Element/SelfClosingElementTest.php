@@ -281,4 +281,18 @@ class SelfClosingElementTest extends TestCase
                 );
             });
     }
+
+    public function testMapChild()
+    {
+        $this
+            ->forAll(DataSet\Unicode::lengthBetween(1, 255))
+            ->then(function($name) {
+                $element = new SelfClosingElement($name);
+
+                $this->assertSame(
+                    $element,
+                    $element->mapChild(static fn($child) => $child),
+                );
+            });
+    }
 }

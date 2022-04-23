@@ -74,6 +74,16 @@ final class Document implements Node
         );
     }
 
+    public function mapChild(callable $map): self
+    {
+        return new self(
+            $this->version,
+            $this->type,
+            $this->encoding,
+            $this->children->map($map),
+        );
+    }
+
     public function removeChild(int $position): Node
     {
         if (!$this->children->indices()->contains($position)) {

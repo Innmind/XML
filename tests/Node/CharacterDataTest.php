@@ -99,4 +99,18 @@ class CharacterDataTest extends TestCase
                 );
             });
     }
+
+    public function testMapChild()
+    {
+        $this
+            ->forAll(Set\Unicode::strings())
+            ->then(function($data) {
+                $characterData = new CharacterData($data);
+
+                $this->assertSame(
+                    $characterData,
+                    $characterData->mapChild(static fn($child) => $child),
+                );
+            });
+    }
 }

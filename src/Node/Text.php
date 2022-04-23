@@ -31,6 +31,11 @@ final class Text implements Node
         return $this;
     }
 
+    public function mapChild(callable $map): self
+    {
+        return $this;
+    }
+
     public function removeChild(int $position): Node
     {
         throw new LogicException('Operation not applicable');
