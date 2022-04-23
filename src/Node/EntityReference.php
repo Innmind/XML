@@ -12,14 +12,10 @@ use Innmind\Immutable\Sequence;
 final class EntityReference implements Node
 {
     private string $data;
-    /** @var Sequence<Node> */
-    private Sequence $children;
 
     private function __construct(string $data)
     {
         $this->data = $data;
-        /** @var Sequence<Node> */
-        $this->children = Sequence::of();
     }
 
     /**
@@ -32,7 +28,7 @@ final class EntityReference implements Node
 
     public function children(): Sequence
     {
-        return $this->children;
+        return Sequence::of();
     }
 
     public function filterChild(callable $filter): self

@@ -15,7 +15,6 @@ final class Type
     private string $name;
     private string $publicId;
     private string $systemId;
-    private string $string;
 
     /**
      * @param non-empty-string $name
@@ -28,12 +27,6 @@ final class Type
         $this->name = $name;
         $this->publicId = $publicId;
         $this->systemId = $systemId;
-        $this->string = \sprintf(
-            '<!DOCTYPE %s%s%s>',
-            $name,
-            $publicId ? ' PUBLIC "'.$publicId.'"' : '',
-            $systemId ? ' "'.$systemId.'"' : '',
-        );
     }
 
     /**
@@ -92,6 +85,11 @@ final class Type
 
     public function toString(): string
     {
-        return $this->string;
+        return \sprintf(
+            '<!DOCTYPE %s%s%s>',
+            $this->name,
+            $this->publicId ? ' PUBLIC "'.$this->publicId.'"' : '',
+            $this->systemId ? ' "'.$this->systemId.'"' : '',
+        );
     }
 }

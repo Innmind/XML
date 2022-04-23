@@ -15,7 +15,6 @@ final class Version
     private int $major;
     /** @var 0|positive-int */
     private int $minor;
-    private string $string;
 
     /**
      * @param 0|positive-int $major
@@ -25,7 +24,6 @@ final class Version
     {
         $this->major = $major;
         $this->minor = $minor;
-        $this->string = $major.'.'.$minor;
     }
 
     /**
@@ -77,6 +75,6 @@ final class Version
 
     public function toString(): string
     {
-        return $this->string;
+        return $this->major.'.'.$this->minor;
     }
 }

@@ -12,14 +12,10 @@ use Innmind\Immutable\Sequence;
 final class CharacterData implements Node
 {
     private string $value;
-    /** @var Sequence<Node> */
-    private Sequence $children;
 
     private function __construct(string $value)
     {
         $this->value = $value;
-        /** @var Sequence<Node> */
-        $this->children = Sequence::of();
     }
 
     /**
@@ -32,7 +28,7 @@ final class CharacterData implements Node
 
     public function children(): Sequence
     {
-        return $this->children;
+        return Sequence::of();
     }
 
     public function filterChild(callable $filter): self
