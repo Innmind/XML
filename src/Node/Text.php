@@ -36,11 +36,6 @@ final class Text implements Node
         return $this;
     }
 
-    public function replaceChild(int $position, Node $child): Node
-    {
-        throw new LogicException('Operation not applicable');
-    }
-
     public function prependChild(Node $child): Node
     {
         throw new LogicException('Operation not applicable');

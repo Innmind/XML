@@ -8,8 +8,6 @@ use Innmind\Xml\{
     Node,
     Attribute,
     Exception\DomainException,
-    Exception\LogicException,
-    Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
     Map,
@@ -207,68 +205,6 @@ class ElementTest extends TestCase
         $this->assertFalse($node->children()->empty());
 
         $this->assertTrue((new Element('foo'))->children()->empty());
-    }
-
-    public function testReplaceChild()
-    {
-        $element = new Element(
-            'foobar',
-            null,
-            Sequence::of(
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
-        );
-
-        $element2 = $element->replaceChild(
-            1,
-            $node = $this->createMock(Node::class),
-        );
-
-        $this->assertNotSame($element, $element2);
-        $this->assertInstanceOf(Element::class, $element2);
-        $this->assertSame($element->name(), $element2->name());
-        $this->assertSame($element->attributes(), $element2->attributes());
-        $this->assertCount(3, $element->children());
-        $this->assertCount(3, $element2->children());
-        $this->assertEquals(
-            $element->children()->get(0),
-            $element2->children()->get(0),
-        );
-        $this->assertNotEquals(
-            $element->children()->get(1),
-            $element2->children()->get(1),
-        );
-        $this->assertSame(
-            $node,
-            $element2->children()->get(1)->match(
-                static fn($node) => $node,
-                static fn() => null,
-            ),
-        );
-        $this->assertEquals(
-            $element->children()->get(2),
-            $element2->children()->get(2),
-        );
-    }
-
-    public function testThrowWhenReplacingUnknownChild()
-    {
-        $this->expectException(OutOfBoundsException::class);
-
-        (new Element(
-            'foobar',
-            null,
-            Sequence::of(
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
-        ))->replaceChild(
-            3,
-            $this->createMock(Node::class),
-        );
     }
 
     public function testPrependChild()

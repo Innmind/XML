@@ -43,16 +43,6 @@ class CommentTest extends TestCase
         );
     }
 
-    public function testThrowWhenReplacingChild()
-    {
-        $this->expectException(LogicException::class);
-
-        (new Comment('foo'))->replaceChild(
-            0,
-            $this->createMock(Node::class),
-        );
-    }
-
     public function testThrowWhenPrependingChild()
     {
         $this->expectException(LogicException::class);

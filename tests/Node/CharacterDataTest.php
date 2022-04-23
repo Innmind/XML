@@ -43,16 +43,6 @@ class CharacterDataTest extends TestCase
         );
     }
 
-    public function testThrowWhenReplacingChild()
-    {
-        $this->expectException(LogicException::class);
-
-        (new CharacterData('foo'))->replaceChild(
-            0,
-            $this->createMock(Node::class),
-        );
-    }
-
     public function testThrowWhenPrependingChild()
     {
         $this->expectException(LogicException::class);

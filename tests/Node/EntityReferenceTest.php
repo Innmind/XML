@@ -43,16 +43,6 @@ class EntityReferenceTest extends TestCase
         );
     }
 
-    public function testThrowWhenReplacingChild()
-    {
-        $this->expectException(LogicException::class);
-
-        (new EntityReference('foo'))->replaceChild(
-            0,
-            $this->createMock(Node::class),
-        );
-    }
-
     public function testThrowWhenPrependingChild()
     {
         $this->expectException(LogicException::class);

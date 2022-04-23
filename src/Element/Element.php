@@ -8,7 +8,6 @@ use Innmind\Xml\{
     Attribute,
     Node,
     Exception\DomainException,
-    Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
     Map,
@@ -118,23 +117,6 @@ class Element implements ElementInterface
             Set::of(...$this->attributes->values()->toList()),
             $this->children->map($map),
         );
-    }
-
-    public function replaceChild(int $position, Node $child): Node
-    {
-        if (!$this->children->indices()->contains($position)) {
-            throw new OutOfBoundsException((string) $position);
-        }
-
-        $element = clone $this;
-        /** @psalm-suppress ArgumentTypeCoercion */
-        $element->children = $this
-            ->children
-            ->take($position)
-            ->add($child)
-            ->append($this->children->drop($position + 1));
-
-        return $element;
     }
 
     public function prependChild(Node $child): Node

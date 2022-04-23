@@ -9,7 +9,6 @@ use Innmind\Xml\{
     Attribute,
     Exception\DomainException,
     Exception\LogicException,
-    Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
     Map,
@@ -205,16 +204,6 @@ class SelfClosingElementTest extends TestCase
     {
         $node = new SelfClosingElement('foo');
         $this->assertTrue($node->children()->empty());
-    }
-
-    public function testThrowWhenReplacingChild()
-    {
-        $this->expectException(LogicException::class);
-
-        (new SelfClosingElement('foo'))->replaceChild(
-            0,
-            $this->createMock(Node::class),
-        );
     }
 
     public function testThrowWhenPrependingChild()

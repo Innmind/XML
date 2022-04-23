@@ -8,7 +8,6 @@ use Innmind\Xml\{
     Node\Document\Type,
     Node\Document\Version,
     Node\Document\Encoding,
-    Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
     Sequence,
@@ -82,23 +81,6 @@ final class Document implements Node
             $this->encoding,
             $this->children->map($map),
         );
-    }
-
-    public function replaceChild(int $position, Node $child): Node
-    {
-        if (!$this->children->indices()->contains($position)) {
-            throw new OutOfBoundsException((string) $position);
-        }
-
-        $document = clone $this;
-        /** @psalm-suppress ArgumentTypeCoercion */
-        $document->children = $this
-            ->children
-            ->take($position)
-            ->add($child)
-            ->append($this->children->drop($position + 1));
-
-        return $document;
     }
 
     public function prependChild(Node $child): Node

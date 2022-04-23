@@ -11,7 +11,6 @@ use Innmind\Xml\{
     Node,
     Element\Element,
     Element\SelfClosingElement,
-    Exception\OutOfBoundsException,
 };
 use Innmind\Immutable\{
     Map,
@@ -143,71 +142,6 @@ class DocumentTest extends TestCase
                 Maybe::just(new Encoding('utf-8')),
                 Sequence::of(new SelfClosingElement('foo')),
             ))->toString(),
-        );
-    }
-
-    public function testReplaceChild()
-    {
-        $document = new Document(
-            new Version(1),
-            Maybe::just(new Type('html')),
-            Maybe::just(new Encoding('utf-8')),
-            Sequence::of(
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
-        );
-
-        $document2 = $document->replaceChild(
-            1,
-            $node = $this->createMock(Node::class),
-        );
-
-        $this->assertNotSame($document, $document2);
-        $this->assertInstanceOf(Document::class, $document2);
-        $this->assertSame($document->version(), $document2->version());
-        $this->assertSame($document->type(), $document2->type());
-        $this->assertSame($document->encoding(), $document2->encoding());
-        $this->assertCount(3, $document->children());
-        $this->assertCount(3, $document2->children());
-        $this->assertEquals(
-            $document->children()->get(0),
-            $document2->children()->get(0),
-        );
-        $this->assertNotEquals(
-            $document->children()->get(1),
-            $document2->children()->get(1),
-        );
-        $this->assertSame(
-            $node,
-            $document2->children()->get(1)->match(
-                static fn($node) => $node,
-                static fn() => null,
-            ),
-        );
-        $this->assertEquals(
-            $document->children()->get(2),
-            $document2->children()->get(2),
-        );
-    }
-
-    public function testThrowWhenReplacingUnknownChild()
-    {
-        $this->expectException(OutOfBoundsException::class);
-
-        (new Document(
-            new Version(1),
-            Maybe::just(new Type('html')),
-            Maybe::just(new Encoding('utf-8')),
-            Sequence::of(
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
-        ))->replaceChild(
-            3,
-            $this->createMock(Node::class),
         );
     }
 
