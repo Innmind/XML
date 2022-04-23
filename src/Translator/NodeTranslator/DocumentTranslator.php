@@ -31,21 +31,21 @@ final class DocumentTranslator implements NodeTranslator
     {
         /**
          * @psalm-suppress ArgumentTypeCoercion
-         * @psalm-suppress RedundantCondition
-         * @psalm-suppress TypeDoesNotContainType
+         * @psalm-suppress MixedArgumentTypeCoercion
          * @var Maybe<Node>
          */
         return Maybe::just($node)
             ->filter(static fn($node) => $node instanceof \DOMDocument)
             ->flatMap(
-                fn(\DOMDocument $node) => $this
-                    ->buildChildren($node->childNodes, $translate)
-                    ->map(fn($children) => Document::of(
-                        $this->buildVersion($node),
-                        Maybe::of($node->doctype)->map($this->buildDoctype(...)),
-                        Maybe::of($node->encoding)->map($this->buildEncoding(...)),
-                        $children,
-                    )),
+                fn(\DOMDocument $node) => Maybe::all(
+                    $this->buildVersion($node),
+                    $this->buildChildren($node->childNodes, $translate),
+                )->map(fn(Version $version, Sequence $children) => Document::of(
+                    $version,
+                    Maybe::of($node->doctype)->flatMap($this->buildDoctype(...)),
+                    Maybe::of($node->encoding)->flatMap($this->buildEncoding(...)),
+                    $children,
+                )),
             );
     }
 
@@ -57,19 +57,25 @@ final class DocumentTranslator implements NodeTranslator
         return new self;
     }
 
-    private function buildVersion(\DOMDocument $document): Version
+    /**
+     * @return Maybe<Version>
+     */
+    private function buildVersion(\DOMDocument $document): Maybe
     {
         [$major, $minor] = \explode('.', $document->xmlVersion);
 
-        return Version::of(
+        return Version::maybe(
             (int) $major,
             (int) $minor,
         );
     }
 
-    private function buildDoctype(\DOMDocumentType $type): Type
+    /**
+     * @return Maybe<Type>
+     */
+    private function buildDoctype(\DOMDocumentType $type): Maybe
     {
-        return Type::of(
+        return Type::maybe(
             $type->name,
             $type->publicId,
             $type->systemId,
@@ -101,8 +107,11 @@ final class DocumentTranslator implements NodeTranslator
         return $children;
     }
 
-    private function buildEncoding(string $encoding): Encoding
+    /**
+     * @return Maybe<Encoding>
+     */
+    private function buildEncoding(string $encoding): Maybe
     {
-        return Encoding::of($encoding);
+        return Encoding::maybe($encoding);
     }
 }
