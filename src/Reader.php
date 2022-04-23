@@ -6,6 +6,9 @@ namespace Innmind\Xml;
 use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\Maybe;
 
+/**
+ * @psalm-immutable
+ */
 interface Reader
 {
     /**

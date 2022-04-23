@@ -11,6 +11,9 @@ use Innmind\Xml\{
 use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\Maybe;
 
+/**
+ * @psalm-immutable
+ */
 final class Reader implements ReaderInterface
 {
     private Translator $translate;
