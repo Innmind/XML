@@ -16,7 +16,7 @@ class TypeTest extends TestCase
      */
     public function testInterface($name, $public, $system, $string)
     {
-        $type = new Type($name, $public, $system);
+        $type = Type::of($name, $public, $system);
 
         $this->assertSame($name, $type->name());
         $this->assertSame($public, $type->publicId());
@@ -28,7 +28,7 @@ class TypeTest extends TestCase
     {
         $this->expectException(DomainException::class);
 
-        new Type('');
+        Type::of('');
     }
 
     public function cases(): array

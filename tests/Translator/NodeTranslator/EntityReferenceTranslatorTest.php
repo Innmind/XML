@@ -8,7 +8,6 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
     Node\EntityReference,
-    Exception\InvalidArgumentException,
 };
 use Innmind\Immutable\Map;
 use PHPUnit\Framework\TestCase;
@@ -19,33 +18,33 @@ class EntityReferenceTranslatorTest extends TestCase
     {
         $this->assertInstanceOf(
             NodeTranslator::class,
-            new EntityReferenceTranslator
+            EntityReferenceTranslator::of(),
         );
     }
 
     public function testTranslate()
     {
-        $translate = new EntityReferenceTranslator;
+        $translate = EntityReferenceTranslator::of();
         $node = $translate(
             new \DOMEntityReference('gt'),
-            new Translator(
-                Map::of('int', NodeTranslator::class)
-            )
+            Translator::of(Map::of()),
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
         );
 
         $this->assertInstanceOf(EntityReference::class, $node);
         $this->assertSame('gt', $node->content());
     }
 
-    public function testThrowWhenInvalidNode()
+    public function testReturnNothingWhenInvalidNode()
     {
-        $this->expectException(InvalidArgumentException::class);
-
-        (new EntityReferenceTranslator)(
+        $this->assertNull(EntityReferenceTranslator::of()(
             new \DOMNode,
-            new Translator(
-                Map::of('int', NodeTranslator::class)
-            )
-        );
+            Translator::of(Map::of()),
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
+        ));
     }
 }

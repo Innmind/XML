@@ -4,35 +4,48 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Translator\NodeTranslator\Visitor;
 
 use Innmind\Xml\Attribute;
-use Innmind\Immutable\Set;
+use Innmind\Immutable\{
+    Set,
+    Maybe,
+};
 
+/**
+ * @psalm-immutable
+ */
 final class Attributes
 {
-    /**
-     * @return Set<Attribute>
-     */
-    public function __invoke(\DOMNode $node): Set
+    private function __construct()
     {
-        /** @var Set<Attribute> */
-        $attributes = Set::of(Attribute::class);
+    }
+
+    /**
+     * @return Maybe<Set<Attribute>>
+     */
+    public function __invoke(\DOMNode $node): Maybe
+    {
+        /** @var Maybe<Set<Attribute>> */
+        $attributes = Maybe::just(Set::of());
 
         if (!$node instanceof \DOMElement) {
             return $attributes;
         }
 
-        /**
-         * @var string $name
-         * @var \DOMAttr $attribute
-         */
         foreach ($node->attributes as $name => $attribute) {
-            $attributes = ($attributes)(
-                new Attribute(
-                    $name,
-                    $attribute->value,
+            $attributes = $attributes->flatMap(
+                static fn($attributes) => Attribute::maybe($name, $attribute->value)->map(
+                    static fn($attribute) => ($attributes)($attribute),
                 ),
             );
         }
 
         return $attributes;
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(): self
+    {
+        return new self;
     }
 }

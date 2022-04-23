@@ -3,31 +3,42 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Visitor;
 
-use Innmind\Xml\{
-    Node,
-    Exception\NoNextSibling,
-};
+use Innmind\Xml\Node;
+use Innmind\Immutable\Maybe;
 
+/**
+ * @psalm-immutable
+ */
 final class NextSibling
 {
     private Node $node;
 
-    public function __construct(Node $node)
+    private function __construct(Node $node)
     {
         $this->node = $node;
     }
 
-    public function __invoke(Node $tree): Node
+    /**
+     * @return Maybe<Node>
+     */
+    public function __invoke(Node $tree): Maybe
     {
-        $parent = (new ParentNode($this->node))($tree);
-        $position = $parent
-            ->children()
-            ->indexOf($this->node);
+        $children = ParentNode::of($this->node)($tree)->map(
+            static fn($parent) => $parent->children(),
+        );
 
-        if ($position === ($parent->children()->size() - 1)) {
-            throw new NoNextSibling;
-        }
+        return $children
+            ->flatMap(fn($children) => $children->indexOf($this->node))
+            ->flatMap(static fn($position) => $children->flatMap(
+                static fn($children) => $children->get($position + 1),
+            ));
+    }
 
-        return $parent->children()->get($position + 1);
+    /**
+     * @psalm-pure
+     */
+    public static function of(Node $node): self
+    {
+        return new self($node);
     }
 }

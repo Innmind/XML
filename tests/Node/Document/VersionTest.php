@@ -13,26 +13,26 @@ class VersionTest extends TestCase
 {
     public function testInterface()
     {
-        $version = new Version(2, 1);
+        $version = Version::of(2, 1);
 
         $this->assertSame(2, $version->major());
         $this->assertSame(1, $version->minor());
         $this->assertSame('2.1', $version->toString());
 
-        $this->assertSame('1.0', (new Version(1))->toString());
+        $this->assertSame('1.0', Version::of(1)->toString());
     }
 
     public function testThrowWhenMajorTooLow()
     {
         $this->expectException(DomainException::class);
 
-        new Version(-1);
+        Version::of(-1);
     }
 
     public function testThrowWhenMinorTooLow()
     {
         $this->expectException(DomainException::class);
 
-        new Version(1, -1);
+        Version::of(1, -1);
     }
 }

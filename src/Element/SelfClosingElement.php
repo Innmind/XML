@@ -4,48 +4,148 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Element;
 
 use Innmind\Xml\{
+    Element,
     Node,
     Attribute,
-    Exception\LogicException,
+    Exception\DomainException,
 };
-use Innmind\Immutable\Set;
-use function Innmind\Immutable\join;
+use Innmind\Immutable\{
+    Set,
+    Str,
+    Map,
+    Sequence,
+    Maybe,
+};
 
-class SelfClosingElement extends Element
+/**
+ * @psalm-immutable
+ */
+class SelfClosingElement implements Element
 {
-    private ?string $string = null;
+    /** @var non-empty-string */
+    private string $name;
+    /** @var Map<non-empty-string, Attribute> */
+    private Map $attributes;
 
     /**
-     * @param Set<Attribute>|null $attributes
+     * @param non-empty-string $name
+     * @param Map<non-empty-string, Attribute> $attributes
      */
-    public function __construct(string $name, Set $attributes = null)
+    private function __construct(string $name, Map $attributes)
     {
-        parent::__construct($name, $attributes);
+        $this->name = $name;
+        $this->attributes = $attributes;
     }
 
-    public function hasChildren(): bool
+    /**
+     * @psalm-pure
+     *
+     * @param non-empty-string $name
+     * @param Set<Attribute>|null $attributes
+     *
+     * @throws DomainException If the name is empty
+     */
+    public static function of(string $name, Set $attributes = null): self
     {
-        return false;
+        return self::maybe($name, $attributes)->match(
+            static fn($self) => $self,
+            static fn() => throw new DomainException,
+        );
     }
 
-    public function removeChild(int $position): Node
+    /**
+     * @psalm-pure
+     *
+     * @param Set<Attribute>|null $attributes
+     *
+     * @return Maybe<self>
+     */
+    public static function maybe(string $name, Set $attributes = null): Maybe
     {
-        throw new LogicException('Operation not applicable');
+        if ($name === '') {
+            /** @var Maybe<self> */
+            return Maybe::nothing();
+        }
+
+        /** @var Set<Attribute> */
+        $attributes ??= Set::of();
+
+        return Maybe::just(new self(
+            $name,
+            Map::of(
+                ...$attributes
+                    ->map(static fn($attribute) => [
+                        $attribute->name(),
+                        $attribute,
+                    ])
+                    ->toList(),
+            ),
+        ));
     }
 
-    public function replaceChild(int $position, Node $child): Node
+    public function name(): string
     {
-        throw new LogicException('Operation not applicable');
+        return $this->name;
     }
 
+    public function attributes(): Map
+    {
+        return $this->attributes;
+    }
+
+    public function attribute(string $name): Maybe
+    {
+        return $this->attributes->get($name);
+    }
+
+    public function removeAttribute(string $name): self
+    {
+        return new self(
+            $this->name,
+            $this->attributes->remove($name),
+        );
+    }
+
+    public function addAttribute(Attribute $attribute): self
+    {
+        return new self(
+            $this->name,
+            ($this->attributes)(
+                $attribute->name(),
+                $attribute,
+            ),
+        );
+    }
+
+    public function children(): Sequence
+    {
+        return Sequence::of();
+    }
+
+    public function filterChild(callable $filter): self
+    {
+        return $this;
+    }
+
+    public function mapChild(callable $map): self
+    {
+        return $this;
+    }
+
+    /**
+     * This operation will do nothing
+     */
     public function prependChild(Node $child): Node
     {
-        throw new LogicException('Operation not applicable');
+        return $this;
     }
 
+    /**
+     * This operation will do nothing
+     */
     public function appendChild(Node $child): Node
     {
-        throw new LogicException('Operation not applicable');
+        return $this;
     }
 
     public function content(): string
@@ -55,22 +155,17 @@ class SelfClosingElement extends Element
 
     public function toString(): string
     {
-        if ($this->string === null) {
-            $attributes = $this
-                ->attributes()
-                ->values()
-                ->mapTo(
-                    'string',
-                    static fn(Attribute $attribute): string => $attribute->toString(),
-                );
-
-            $this->string = \sprintf(
-                '<%s%s/>',
-                $this->name(),
-                !$this->attributes()->empty() ? ' '.join(' ', $attributes)->toString() : '',
+        $attributes = $this
+            ->attributes()
+            ->values()
+            ->map(
+                static fn(Attribute $attribute): string => $attribute->toString(),
             );
-        }
 
-        return $this->string;
+        return \sprintf(
+            '<%s%s/>',
+            $this->name(),
+            !$this->attributes()->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
+        );
     }
 }

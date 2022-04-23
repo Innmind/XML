@@ -9,39 +9,59 @@ use Innmind\Xml\{
     Translator\NodeTranslator\Visitor\Attributes,
     Translator\NodeTranslator\Visitor\Children,
     Node,
-    Exception\InvalidArgumentException,
     Element\SelfClosingElement,
     Element\Element,
 };
-use function Innmind\Immutable\unwrap;
+use Innmind\Immutable\{
+    Maybe,
+    Set,
+    Sequence,
+};
 
+/**
+ * @psalm-immutable
+ */
 final class ElementTranslator implements NodeTranslator
 {
-    public function __invoke(
-        \DOMNode $node,
-        Translator $translate
-    ): Node {
-        if (!$node instanceof \DOMElement) {
-            throw new InvalidArgumentException;
-        }
+    private function __construct()
+    {
+    }
 
-        $attributes = (new Attributes)($node);
+    public function __invoke(\DOMNode $node, Translator $translate): Maybe
+    {
+        /** @var Maybe<\DOMElement> */
+        $node = Maybe::just($node)
+            ->filter(static fn($node) => $node instanceof \DOMElement);
 
-        /** @psalm-suppress RedundantCondition */
-        if (
-            $node->childNodes instanceof \DOMNodeList &&
-            $node->childNodes->length === 0
-        ) {
-            return new SelfClosingElement(
-                $node->nodeName,
-                $attributes,
-            );
-        }
+        /**
+         * @psalm-suppress MixedArgumentTypeCoercion
+         * @psalm-suppress MixedArgument
+         * @var Maybe<Node>
+         */
+        return $node
+            ->filter(static fn($node) => $node->childNodes->length === 0)
+            ->flatMap(static fn($node) => Attributes::of()($node)->flatMap(
+                static fn($attributes) => SelfClosingElement::maybe(
+                    $node->nodeName,
+                    $attributes,
+                ),
+            ))
+            ->otherwise(static fn() => $node->flatMap(
+                static fn($node) => Maybe::all(Attributes::of()($node), Children::of($translate)($node))->flatMap(
+                    static fn(Set $attributes, Sequence $children) => Element::maybe(
+                        $node->nodeName,
+                        $attributes,
+                        $children,
+                    ),
+                ),
+            ));
+    }
 
-        return new Element(
-            $node->nodeName,
-            $attributes,
-            ...unwrap((new Children($translate))($node)),
-        );
+    /**
+     * @psalm-pure
+     */
+    public static function of(): self
+    {
+        return new self;
     }
 }

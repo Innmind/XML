@@ -8,33 +8,57 @@ use Innmind\Xml\{
     Node\Document\Type,
     Node\Document\Version,
     Node\Document\Encoding,
-    Exception\OutOfBoundsException,
 };
-use Innmind\Immutable\Sequence;
-use function Innmind\Immutable\{
-    join,
-    unwrap,
+use Innmind\Immutable\{
+    Sequence,
+    Str,
+    Maybe,
 };
 
+/**
+ * @psalm-immutable
+ */
 final class Document implements Node
 {
     private Version $version;
-    private ?Type $type = null;
+    /** @var Maybe<Type> */
+    private Maybe $type;
+    /** @var Maybe<Encoding> */
+    private Maybe $encoding;
     /** @var Sequence<Node> */
     private Sequence $children;
-    private ?Encoding $encoding = null;
 
-    public function __construct(
+    /**
+     * @param Maybe<Type> $type
+     * @param Maybe<Encoding> $encoding
+     * @param Sequence<Node> $children
+     */
+    private function __construct(
         Version $version,
-        Type $type = null,
-        Encoding $encoding = null,
-        Node ...$children
+        Maybe $type,
+        Maybe $encoding,
+        Sequence $children,
     ) {
         $this->version = $version;
         $this->type = $type;
         $this->encoding = $encoding;
-        /** @var Sequence<Node> */
-        $this->children = Sequence::of(Node::class, ...$children);
+        $this->children = $children;
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @param Maybe<Type> $type
+     * @param Maybe<Encoding> $encoding
+     * @param Sequence<Node> $children
+     */
+    public static function of(
+        Version $version,
+        Maybe $type,
+        Maybe $encoding,
+        Sequence $children = null,
+    ): self {
+        return new self($version, $type, $encoding, $children ?? Sequence::of());
     }
 
     public function version(): Version
@@ -42,16 +66,12 @@ final class Document implements Node
         return $this->version;
     }
 
-    /** @psalm-suppress InvalidNullableReturnType */
-    public function type(): Type
+    /**
+     * @return Maybe<Type>
+     */
+    public function type(): Maybe
     {
-        /** @psalm-suppress NullableReturnStatement */
         return $this->type;
-    }
-
-    public function hasType(): bool
-    {
-        return $this->type instanceof Type;
     }
 
     public function children(): Sequence
@@ -59,50 +79,32 @@ final class Document implements Node
         return $this->children;
     }
 
-    public function hasChildren(): bool
+    public function filterChild(callable $filter): self
     {
-        return !$this->children->empty();
+        return new self(
+            $this->version,
+            $this->type,
+            $this->encoding,
+            $this->children->filter($filter),
+        );
     }
 
-    public function removeChild(int $position): Node
+    public function mapChild(callable $map): self
     {
-        if (!$this->children->indices()->contains($position)) {
-            throw new OutOfBoundsException((string) $position);
-        }
-
-        $document = clone $this;
-        $document->children = $this
-            ->children
-            ->take($position)
-            ->append($this->children->drop($position + 1));
-
-        return $document;
-    }
-
-    public function replaceChild(int $position, Node $child): Node
-    {
-        if (!$this->children->indices()->contains($position)) {
-            throw new OutOfBoundsException((string) $position);
-        }
-
-        $document = clone $this;
-        $document->children = $this
-            ->children
-            ->take($position)
-            ->add($child)
-            ->append($this->children->drop($position + 1));
-
-        return $document;
+        return new self(
+            $this->version,
+            $this->type,
+            $this->encoding,
+            $this->children->map($map),
+        );
     }
 
     public function prependChild(Node $child): Node
     {
         $document = clone $this;
-        /** @var Sequence<Node> */
         $document->children = Sequence::of(
-            Node::class,
             $child,
-            ...unwrap($this->children),
+            ...$this->children->toList(),
         );
 
         return $document;
@@ -116,26 +118,21 @@ final class Document implements Node
         return $document;
     }
 
-    /** @psalm-suppress InvalidNullableReturnType */
-    public function encoding(): Encoding
+    /**
+     * @return Maybe<Encoding>
+     */
+    public function encoding(): Maybe
     {
-        /** @psalm-suppress NullableReturnStatement */
         return $this->encoding;
-    }
-
-    public function encodingIsSpecified(): bool
-    {
-        return $this->encoding instanceof Encoding;
     }
 
     public function content(): string
     {
-        $children = $this->children->mapTo(
-            'string',
+        $children = $this->children->map(
             static fn(Node $child): string => $child->toString(),
         );
 
-        return join('', $children)->toString();
+        return Str::of('')->join($children)->toString();
     }
 
     public function toString(): string
@@ -143,12 +140,19 @@ final class Document implements Node
         $string = \sprintf(
             '<?xml version="%s"%s?>',
             $this->version->toString(),
-            $this->encoding instanceof Encoding ? ' encoding="'.$this->encoding->toString().'"' : '',
+            $this
+                ->encoding
+                ->map(static fn($encoding) => ' encoding="'.$encoding->toString().'"')
+                ->match(
+                    static fn($encoding) => $encoding,
+                    static fn() => '',
+                ),
         );
 
-        if ($this->type instanceof Type) {
-            $string .= "\n".$this->type->toString();
-        }
+        $string .= $this->type->match(
+            static fn($type) => "\n".$type->toString(),
+            static fn() => '',
+        );
 
         return $string."\n".$this->content();
     }

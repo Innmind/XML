@@ -7,20 +7,35 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
     Node,
-    Exception\InvalidArgumentException,
     Node\EntityReference,
 };
+use Innmind\Immutable\Maybe;
 
+/**
+ * @psalm-immutable
+ */
 final class EntityReferenceTranslator implements NodeTranslator
 {
-    public function __invoke(
-        \DOMNode $node,
-        Translator $translate
-    ): Node {
-        if (!$node instanceof \DOMEntityReference) {
-            throw new InvalidArgumentException;
-        }
+    private function __construct()
+    {
+    }
 
-        return new EntityReference($node->nodeName);
+    public function __invoke(\DOMNode $node, Translator $translate): Maybe
+    {
+        /**
+         * @psalm-suppress ArgumentTypeCoercion
+         * @var Maybe<Node>
+         */
+        return Maybe::just($node)
+            ->filter(static fn($node) => $node instanceof \DOMEntityReference)
+            ->map(static fn(\DOMEntityReference $node) => EntityReference::of($node->nodeName));
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function of(): self
+    {
+        return new self;
     }
 }

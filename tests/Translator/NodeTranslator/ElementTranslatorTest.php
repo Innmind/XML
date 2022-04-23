@@ -10,9 +10,11 @@ use Innmind\Xml\{
     Node,
     Element\Element,
     Element\SelfClosingElement,
-    Exception\InvalidArgumentException,
 };
-use Innmind\Immutable\Map;
+use Innmind\Immutable\{
+    Map,
+    Maybe,
+};
 use PHPUnit\Framework\TestCase;
 
 class ElementTranslatorTest extends TestCase
@@ -21,7 +23,7 @@ class ElementTranslatorTest extends TestCase
     {
         $this->assertInstanceOf(
             NodeTranslator::class,
-            new ElementTranslator
+            ElementTranslator::of(),
         );
     }
 
@@ -33,44 +35,45 @@ class ElementTranslatorTest extends TestCase
 XML
         );
 
-        $translate = new ElementTranslator;
-        $foo = new SelfClosingElement('foo');
+        $translate = ElementTranslator::of();
+        $foo = SelfClosingElement::of('foo');
         $node = $translate(
             $document->childNodes->item(0),
-            new Translator(
-                Map::of('int', NodeTranslator::class)
-                    (
-                        \XML_ELEMENT_NODE,
-                        new class($foo) implements NodeTranslator {
-                            private $foo;
+            Translator::of(
+                Map::of([
+                    \XML_ELEMENT_NODE,
+                    new class($foo) implements NodeTranslator {
+                        private $foo;
 
-                            public function __construct(Node $foo)
-                            {
-                                $this->foo = $foo;
-                            }
-
-                            public function __invoke(\DOMNode $node, Translator $translate): Node
-                            {
-                                return $this->foo;
-                            }
+                        public function __construct(Node $foo)
+                        {
+                            $this->foo = $foo;
                         }
-                    )
-            )
+
+                        public function __invoke(\DOMNode $node, Translator $translate): Maybe
+                        {
+                            return Maybe::just($this->foo);
+                        }
+                    },
+                ]),
+            ),
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
         );
 
         $this->assertInstanceOf(Element::class, $node);
         $this->assertSame($xml, $node->toString());
     }
 
-    public function testThrowWhenInvalidNode()
+    public function testReturnNothingWhenInvalidNode()
     {
-        $this->expectException(InvalidArgumentException::class);
-
-        (new ElementTranslator)(
+        $this->assertNull(ElementTranslator::of()(
             new \DOMNode,
-            new Translator(
-                Map::of('int', NodeTranslator::class)
-            )
-        );
+            Translator::of(Map::of()),
+        )->match(
+            static fn($node) => $node,
+            static fn() => null,
+        ));
     }
 }

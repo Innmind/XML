@@ -7,10 +7,8 @@ use Innmind\Xml\{
     Reader\Reader,
     Reader as ReaderInterface,
     Element\Element,
-    Translator\Translator,
-    Translator\NodeTranslators,
 };
-use Innmind\Stream\Readable\Stream;
+use Innmind\Filesystem\File\Content;
 use PHPUnit\Framework\TestCase;
 
 class ReaderTest extends TestCase
@@ -19,18 +17,14 @@ class ReaderTest extends TestCase
 
     public function setUp(): void
     {
-        $this->read = new Reader(
-            new Translator(
-                NodeTranslators::defaults()
-            )
-        );
+        $this->read = Reader::of();
     }
 
     public function testInterface()
     {
         $this->assertInstanceOf(
             ReaderInterface::class,
-            $this->read
+            $this->read,
         );
     }
 
@@ -38,7 +32,7 @@ class ReaderTest extends TestCase
     {
         $this->assertEquals(
             $this->read,
-            new Reader,
+            Reader::of(),
         );
     }
 
@@ -56,10 +50,31 @@ class ReaderTest extends TestCase
     hey!
 </foo>
 XML;
-        $res = \fopen('php://temp', 'r+');
-        \fwrite($res, $xml);
-        $node = ($this->read)(new Stream($res));
+        $node = ($this->read)(Content\Lines::ofContent($xml))->match(
+            static fn($node) => $node,
+            static fn() => null,
+        );
 
         $this->assertSame($xml, $node->toString());
+    }
+
+    public function testReturnNothingWhenEmpty()
+    {
+        $node = ($this->read)(Content\None::of())->match(
+            static fn($node) => $node,
+            static fn() => null,
+        );
+
+        $this->assertNull($node);
+    }
+
+    public function testReturnNothingWhenInvalidXml()
+    {
+        $node = ($this->read)(Content\Lines::ofContent("<?xml version=\"1.0\"?>\n"))->match(
+            static fn($node) => $node,
+            static fn() => null,
+        );
+
+        $this->assertNull($node);
     }
 }

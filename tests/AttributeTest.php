@@ -11,16 +11,17 @@ use PHPUnit\Framework\TestCase;
 
 class AttributeTest extends TestCase
 {
-    public function testThrowWhenEmptyName()
+    public function testReturnNothingWhenEmptyName()
     {
-        $this->expectException(DomainException::class);
-
-        new Attribute('');
+        $this->assertNull(Attribute::maybe('')->match(
+            static fn($attribute) => $attribute,
+            static fn() => null,
+        ));
     }
 
     public function testEmptyValue()
     {
-        $attribute = new Attribute('foo');
+        $attribute = Attribute::of('foo');
 
         $this->assertSame('foo', $attribute->name());
         $this->assertSame('', $attribute->value());
@@ -28,7 +29,7 @@ class AttributeTest extends TestCase
 
     public function testWithValue()
     {
-        $attribute = new Attribute('foo', 'bar');
+        $attribute = Attribute::of('foo', 'bar');
 
         $this->assertSame('foo', $attribute->name());
         $this->assertSame('bar', $attribute->value());
@@ -38,7 +39,7 @@ class AttributeTest extends TestCase
     {
         $this->assertSame(
             'foo',
-            (new Attribute('foo'))->toString(),
+            Attribute::of('foo')->toString(),
         );
     }
 
@@ -46,7 +47,7 @@ class AttributeTest extends TestCase
     {
         $this->assertSame(
             'foo="bar"',
-            (new Attribute('foo', 'bar'))->toString(),
+            Attribute::of('foo', 'bar')->toString(),
         );
     }
 }
