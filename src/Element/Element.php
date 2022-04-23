@@ -30,16 +30,18 @@ class Element implements ElementInterface
     private Sequence $children;
 
     /**
-     * @no-named-arguments
      * @param Set<Attribute>|null $attributes
+     * @param Sequence<Node> $children
      */
     public function __construct(
         string $name,
         Set $attributes = null,
-        Node ...$children,
+        Sequence $children = null,
     ) {
         /** @var Set<Attribute> */
         $attributes ??= Set::of();
+        /** @var Sequence<Node> */
+        $children ??= Sequence::of();
 
         if (Str::of($name)->empty()) {
             throw new DomainException;
@@ -54,7 +56,7 @@ class Element implements ElementInterface
                 ])
                 ->toList(),
         );
-        $this->children = Sequence::of(...$children);
+        $this->children = $children;
     }
 
     public function name(): string

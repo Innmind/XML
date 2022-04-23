@@ -88,7 +88,7 @@ class DocumentTest extends TestCase
                 new Version(1),
                 null,
                 null,
-                new Element('foo'),
+                Sequence::of(new Element('foo')),
             ))->content(),
         );
     }
@@ -121,7 +121,7 @@ class DocumentTest extends TestCase
                 new Version(2, 1),
                 new Type('html'),
                 new Encoding('utf-8'),
-                new SelfClosingElement('foo'),
+                Sequence::of(new SelfClosingElement('foo')),
             ))->toString(),
         );
     }
@@ -132,9 +132,11 @@ class DocumentTest extends TestCase
             new Version(1),
             new Type('html'),
             new Encoding('utf-8'),
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
+            Sequence::of(
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         );
 
         $document2 = $document->removeChild(1);
@@ -164,9 +166,11 @@ class DocumentTest extends TestCase
             new Version(1),
             new Type('html'),
             new Encoding('utf-8'),
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
+            Sequence::of(
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         ))->removeChild(3);
     }
 
@@ -176,9 +180,11 @@ class DocumentTest extends TestCase
             new Version(1),
             new Type('html'),
             new Encoding('utf-8'),
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
+            Sequence::of(
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         );
 
         $document2 = $document->replaceChild(
@@ -222,9 +228,11 @@ class DocumentTest extends TestCase
             new Version(1),
             new Type('html'),
             new Encoding('utf-8'),
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
+            Sequence::of(
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         ))->replaceChild(
             3,
             $this->createMock(Node::class),
@@ -237,9 +245,11 @@ class DocumentTest extends TestCase
             new Version(1),
             new Type('html'),
             new Encoding('utf-8'),
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
+            Sequence::of(
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         );
 
         $document2 = $document->prependChild(
@@ -281,9 +291,11 @@ class DocumentTest extends TestCase
             new Version(1),
             new Type('html'),
             new Encoding('utf-8'),
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
+            Sequence::of(
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         );
 
         $document2 = $document->appendChild(

@@ -27,18 +27,18 @@ final class Document implements Node
     private ?Encoding $encoding = null;
 
     /**
-     * @no-named-arguments
+     * @param Sequence<Node> $children
      */
     public function __construct(
         Version $version,
         Type $type = null,
         Encoding $encoding = null,
-        Node ...$children,
+        Sequence $children = null,
     ) {
         $this->version = $version;
         $this->type = $type;
         $this->encoding = $encoding;
-        $this->children = Sequence::of(...$children);
+        $this->children = $children ?? Sequence::of();
     }
 
     public function version(): Version

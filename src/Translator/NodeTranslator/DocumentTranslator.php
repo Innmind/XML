@@ -40,7 +40,7 @@ final class DocumentTranslator implements NodeTranslator
                         $this->buildVersion($node),
                         $node->doctype ? $this->buildDoctype($node->doctype) : null,
                         $node->encoding ? $this->buildEncoding($node->encoding) : null,
-                        ...$children->toList(),
+                        $children,
                     )),
             );
     }

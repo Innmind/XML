@@ -196,7 +196,7 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             null,
-            new Element('bar'),
+            Sequence::of(new Element('bar')),
         );
         $this->assertFalse($node->children()->empty());
 
@@ -208,9 +208,11 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
+            Sequence::of(
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         );
 
         $element2 = $element->removeChild(1);
@@ -238,9 +240,11 @@ class ElementTest extends TestCase
         (new Element(
             'foobar',
             null,
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
+            Sequence::of(
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         ))->removeChild(3);
     }
 
@@ -249,9 +253,11 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
+            Sequence::of(
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         );
 
         $element2 = $element->replaceChild(
@@ -293,9 +299,11 @@ class ElementTest extends TestCase
         (new Element(
             'foobar',
             null,
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
+            Sequence::of(
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         ))->replaceChild(
             3,
             $this->createMock(Node::class),
@@ -307,9 +315,11 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
+            Sequence::of(
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         );
 
         $element2 = $element->prependChild(
@@ -349,9 +359,11 @@ class ElementTest extends TestCase
         $element = new Element(
             'foobar',
             null,
-            new Element('foo'),
-            new Element('bar'),
-            new Element('baz'),
+            Sequence::of(
+                new Element('foo'),
+                new Element('bar'),
+                new Element('baz'),
+            ),
         );
 
         $element2 = $element->appendChild(
@@ -399,7 +411,7 @@ class ElementTest extends TestCase
         $node = new Element(
             'foo',
             null,
-            new Element('bar'),
+            Sequence::of(new Element('bar')),
         );
 
         $this->assertSame(
@@ -432,8 +444,10 @@ class ElementTest extends TestCase
                     Attribute::of('bar', 'baz'),
                     Attribute::of('baz', 'foo'),
                 ),
-                new Element('bar'),
-                new Element('baz'),
+                Sequence::of(
+                    new Element('bar'),
+                    new Element('baz'),
+                ),
             ))->toString(),
         );
     }

@@ -47,7 +47,7 @@ final class ElementTranslator implements NodeTranslator
                     static fn(Set $attributes, Sequence $children) => new Element(
                         $node->nodeName,
                         $attributes,
-                        ...$children->toList(),
+                        $children,
                     ),
                 ),
             ));
