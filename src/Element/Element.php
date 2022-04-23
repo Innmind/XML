@@ -120,22 +120,6 @@ class Element implements ElementInterface
         );
     }
 
-    public function removeChild(int $position): Node
-    {
-        if (!$this->children->indices()->contains($position)) {
-            throw new OutOfBoundsException((string) $position);
-        }
-
-        $element = clone $this;
-        /** @psalm-suppress ArgumentTypeCoercion */
-        $element->children = $this
-            ->children
-            ->take($position)
-            ->append($this->children->drop($position + 1));
-
-        return $element;
-    }
-
     public function replaceChild(int $position, Node $child): Node
     {
         if (!$this->children->indices()->contains($position)) {

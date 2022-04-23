@@ -207,13 +207,6 @@ class SelfClosingElementTest extends TestCase
         $this->assertTrue($node->children()->empty());
     }
 
-    public function testThrowWhenRemovingChild()
-    {
-        $this->expectException(LogicException::class);
-
-        (new SelfClosingElement('foo'))->removeChild(0);
-    }
-
     public function testThrowWhenReplacingChild()
     {
         $this->expectException(LogicException::class);

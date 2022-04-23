@@ -209,51 +209,6 @@ class ElementTest extends TestCase
         $this->assertTrue((new Element('foo'))->children()->empty());
     }
 
-    public function testRemoveChild()
-    {
-        $element = new Element(
-            'foobar',
-            null,
-            Sequence::of(
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
-        );
-
-        $element2 = $element->removeChild(1);
-
-        $this->assertNotSame($element, $element2);
-        $this->assertInstanceOf(Element::class, $element2);
-        $this->assertSame($element->name(), $element2->name());
-        $this->assertSame($element->attributes(), $element2->attributes());
-        $this->assertCount(3, $element->children());
-        $this->assertCount(2, $element2->children());
-        $this->assertEquals(
-            $element->children()->get(0),
-            $element2->children()->get(0),
-        );
-        $this->assertEquals(
-            $element->children()->get(2),
-            $element2->children()->get(1),
-        );
-    }
-
-    public function testThrowWhenRemovingUnknownChild()
-    {
-        $this->expectException(OutOfBoundsException::class);
-
-        (new Element(
-            'foobar',
-            null,
-            Sequence::of(
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
-        ))->removeChild(3);
-    }
-
     public function testReplaceChild()
     {
         $element = new Element(

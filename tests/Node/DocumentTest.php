@@ -146,54 +146,6 @@ class DocumentTest extends TestCase
         );
     }
 
-    public function testRemoveChild()
-    {
-        $document = new Document(
-            new Version(1),
-            Maybe::just(new Type('html')),
-            Maybe::just(new Encoding('utf-8')),
-            Sequence::of(
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
-        );
-
-        $document2 = $document->removeChild(1);
-
-        $this->assertNotSame($document, $document2);
-        $this->assertInstanceOf(Document::class, $document2);
-        $this->assertSame($document->version(), $document2->version());
-        $this->assertSame($document->type(), $document2->type());
-        $this->assertSame($document->encoding(), $document2->encoding());
-        $this->assertCount(3, $document->children());
-        $this->assertCount(2, $document2->children());
-        $this->assertEquals(
-            $document->children()->get(0),
-            $document2->children()->get(0),
-        );
-        $this->assertEquals(
-            $document->children()->get(2),
-            $document2->children()->get(1),
-        );
-    }
-
-    public function testThrowWhenRemovingUnknownChild()
-    {
-        $this->expectException(OutOfBoundsException::class);
-
-        (new Document(
-            new Version(1),
-            Maybe::just(new Type('html')),
-            Maybe::just(new Encoding('utf-8')),
-            Sequence::of(
-                new Element('foo'),
-                new Element('bar'),
-                new Element('baz'),
-            ),
-        ))->removeChild(3);
-    }
-
     public function testReplaceChild()
     {
         $document = new Document(
