@@ -13,6 +13,9 @@ use Innmind\Immutable\{
  */
 interface Element extends Node
 {
+    /**
+     * @return non-empty-string
+     */
     public function name(): string;
 
     /**

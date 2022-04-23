@@ -22,6 +22,7 @@ use Innmind\Immutable\{
  */
 class Element implements ElementInterface
 {
+    /** @var non-empty-string */
     private string $name;
     /** @var Map<non-empty-string, Attribute> */
     private Map $attributes;
@@ -29,6 +30,7 @@ class Element implements ElementInterface
     private Sequence $children;
 
     /**
+     * @param non-empty-string $name
      * @param Map<non-empty-string, Attribute> $attributes
      * @param Sequence<Node> $children
      */
@@ -37,10 +39,6 @@ class Element implements ElementInterface
         Map $attributes,
         Sequence $children,
     ) {
-        if (Str::of($name)->empty()) {
-            throw new DomainException;
-        }
-
         $this->name = $name;
         $this->attributes = $attributes;
         $this->children = $children;
@@ -49,20 +47,47 @@ class Element implements ElementInterface
     /**
      * @psalm-pure
      *
+     * @param non-empty-string $name
      * @param Set<Attribute>|null $attributes
      * @param Sequence<Node>|null $children
+     *
+     * @throws DomainException If the name is empty
      */
     public static function of(
         string $name,
         Set $attributes = null,
         Sequence $children = null,
     ): self {
+        return self::maybe($name, $attributes, $children)->match(
+            static fn($self) => $self,
+            static fn() => throw new DomainException,
+        );
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @param Set<Attribute>|null $attributes
+     * @param Sequence<Node>|null $children
+     *
+     * @return Maybe<self>
+     */
+    public static function maybe(
+        string $name,
+        Set $attributes = null,
+        Sequence $children = null,
+    ): Maybe {
+        if ($name === '') {
+            /** @var Maybe<self> */
+            return Maybe::nothing();
+        }
+
         /** @var Set<Attribute> */
         $attributes ??= Set::of();
         /** @var Sequence<Node> */
         $children ??= Sequence::of();
 
-        return new self(
+        return Maybe::just(new self(
             $name,
             Map::of(
                 ...$attributes
@@ -73,7 +98,7 @@ class Element implements ElementInterface
                     ->toList(),
             ),
             $children,
-        );
+        ));
     }
 
     public function name(): string

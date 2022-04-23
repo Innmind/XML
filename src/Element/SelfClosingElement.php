@@ -23,19 +23,17 @@ use Innmind\Immutable\{
  */
 class SelfClosingElement implements Element
 {
+    /** @var non-empty-string */
     private string $name;
     /** @var Map<non-empty-string, Attribute> */
     private Map $attributes;
 
     /**
+     * @param non-empty-string $name
      * @param Map<non-empty-string, Attribute> $attributes
      */
     private function __construct(string $name, Map $attributes)
     {
-        if (Str::of($name)->empty()) {
-            throw new DomainException;
-        }
-
         $this->name = $name;
         $this->attributes = $attributes;
     }
@@ -43,14 +41,37 @@ class SelfClosingElement implements Element
     /**
      * @psalm-pure
      *
+     * @param non-empty-string $name
      * @param Set<Attribute>|null $attributes
+     *
+     * @throws DomainException If the name is empty
      */
     public static function of(string $name, Set $attributes = null): self
     {
+        return self::maybe($name, $attributes)->match(
+            static fn($self) => $self,
+            static fn() => throw new DomainException,
+        );
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @param Set<Attribute>|null $attributes
+     *
+     * @return Maybe<self>
+     */
+    public static function maybe(string $name, Set $attributes = null): Maybe
+    {
+        if ($name === '') {
+            /** @var Maybe<self> */
+            return Maybe::nothing();
+        }
+
         /** @var Set<Attribute> */
         $attributes ??= Set::of();
 
-        return new self(
+        return Maybe::just(new self(
             $name,
             Map::of(
                 ...$attributes
@@ -60,7 +81,7 @@ class SelfClosingElement implements Element
                     ])
                     ->toList(),
             ),
-        );
+        ));
     }
 
     public function name(): string

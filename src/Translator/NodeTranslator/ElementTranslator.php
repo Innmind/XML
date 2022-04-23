@@ -40,15 +40,15 @@ final class ElementTranslator implements NodeTranslator
          */
         return $node
             ->filter(static fn($node) => $node->childNodes->length === 0)
-            ->flatMap(static fn($node) => Attributes::of()($node)->map(
-                static fn($attributes) => SelfClosingElement::of(
+            ->flatMap(static fn($node) => Attributes::of()($node)->flatMap(
+                static fn($attributes) => SelfClosingElement::maybe(
                     $node->nodeName,
                     $attributes,
                 ),
             ))
             ->otherwise(static fn() => $node->flatMap(
-                static fn($node) => Maybe::all(Attributes::of()($node), Children::of($translate)($node))->map(
-                    static fn(Set $attributes, Sequence $children) => Element::of(
+                static fn($node) => Maybe::all(Attributes::of()($node), Children::of($translate)($node))->flatMap(
+                    static fn(Set $attributes, Sequence $children) => Element::maybe(
                         $node->nodeName,
                         $attributes,
                         $children,
