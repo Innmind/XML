@@ -8,6 +8,8 @@ This library is an abstraction on top of the `\DOM*` classes of php, the goal is
 
 The big differences are that each node is immutable and is only aware of its children (instead of being aware of its parent and siblings). This can allow you to extract a whole subtree and use it to build a new tree without affecting the original one.
 
+**Important**: you must use [`vimeo/psalm`](https://packagist.org/packages/vimeo/psalm) to make sure you use this library correctly.
+
 ## Installation
 
 ```sh
