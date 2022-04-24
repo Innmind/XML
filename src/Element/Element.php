@@ -20,7 +20,7 @@ use Innmind\Immutable\{
 /**
  * @psalm-immutable
  */
-class Element implements ElementInterface
+final class Element implements ElementInterface
 {
     /** @var non-empty-string */
     private string $name;

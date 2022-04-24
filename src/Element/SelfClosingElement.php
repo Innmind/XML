@@ -20,7 +20,7 @@ use Innmind\Immutable\{
 /**
  * @psalm-immutable
  */
-class SelfClosingElement implements Element
+final class SelfClosingElement implements Element
 {
     /** @var non-empty-string */
     private string $name;
