@@ -20,7 +20,7 @@ use Innmind\Immutable\{
 /**
  * @psalm-immutable
  */
-class SelfClosingElement implements Element
+final class SelfClosingElement implements Element
 {
     /** @var non-empty-string */
     private string $name;
@@ -135,7 +135,7 @@ class SelfClosingElement implements Element
     /**
      * This operation will do nothing
      */
-    public function prependChild(Node $child): Node
+    public function prependChild(Node $child): self
     {
         return $this;
     }
@@ -143,7 +143,7 @@ class SelfClosingElement implements Element
     /**
      * This operation will do nothing
      */
-    public function appendChild(Node $child): Node
+    public function appendChild(Node $child): self
     {
         return $this;
     }

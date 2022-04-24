@@ -20,7 +20,7 @@ use Innmind\Immutable\{
 /**
  * @psalm-immutable
  */
-class Element implements ElementInterface
+final class Element implements ElementInterface
 {
     /** @var non-empty-string */
     private string $name;
@@ -116,7 +116,7 @@ class Element implements ElementInterface
         return $this->attributes->get($name);
     }
 
-    public function removeAttribute(string $name): ElementInterface
+    public function removeAttribute(string $name): self
     {
         if (!$this->attributes->contains($name)) {
             return $this;
@@ -128,7 +128,7 @@ class Element implements ElementInterface
         return $element;
     }
 
-    public function addAttribute(Attribute $attribute): ElementInterface
+    public function addAttribute(Attribute $attribute): self
     {
         $element = clone $this;
         $element->attributes = ($this->attributes)(
@@ -162,7 +162,7 @@ class Element implements ElementInterface
         );
     }
 
-    public function prependChild(Node $child): Node
+    public function prependChild(Node $child): self
     {
         $element = clone $this;
         $element->children = Sequence::of(
@@ -173,7 +173,7 @@ class Element implements ElementInterface
         return $element;
     }
 
-    public function appendChild(Node $child): Node
+    public function appendChild(Node $child): self
     {
         $element = clone $this;
         $element->children = ($this->children)($child);
