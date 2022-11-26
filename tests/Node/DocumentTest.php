@@ -11,6 +11,7 @@ use Innmind\Xml\{
     Node,
     Element\Element,
     Element\SelfClosingElement,
+    AsContent,
 };
 use Innmind\Immutable\{
     Map,
@@ -31,6 +32,10 @@ class DocumentTest extends TestCase
     {
         $this->assertInstanceOf(
             Node::class,
+            Document::of(Version::of(1), Maybe::nothing(), Maybe::nothing()),
+        );
+        $this->assertInstanceOf(
+            AsContent::class,
             Document::of(Version::of(1), Maybe::nothing(), Maybe::nothing()),
         );
     }
@@ -302,5 +307,41 @@ class DocumentTest extends TestCase
                 $this->assertSame($element->children()->size(), $element2->children()->size());
                 $this->assertTrue($element2->children()->contains($replacement));
             });
+    }
+
+    public function testAsContent()
+    {
+        $document = Document::of(
+            Version::of(1),
+            Maybe::just(Type::of('html')),
+            Maybe::just(Encoding::of('utf-8')),
+            Sequence::of(
+                Element::of(
+                    'root',
+                    null,
+                    Sequence::of(
+                        Element::of('foo'),
+                        Element::of('bar'),
+                        Element::of('baz'),
+                    ),
+                ),
+            ),
+        );
+
+        $this->assertSame(
+            <<<CONTENT
+            <?xml version="1.0" encoding="utf-8"?>
+            <!DOCTYPE html>
+            <root>
+                <foo>
+                </foo>
+                <bar>
+                </bar>
+                <baz>
+                </baz>
+            </root>
+            CONTENT,
+            $document->asContent()->toString(),
+        );
     }
 }

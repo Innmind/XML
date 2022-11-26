@@ -8,7 +8,9 @@ use Innmind\Xml\{
     Node\Document\Type,
     Node\Document\Version,
     Node\Document\Encoding,
+    AsContent,
 };
+use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\{
     Sequence,
     Str,
@@ -18,7 +20,7 @@ use Innmind\Immutable\{
 /**
  * @psalm-immutable
  */
-final class Document implements Node
+final class Document implements Node, AsContent
 {
     private Version $version;
     /** @var Maybe<Type> */
@@ -134,7 +136,38 @@ final class Document implements Node
 
     public function toString(): string
     {
-        $string = \sprintf(
+        $string = $this->tag();
+
+        $string .= $this->type->match(
+            static fn($type) => "\n".$type->toString(),
+            static fn() => '',
+        );
+
+        return $string."\n".$this->content();
+    }
+
+    public function asContent(): Content
+    {
+        return Content\Lines::of(
+            Sequence::lazyStartingWith(Content\Line::of(Str::of($this->tag())))
+                ->append($this->type->match(
+                    static fn($type) => Sequence::of(Content\Line::of(Str::of($type->toString()))),
+                    static fn() => Sequence::of(),
+                ))
+                ->append(
+                    $this
+                        ->children
+                        ->flatMap(static fn($node) => match ($node instanceof AsContent) {
+                            true => $node->asContent()->lines(),
+                            false => Content\Lines::ofContent($node->toString())->lines(),
+                        }),
+                ),
+        );
+    }
+
+    private function tag(): string
+    {
+        return \sprintf(
             '<?xml version="%s"%s?>',
             $this->version->toString(),
             $this
@@ -145,12 +178,5 @@ final class Document implements Node
                     static fn() => '',
                 ),
         );
-
-        $string .= $this->type->match(
-            static fn($type) => "\n".$type->toString(),
-            static fn() => '',
-        );
-
-        return $string."\n".$this->content();
     }
 }

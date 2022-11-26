@@ -7,8 +7,10 @@ use Innmind\Xml\{
     Element as ElementInterface,
     Attribute,
     Node,
+    AsContent,
     Exception\DomainException,
 };
+use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\{
     Map,
     Sequence,
@@ -20,7 +22,7 @@ use Innmind\Immutable\{
 /**
  * @psalm-immutable
  */
-final class Element implements ElementInterface
+final class Element implements ElementInterface, AsContent
 {
     /** @var non-empty-string */
     private string $name;
@@ -189,6 +191,37 @@ final class Element implements ElementInterface
 
     public function toString(): string
     {
+        return \sprintf(
+            '%s%s%s',
+            $this->openingTag(),
+            $this->content(),
+            $this->closingTag(),
+        );
+    }
+
+    public function asContent(): Content
+    {
+        return Content\Lines::of(
+            Sequence::lazyStartingWith(Content\Line::of(Str::of($this->openingTag())))
+                ->append(
+                    $this
+                        ->children
+                        ->flatMap(
+                            static fn($node) => match ($node instanceof AsContent) {
+                                true => $node->asContent()->lines(),
+                                false => Content\Lines::ofContent($node->toString())->lines(),
+                            },
+                        )
+                        ->map(static fn($line) => $line->map(
+                            static fn($string) => $string->prepend('    '), // to correctly indent the file
+                        )),
+                )
+                ->add(Content\Line::of(Str::of($this->closingTag()))),
+        );
+    }
+
+    private function openingTag(): string
+    {
         $attributes = $this
             ->attributes
             ->values()
@@ -197,10 +230,16 @@ final class Element implements ElementInterface
             );
 
         return \sprintf(
-            '<%s%s>%s</%s>',
+            '<%s%s>',
             $this->name(),
-            !$this->attributes()->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
-            $this->content(),
+            !$attributes->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
+        );
+    }
+
+    private function closingTag(): string
+    {
+        return \sprintf(
+            '</%s>',
             $this->name(),
         );
     }

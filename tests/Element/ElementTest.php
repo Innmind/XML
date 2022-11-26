@@ -7,6 +7,7 @@ use Innmind\Xml\{
     Element\Element,
     Node,
     Attribute,
+    AsContent,
     Exception\DomainException,
 };
 use Innmind\Immutable\{
@@ -28,6 +29,10 @@ class ElementTest extends TestCase
     {
         $this->assertInstanceOf(
             Node::class,
+            Element::of('foo'),
+        );
+        $this->assertInstanceOf(
+            AsContent::class,
             Element::of('foo'),
         );
     }
@@ -410,5 +415,32 @@ class ElementTest extends TestCase
                 $this->assertSame($element->children()->size(), $element2->children()->size());
                 $this->assertTrue($element2->children()->contains($replacement));
             });
+    }
+
+    public function testAsContent()
+    {
+        $element = Element::of(
+            'foo',
+            Set::of(
+                Attribute::of('bar', 'baz'),
+                Attribute::of('baz', 'foo'),
+            ),
+            Sequence::of(
+                Element::of('bar'),
+                Element::of('baz'),
+            ),
+        );
+
+        $this->assertSame(
+            <<<CONTENT
+            <foo bar="baz" baz="foo">
+                <bar>
+                </bar>
+                <baz>
+                </baz>
+            </foo>
+            CONTENT,
+            $element->asContent()->toString(),
+        );
     }
 }
