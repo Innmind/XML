@@ -27,8 +27,10 @@ final class PreviousSibling
             static fn($parent) => $parent->children(),
         );
 
+        /** @psalm-suppress ArgumentTypeCoercion */
         return $children
             ->flatMap(fn($children) => $children->indexOf($this->node))
+            ->filter(static fn($position) => $position >= 0)
             ->flatMap(static fn($position) => $children->flatMap(
                 static fn($children) => $children->get($position - 1),
             ));

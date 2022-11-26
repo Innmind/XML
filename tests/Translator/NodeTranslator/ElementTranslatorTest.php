@@ -71,9 +71,9 @@ XML
         $this->assertNull(ElementTranslator::of()(
             new \DOMNode,
             Translator::of(Map::of()),
-        )->match(
-            static fn($node) => $node,
-            static fn() => null,
-        ));
+            )->match(
+                static fn($node) => $node,
+                static fn() => null,
+            ));
     }
 }
