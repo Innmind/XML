@@ -165,10 +165,7 @@ final class Element implements ElementInterface
     public function prependChild(Node $child): self
     {
         $element = clone $this;
-        $element->children = Sequence::of(
-            $child,
-            ...$this->children->toList(),
-        );
+        $element->children = Sequence::lazyStartingWith($child)->append($this->children);
 
         return $element;
     }

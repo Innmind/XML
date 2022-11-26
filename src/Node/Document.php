@@ -102,10 +102,7 @@ final class Document implements Node
     public function prependChild(Node $child): Node
     {
         $document = clone $this;
-        $document->children = Sequence::of(
-            $child,
-            ...$this->children->toList(),
-        );
+        $document->children = Sequence::lazyStartingWith($child)->append($this->children);
 
         return $document;
     }
