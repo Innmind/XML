@@ -9,6 +9,7 @@ use Innmind\Xml\Translator\{
     NodeTranslator\ElementTranslator,
     NodeTranslator\CharacterDataTranslator,
     NodeTranslator\CommentTranslator,
+    NodeTranslator\ProcessingInstructionTranslator,
     NodeTranslator\TextTranslator,
     NodeTranslator\EntityReferenceTranslator,
 };
@@ -22,7 +23,7 @@ class NodeTranslatorsTest extends TestCase
         $defaults = NodeTranslators::defaults();
 
         $this->assertInstanceOf(Map::class, $defaults);
-        $this->assertCount(6, $defaults);
+        $this->assertCount(7, $defaults);
         $this->assertInstanceOf(
             DocumentTranslator::class,
             $defaults->get(\XML_DOCUMENT_NODE)->match(
@@ -47,6 +48,13 @@ class NodeTranslatorsTest extends TestCase
         $this->assertInstanceOf(
             CommentTranslator::class,
             $defaults->get(\XML_COMMENT_NODE)->match(
+                static fn($translator) => $translator,
+                static fn() => null,
+            ),
+        );
+        $this->assertInstanceOf(
+            ProcessingInstructionTranslator::class,
+            $defaults->get(\XML_PI_NODE)->match(
                 static fn($translator) => $translator,
                 static fn() => null,
             ),

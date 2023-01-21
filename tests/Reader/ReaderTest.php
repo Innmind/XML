@@ -7,8 +7,10 @@ use Innmind\Xml\{
     Reader\Reader,
     Reader as ReaderInterface,
     Element\Element,
+    Node\Document,
 };
 use Innmind\Filesystem\File\Content;
+use Innmind\Url\Path;
 use PHPUnit\Framework\TestCase;
 
 class ReaderTest extends TestCase
@@ -76,5 +78,24 @@ XML;
         );
 
         $this->assertNull($node);
+    }
+
+    public function testProcessingInstructionsAreReadCorrectly()
+    {
+        $node = ($this->read)(Content\AtPath::of(Path::of('fixtures/theatlantic.xml')))->match(
+            static fn($node) => $node,
+            static fn() => null,
+        );
+
+        $this->assertInstanceOf(Document::class, $node);
+        $this->assertCount(2, $node->children());
+        $stylesheet = $node->children()->first()->match(
+            static fn($stylesheet) => $stylesheet,
+            static fn() => null,
+        );
+        $this->assertSame(
+            '<?xml-stylesheet type="text/xsl" href="/static/theatlantic/syndication/feeds/atom-to-html.6d0fbcbe7c3f.xsl" ?>',
+            $stylesheet->toString(),
+        );
     }
 }

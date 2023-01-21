@@ -1,5 +1,11 @@
 # Changelog
 
+## 7.3.0 - 2023-01-21
+
+### Added
+
+- `Innmind\Xml\Node\ProcessingInstruction`
+
 ## 7.2.0 - 2022-12-18
 
 ### Added
