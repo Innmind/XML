@@ -8,6 +8,7 @@ use Innmind\Xml\Translator\NodeTranslator\{
     ElementTranslator,
     CharacterDataTranslator,
     CommentTranslator,
+    ProcessingInstructionTranslator,
     TextTranslator,
     EntityReferenceTranslator,
 };
@@ -31,6 +32,7 @@ final class NodeTranslators
             [\XML_CDATA_SECTION_NODE, CharacterDataTranslator::of()],
             [\XML_TEXT_NODE, TextTranslator::of()],
             [\XML_COMMENT_NODE, CommentTranslator::of()],
+            [\XML_PI_NODE, ProcessingInstructionTranslator::of()],
             [\XML_ENTITY_REF_NODE, EntityReferenceTranslator::of()],
         );
     }
