@@ -1,5 +1,11 @@
 # Changelog
 
+## 7.4.0 - 2023-02-03
+
+### Added
+
+- `Innmind\Xml\Attribute::empty()`
+
 ## 7.3.0 - 2023-01-21
 
 ### Added

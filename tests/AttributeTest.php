@@ -43,6 +43,14 @@ class AttributeTest extends TestCase
         );
     }
 
+    public function testCastEmptyAttribute()
+    {
+        $this->assertSame(
+            'foo=""',
+            Attribute::empty('foo')->toString(),
+        );
+    }
+
     public function testCastWithValue()
     {
         $this->assertSame(

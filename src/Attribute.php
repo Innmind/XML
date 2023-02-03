@@ -16,14 +16,19 @@ class Attribute
     /** @var non-empty-string */
     private string $name;
     private string $value;
+    private bool $renderEmptyValue;
 
     /**
      * @param non-empty-string $name
      */
-    private function __construct(string $name, string $value = '')
-    {
+    private function __construct(
+        string $name,
+        string $value = '',
+        bool $renderEmptyValue = false,
+    ) {
         $this->name = $name;
         $this->value = $value;
+        $this->renderEmptyValue = $renderEmptyValue;
     }
 
     /**
@@ -50,6 +55,16 @@ class Attribute
     }
 
     /**
+     * @psalm-pure
+     *
+     * @param non-empty-string $name
+     */
+    public static function empty(string $name): self
+    {
+        return new self($name, '', true);
+    }
+
+    /**
      * @return non-empty-string
      */
     public function name(): string
@@ -64,15 +79,10 @@ class Attribute
 
     public function toString(): string
     {
-        $string = $this->name;
-
-        if (!Str::of($this->value)->empty()) {
-            $string .= \sprintf(
-                '="%s"',
-                $this->value,
-            );
-        }
-
-        return $string;
+        return $this->name.(match ([$this->value, $this->renderEmptyValue]) {
+            ['', true] => '=""',
+            ['', false] => '',
+            default => \sprintf('="%s"', $this->value),
+        });
     }
 }
