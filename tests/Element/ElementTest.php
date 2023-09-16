@@ -376,14 +376,13 @@ class ElementTest extends TestCase
     {
         $this
             ->forAll(
-                DataSet\Unicode::lengthBetween(1, 255),
+                DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 255),
                 DataSet\Sequence::of(
                     DataSet\Decorate::immutable(
                         static fn($name) => Element::of($name),
-                        DataSet\Unicode::lengthBetween(1, 10),
+                        DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 255),
                     ),
-                    DataSet\Integers::between(0, 10),
-                ),
+                )->between(0, 10),
             )
             ->then(function($name, $children) {
                 $element = Element::of(
@@ -406,17 +405,16 @@ class ElementTest extends TestCase
     {
         $this
             ->forAll(
-                DataSet\Unicode::lengthBetween(1, 255),
+                DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 255),
                 DataSet\Sequence::of(
                     DataSet\Decorate::immutable(
                         static fn($name) => Element::of($name),
-                        DataSet\Unicode::lengthBetween(1, 10),
+                        DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 10),
                     ),
-                    DataSet\Integers::between(1, 10),
-                ),
+                )->between(1, 10),
                 DataSet\Decorate::immutable(
                     static fn($name) => Element::of($name),
-                    DataSet\Unicode::lengthBetween(1, 10),
+                    DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 10),
                 ),
             )
             ->then(function($name, $children, $replacement) {

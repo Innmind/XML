@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreleased]
+
+### Removed
+
+- Support for PHP `8.1`
+
 ## 7.4.0 - 2023-02-03
 
 ### Added

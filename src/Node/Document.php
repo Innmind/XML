@@ -157,9 +157,9 @@ final class Document implements Node, AsContent
                 ->append(
                     $this
                         ->children
-                        ->flatMap(static fn($node) => match ($node instanceof AsContent) {
-                            true => $node->asContent()->lines(),
-                            false => Content\Lines::ofContent($node->toString())->lines(),
+                        ->flatMap(static fn($node) => match (true) {
+                            $node instanceof AsContent => $node->asContent()->lines(),
+                            default => Content\Lines::ofContent($node->toString())->lines(),
                         }),
                 ),
         );

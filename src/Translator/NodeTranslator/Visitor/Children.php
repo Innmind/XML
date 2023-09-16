@@ -32,7 +32,9 @@ final class Children
         /** @var Maybe<Sequence<Node>> */
         $children = Maybe::just(Sequence::of());
 
+        /** @psalm-suppress ImpureMethodCall */
         foreach ($node->childNodes as $child) {
+            /** @psalm-suppress MixedArgumentTypeCoercion */
             $children = $children->flatMap(
                 fn($children) => ($this->translate)($child)->map(
                     static fn($node) => ($children)($node),

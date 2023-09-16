@@ -30,7 +30,16 @@ final class Attributes
             return $attributes;
         }
 
-        foreach ($node->attributes as $name => $attribute) {
+        /**
+         * @psalm-suppress MixedArgument
+         * @psalm-suppress ImpureMethodCall
+         */
+        foreach ($node->attributes ?? [] as $name => $attribute) {
+            /**
+             * @psalm-suppress MixedArgument
+             * @psalm-suppress MixedPropertyFetch
+             * @psalm-suppress MixedArgumentTypeCoercion
+             */
             $attributes = $attributes->flatMap(
                 static fn($attributes) => Attribute::maybe($name, $attribute->value)->map(
                     static fn($attribute) => ($attributes)($attribute),

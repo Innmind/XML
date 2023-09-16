@@ -269,10 +269,9 @@ class DocumentTest extends TestCase
                 Set\Sequence::of(
                     Set\Decorate::immutable(
                         static fn($name) => Element::of($name),
-                        Set\Unicode::lengthBetween(1, 10),
+                        Set\Strings::madeOf(Set\Unicode::any())->between(1, 10),
                     ),
-                    Set\Integers::between(0, 10),
-                ),
+                )->between(0, 10),
             )
             ->then(function($major, $minor, $children) {
                 $element = Document::of(
@@ -301,13 +300,12 @@ class DocumentTest extends TestCase
                 Set\Sequence::of(
                     Set\Decorate::immutable(
                         static fn($name) => Element::of($name),
-                        Set\Unicode::lengthBetween(1, 10),
+                        Set\Strings::madeOf(Set\Unicode::any())->between(1, 10),
                     ),
-                    Set\Integers::between(1, 10),
-                ),
+                )->between(1, 10),
                 Set\Decorate::immutable(
                     static fn($name) => Element::of($name),
-                    Set\Unicode::lengthBetween(1, 10),
+                    Set\Strings::madeOf(Set\Unicode::any())->between(1, 10),
                 ),
             )
             ->then(function($major, $minor, $children, $replacement) {
