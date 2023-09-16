@@ -243,16 +243,34 @@ class ElementTest extends TestCase
             ),
         );
         $this->assertEquals(
-            $element->children()->get(0),
-            $element2->children()->get(1),
+            $element->children()->get(0)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
+            $element2->children()->get(1)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
         );
         $this->assertEquals(
-            $element->children()->get(1),
-            $element2->children()->get(2),
+            $element->children()->get(1)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
+            $element2->children()->get(2)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
         );
         $this->assertEquals(
-            $element->children()->get(2),
-            $element2->children()->get(3),
+            $element->children()->get(2)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
+            $element2->children()->get(3)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
         );
     }
 

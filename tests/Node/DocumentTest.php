@@ -183,16 +183,34 @@ class DocumentTest extends TestCase
             ),
         );
         $this->assertEquals(
-            $document->children()->get(0),
-            $document2->children()->get(1),
+            $document->children()->get(0)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
+            $document2->children()->get(1)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
         );
         $this->assertEquals(
-            $document->children()->get(1),
-            $document2->children()->get(2),
+            $document->children()->get(1)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
+            $document2->children()->get(2)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
         );
         $this->assertEquals(
-            $document->children()->get(2),
-            $document2->children()->get(3),
+            $document->children()->get(2)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
+            $document2->children()->get(3)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
         );
     }
 
