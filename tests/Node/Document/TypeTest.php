@@ -31,7 +31,7 @@ class TypeTest extends TestCase
         Type::of('');
     }
 
-    public function cases(): array
+    public static function cases(): array
     {
         return [
             ['foo', '', '', '<!DOCTYPE foo>'],

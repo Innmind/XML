@@ -1,5 +1,15 @@
 # Changelog
 
+## 7.5.0 - 2023-09-16
+
+### Added
+
+- Support for `innmind/immutable:~5.0`
+
+### Removed
+
+- Support for PHP `8.1`
+
 ## 7.4.0 - 2023-02-03
 
 ### Added

@@ -207,9 +207,9 @@ final class Element implements ElementInterface, AsContent
                     $this
                         ->children
                         ->flatMap(
-                            static fn($node) => match ($node instanceof AsContent) {
-                                true => $node->asContent()->lines(),
-                                false => Content\Lines::ofContent($node->toString())->lines(),
+                            static fn($node) => match (true) {
+                                $node instanceof AsContent => $node->asContent()->lines(),
+                                default => Content\Lines::ofContent($node->toString())->lines(),
                             },
                         )
                         ->map(static fn($line) => $line->map(

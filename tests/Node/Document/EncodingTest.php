@@ -31,7 +31,7 @@ class EncodingTest extends TestCase
         Encoding::of($name);
     }
 
-    public function cases(): array
+    public static function cases(): array
     {
         return [
             ['unicode-1-1'],
@@ -42,7 +42,7 @@ class EncodingTest extends TestCase
         ];
     }
 
-    public function invalid(): array
+    public static function invalid(): array
     {
         return [
             ['@'],

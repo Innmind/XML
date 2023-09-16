@@ -183,16 +183,34 @@ class DocumentTest extends TestCase
             ),
         );
         $this->assertEquals(
-            $document->children()->get(0),
-            $document2->children()->get(1),
+            $document->children()->get(0)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
+            $document2->children()->get(1)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
         );
         $this->assertEquals(
-            $document->children()->get(1),
-            $document2->children()->get(2),
+            $document->children()->get(1)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
+            $document2->children()->get(2)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
         );
         $this->assertEquals(
-            $document->children()->get(2),
-            $document2->children()->get(3),
+            $document->children()->get(2)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
+            $document2->children()->get(3)->match(
+                static fn($value) => $value,
+                static fn() => null,
+            ),
         );
     }
 
@@ -251,10 +269,9 @@ class DocumentTest extends TestCase
                 Set\Sequence::of(
                     Set\Decorate::immutable(
                         static fn($name) => Element::of($name),
-                        Set\Unicode::lengthBetween(1, 10),
+                        Set\Strings::madeOf(Set\Unicode::any())->between(1, 10),
                     ),
-                    Set\Integers::between(0, 10),
-                ),
+                )->between(0, 10),
             )
             ->then(function($major, $minor, $children) {
                 $element = Document::of(
@@ -283,13 +300,12 @@ class DocumentTest extends TestCase
                 Set\Sequence::of(
                     Set\Decorate::immutable(
                         static fn($name) => Element::of($name),
-                        Set\Unicode::lengthBetween(1, 10),
+                        Set\Strings::madeOf(Set\Unicode::any())->between(1, 10),
                     ),
-                    Set\Integers::between(1, 10),
-                ),
+                )->between(1, 10),
                 Set\Decorate::immutable(
                     static fn($name) => Element::of($name),
-                    Set\Unicode::lengthBetween(1, 10),
+                    Set\Strings::madeOf(Set\Unicode::any())->between(1, 10),
                 ),
             )
             ->then(function($major, $minor, $children, $replacement) {

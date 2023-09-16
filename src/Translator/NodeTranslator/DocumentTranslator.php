@@ -62,7 +62,7 @@ final class DocumentTranslator implements NodeTranslator
      */
     private function buildVersion(\DOMDocument $document): Maybe
     {
-        [$major, $minor] = \explode('.', $document->xmlVersion);
+        [$major, $minor] = \explode('.', $document->xmlVersion ?? '');
 
         return Version::maybe(
             (int) $major,
@@ -75,6 +75,7 @@ final class DocumentTranslator implements NodeTranslator
      */
     private function buildDoctype(\DOMDocumentType $type): Maybe
     {
+        /** @psalm-suppress MixedArgument */
         return Type::maybe(
             $type->name,
             $type->publicId,
@@ -92,11 +93,13 @@ final class DocumentTranslator implements NodeTranslator
         /** @var Maybe<Sequence<Node>> */
         $children = Maybe::just(Sequence::of());
 
+        /** @psalm-suppress ImpureMethodCall */
         foreach ($nodes as $child) {
             if ($child->nodeType === \XML_DOCUMENT_TYPE_NODE) {
                 continue;
             }
 
+            /** @psalm-suppress MixedArgumentTypeCoercion */
             $children = $children->flatMap(
                 static fn($children) => $translate($child)->map(
                     static fn($node) => ($children)($node),
