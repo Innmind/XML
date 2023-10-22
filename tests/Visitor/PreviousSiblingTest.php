@@ -26,7 +26,7 @@ class PreviousSiblingTest extends TestCase
 <div><foo /><baz /><bar /></div>
 XML;
         $tree = ($this->read)(
-            Content\Lines::ofContent($xml),
+            Content::ofString($xml),
         )->match(
             static fn($node) => $node,
             static fn() => null,
@@ -64,7 +64,7 @@ XML;
 <div><foo /><baz /><bar /></div>
 XML;
         $tree = ($this->read)(
-            Content\Lines::ofContent($xml),
+            Content::ofString($xml),
         )->match(
             static fn($node) => $node,
             static fn() => null,

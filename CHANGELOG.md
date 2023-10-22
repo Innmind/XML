@@ -1,5 +1,11 @@
 # Changelog
 
+## 7.6.0 - 2023-10-22
+
+### Changed
+
+- Requires `innmind/filesystem:~7.0`
+
 ## 7.5.0 - 2023-09-16
 
 ### Added

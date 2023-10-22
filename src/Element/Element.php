@@ -201,7 +201,7 @@ final class Element implements ElementInterface, AsContent
 
     public function asContent(): Content
     {
-        return Content\Lines::of(
+        return Content::ofLines(
             Sequence::lazyStartingWith(Content\Line::of(Str::of($this->openingTag())))
                 ->append(
                     $this
@@ -209,7 +209,7 @@ final class Element implements ElementInterface, AsContent
                         ->flatMap(
                             static fn($node) => match (true) {
                                 $node instanceof AsContent => $node->asContent()->lines(),
-                                default => Content\Lines::ofContent($node->toString())->lines(),
+                                default => Content::ofString($node->toString())->lines(),
                             },
                         )
                         ->map(static fn($line) => $line->map(
