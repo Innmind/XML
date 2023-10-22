@@ -10,6 +10,8 @@ use Innmind\Xml\{
     Node\Document,
 };
 use Innmind\Filesystem\File\Content;
+use Innmind\IO\IO;
+use Innmind\Stream\Streams;
 use Innmind\Url\Path;
 use PHPUnit\Framework\TestCase;
 
@@ -52,7 +54,7 @@ class ReaderTest extends TestCase
     hey!
 </foo>
 XML;
-        $node = ($this->read)(Content\Lines::ofContent($xml))->match(
+        $node = ($this->read)(Content::ofString($xml))->match(
             static fn($node) => $node,
             static fn() => null,
         );
@@ -62,7 +64,7 @@ XML;
 
     public function testReturnNothingWhenEmpty()
     {
-        $node = ($this->read)(Content\None::of())->match(
+        $node = ($this->read)(Content::none())->match(
             static fn($node) => $node,
             static fn() => null,
         );
@@ -72,7 +74,7 @@ XML;
 
     public function testReturnNothingWhenInvalidXml()
     {
-        $node = ($this->read)(Content\Lines::ofContent("<?xml version=\"1.0\"?>\n"))->match(
+        $node = ($this->read)(Content::ofString("<?xml version=\"1.0\"?>\n"))->match(
             static fn($node) => $node,
             static fn() => null,
         );
@@ -82,7 +84,14 @@ XML;
 
     public function testProcessingInstructionsAreReadCorrectly()
     {
-        $node = ($this->read)(Content\AtPath::of(Path::of('fixtures/theatlantic.xml')))->match(
+        $streams = Streams::fromAmbientAuthority();
+        $io = IO::of(static fn() => null);
+
+        $node = ($this->read)(Content::atPath(
+            $streams->readable(),
+            $io->readable(),
+            Path::of('fixtures/theatlantic.xml'),
+        ))->match(
             static fn($node) => $node,
             static fn() => null,
         );

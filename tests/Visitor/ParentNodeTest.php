@@ -26,7 +26,7 @@ class ParentNodeTest extends TestCase
 <div><div><foo /><bar /></div></div>
 XML;
         $tree = ($this->read)(
-            Content\Lines::ofContent($xml),
+            Content::ofString($xml),
         )->match(
             static fn($node) => $node,
             static fn() => null,

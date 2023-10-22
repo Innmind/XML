@@ -33,7 +33,7 @@ class TextTest extends TestCase
 </div>
 XML;
         $tree = ($this->read)(
-            Content\Lines::ofContent($xml),
+            Content::ofString($xml),
         )->match(
             static fn($node) => $node,
             static fn() => null,
