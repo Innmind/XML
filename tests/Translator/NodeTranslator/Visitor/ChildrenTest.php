@@ -7,7 +7,6 @@ use Innmind\Xml\{
     Translator\NodeTranslator\Visitor\Children,
     Translator\Translator,
     Translator\NodeTranslators,
-    Node,
 };
 use Innmind\Immutable\Sequence;
 use PHPUnit\Framework\TestCase;

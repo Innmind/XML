@@ -3,10 +3,7 @@ declare(strict_types = 1);
 
 namespace Tests\Innmind\Xml\Translator\NodeTranslator\Visitor;
 
-use Innmind\Xml\{
-    Translator\NodeTranslator\Visitor\Attributes,
-    Attribute,
-};
+use Innmind\Xml\Translator\NodeTranslator\Visitor\Attributes;
 use Innmind\Immutable\Set;
 use PHPUnit\Framework\TestCase;
 

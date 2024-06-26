@@ -3,10 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml;
 
-use Innmind\Immutable\{
-    Str,
-    Maybe,
-};
+use Innmind\Immutable\Maybe;
 
 /**
  * @psalm-immutable

@@ -14,7 +14,6 @@ use Innmind\Xml\{
     AsContent,
 };
 use Innmind\Immutable\{
-    Map,
     Sequence,
     Maybe,
 };

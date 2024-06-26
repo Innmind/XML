@@ -13,7 +13,6 @@ use Innmind\Xml\{
     Node\Document,
 };
 use Innmind\Immutable\{
-    Map,
     Sequence,
     Maybe,
 };
