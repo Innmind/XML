@@ -167,7 +167,7 @@ final class Element implements ElementInterface, AsContent
     public function prependChild(Node $child): self
     {
         $element = clone $this;
-        $element->children = Sequence::lazyStartingWith($child)->append($this->children);
+        $element->children = $this->children->prepend(Sequence::of($child));
 
         return $element;
     }
@@ -202,20 +202,18 @@ final class Element implements ElementInterface, AsContent
     public function asContent(): Content
     {
         return Content::ofLines(
-            Sequence::lazyStartingWith(Content\Line::of(Str::of($this->openingTag())))
-                ->append(
-                    $this
-                        ->children
-                        ->flatMap(
-                            static fn($node) => match (true) {
-                                $node instanceof AsContent => $node->asContent()->lines(),
-                                default => Content::ofString($node->toString())->lines(),
-                            },
-                        )
-                        ->map(static fn($line) => $line->map(
-                            static fn($string) => $string->prepend('    '), // to correctly indent the file
-                        )),
+            $this
+                ->children
+                ->flatMap(
+                    static fn($node) => match (true) {
+                        $node instanceof AsContent => $node->asContent()->lines(),
+                        default => Content::ofString($node->toString())->lines(),
+                    },
                 )
+                ->map(static fn($line) => $line->map(
+                    static fn($string) => $string->prepend('    '), // to correctly indent the file
+                ))
+                ->prepend(Sequence::of(Content\Line::of(Str::of($this->openingTag()))))
                 ->add(Content\Line::of(Str::of($this->closingTag()))),
         );
     }
