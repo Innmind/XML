@@ -104,7 +104,7 @@ final class Document implements Node, AsContent
     public function prependChild(Node $child): Node
     {
         $document = clone $this;
-        $document->children = Sequence::lazyStartingWith($child)->append($this->children);
+        $document->children = $this->children->prepend(Sequence::of($child));
 
         return $document;
     }
@@ -149,19 +149,17 @@ final class Document implements Node, AsContent
     public function asContent(): Content
     {
         return Content::ofLines(
-            Sequence::lazyStartingWith(Content\Line::of(Str::of($this->tag())))
-                ->append($this->type->match(
+            $this
+                ->children
+                ->flatMap(static fn($node) => match (true) {
+                    $node instanceof AsContent => $node->asContent()->lines(),
+                    default => Content::ofString($node->toString())->lines(),
+                })
+                ->prepend($this->type->match(
                     static fn($type) => Sequence::of(Content\Line::of(Str::of($type->toString()))),
                     static fn() => Sequence::of(),
                 ))
-                ->append(
-                    $this
-                        ->children
-                        ->flatMap(static fn($node) => match (true) {
-                            $node instanceof AsContent => $node->asContent()->lines(),
-                            default => Content::ofString($node->toString())->lines(),
-                        }),
-                ),
+                ->prepend(Sequence::of(Content\Line::of(Str::of($this->tag())))),
         );
     }
 
