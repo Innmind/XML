@@ -84,7 +84,10 @@ XML;
     public function testProcessingInstructionsAreReadCorrectly()
     {
         $streams = Streams::fromAmbientAuthority();
-        $io = IO::of(static fn() => null);
+        $io = IO::of(static fn($period) => match ($period) {
+            null => $streams->watch()->waitForever(),
+            default => $streams->watch()->timeoutAfter($period),
+        });
 
         $node = ($this->read)(Content::atPath(
             $streams->readable(),
