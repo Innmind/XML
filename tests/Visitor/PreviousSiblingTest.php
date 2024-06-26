@@ -6,7 +6,6 @@ namespace Tests\Innmind\Xml\Visitor;
 use Innmind\Xml\{
     Visitor\PreviousSibling,
     Reader\Reader,
-    Element\Element,
 };
 use Innmind\Filesystem\File\Content;
 use PHPUnit\Framework\TestCase;

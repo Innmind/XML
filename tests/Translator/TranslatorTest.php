@@ -6,7 +6,6 @@ namespace Tests\Innmind\Xml\Translator;
 use Innmind\Xml\{
     Translator\Translator,
     Translator\NodeTranslators,
-    Translator\NodeTranslator,
     Element\Element,
     Element\SelfClosingElement,
     Node\Document,

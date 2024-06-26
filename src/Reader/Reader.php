@@ -5,7 +5,6 @@ namespace Innmind\Xml\Reader;
 
 use Innmind\Xml\{
     Reader as ReaderInterface,
-    Node,
     Translator\Translator,
 };
 use Innmind\Filesystem\File\Content;

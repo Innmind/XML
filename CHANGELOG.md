@@ -1,5 +1,12 @@
 # Changelog
 
+## 7.7.0 - 2024-06-26
+
+### Changed
+
+- Requires `innmind/immutable:~5.7`
+- `Document` and `Element` children `Sequence` is no longer forced to be lazy, it depends on the kind of `Sequence` you use when building them
+
 ## 7.6.0 - 2023-10-22
 
 ### Changed
