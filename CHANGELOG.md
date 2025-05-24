@@ -13,6 +13,7 @@
 - `Innmind\Xml\Element\Element::of()` name argument now expects a `Name`
 - `Innmind\Xml\Element\SelfClosingElement::of()` name argument now expects a `Name`
 - `Innmind\Xml\Element` is now a final class
+- `Innmind\Xml\Element` no longer extends `Innmind\Xml\Node`
 
 ### Removed
 

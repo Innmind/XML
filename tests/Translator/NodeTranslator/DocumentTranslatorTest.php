@@ -8,7 +8,6 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
     Node\Document,
-    Node,
     Element,
     Element\Name,
 };
@@ -48,7 +47,7 @@ XML
                     new class($foo) implements NodeTranslator {
                         private $foo;
 
-                        public function __construct(Node $foo)
+                        public function __construct(Element $foo)
                         {
                             $this->foo = $foo;
                         }

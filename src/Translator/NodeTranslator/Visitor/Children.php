@@ -6,6 +6,7 @@ namespace Innmind\Xml\Translator\NodeTranslator\Visitor;
 use Innmind\Xml\{
     Translator\Translator,
     Node,
+    Element,
 };
 use Innmind\Immutable\{
     Sequence,
@@ -25,11 +26,11 @@ final class Children
     }
 
     /**
-     * @return Maybe<Sequence<Node>>
+     * @return Maybe<Sequence<Node|Element>>
      */
     public function __invoke(\DOMNode $node): Maybe
     {
-        /** @var Maybe<Sequence<Node>> */
+        /** @var Maybe<Sequence<Node|Element>> */
         $children = Maybe::just(Sequence::of());
 
         /**

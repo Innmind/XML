@@ -28,10 +28,6 @@ class ElementTest extends TestCase
     public function testInterface()
     {
         $this->assertInstanceOf(
-            Node::class,
-            Element::of(Name::of('foo')),
-        );
-        $this->assertInstanceOf(
             AsContent::class,
             Element::of(Name::of('foo')),
         );

@@ -84,13 +84,13 @@ final class DocumentTranslator implements NodeTranslator
     }
 
     /**
-     * @return Maybe<Sequence<Node>>
+     * @return Maybe<Sequence<Node|Element>>
      */
     private function buildChildren(
         \DOMNodeList $nodes,
         Translator $translate,
     ): Maybe {
-        /** @var Maybe<Sequence<Node>> */
+        /** @var Maybe<Sequence<Node|Element>> */
         $children = Maybe::just(Sequence::of());
 
         /**

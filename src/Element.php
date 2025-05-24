@@ -17,11 +17,11 @@ use Innmind\Immutable\{
 /**
  * @psalm-immutable
  */
-final class Element implements Node, AsContent
+final class Element implements AsContent
 {
     /**
      * @param Map<non-empty-string, Attribute> $attributes
-     * @param Sequence<Node> $children
+     * @param Sequence<Node|self> $children
      */
     private function __construct(
         private Name $name,
@@ -35,7 +35,7 @@ final class Element implements Node, AsContent
      * @psalm-pure
      *
      * @param Set<Attribute>|null $attributes
-     * @param Sequence<Node>|null $children
+     * @param Sequence<Node|self>|null $children
      */
     public static function of(
         Name $name,
@@ -43,7 +43,7 @@ final class Element implements Node, AsContent
         ?Sequence $children = null,
     ): self {
         $attributes ??= Set::of()->keep(Instance::of(Attribute::class));
-        /** @var Sequence<Node> */
+        /** @var Sequence<Node|self> */
         $children ??= Sequence::of();
 
         return new self(
@@ -140,13 +140,17 @@ final class Element implements Node, AsContent
         );
     }
 
-    #[\Override]
+    /**
+     * @return Sequence<Node|self>
+     */
     public function children(): Sequence
     {
         return $this->children;
     }
 
-    #[\Override]
+    /**
+     * @param callable(Node|self): bool $filter
+     */
     public function filterChild(callable $filter): self
     {
         if ($this->selfClosing) {
@@ -161,7 +165,9 @@ final class Element implements Node, AsContent
         );
     }
 
-    #[\Override]
+    /**
+     * @param callable(Node|self): Node $map
+     */
     public function mapChild(callable $map): self
     {
         if ($this->selfClosing) {
@@ -176,8 +182,7 @@ final class Element implements Node, AsContent
         );
     }
 
-    #[\Override]
-    public function prependChild(Node $child): self
+    public function prependChild(Node|self $child): self
     {
         if ($this->selfClosing) {
             return $this;
@@ -191,8 +196,7 @@ final class Element implements Node, AsContent
         );
     }
 
-    #[\Override]
-    public function appendChild(Node $child): self
+    public function appendChild(Node|self $child): self
     {
         if ($this->selfClosing) {
             return $this;
@@ -206,7 +210,6 @@ final class Element implements Node, AsContent
         );
     }
 
-    #[\Override]
     public function content(): string
     {
         $children = $this->children->map(
@@ -216,7 +219,6 @@ final class Element implements Node, AsContent
         return Str::of('')->join($children)->toString();
     }
 
-    #[\Override]
     public function toString(): string
     {
         if ($this->selfClosing) {

@@ -3,7 +3,10 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Visitor;
 
-use Innmind\Xml\Node;
+use Innmind\Xml\{
+    Node,
+    Element,
+};
 
 /**
  * Extract whole text of a tree
@@ -15,7 +18,7 @@ final class Text
     {
     }
 
-    public function __invoke(Node $tree): string
+    public function __invoke(Node|Element $tree): string
     {
         return $tree->children()->match(
             fn($node, $children) => $children->reduce(

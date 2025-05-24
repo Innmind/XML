@@ -5,6 +5,7 @@ namespace Innmind\Xml\Node;
 
 use Innmind\Xml\{
     Node,
+    Element,
     Node\Document\Type,
     Node\Document\Version,
     Node\Document\Encoding,
@@ -27,13 +28,13 @@ final class Document implements Node, AsContent
     private Maybe $type;
     /** @var Maybe<Encoding> */
     private Maybe $encoding;
-    /** @var Sequence<Node> */
+    /** @var Sequence<Node|Element> */
     private Sequence $children;
 
     /**
      * @param Maybe<Type> $type
      * @param Maybe<Encoding> $encoding
-     * @param Sequence<Node> $children
+     * @param Sequence<Node|Element> $children
      */
     private function __construct(
         Version $version,
@@ -52,7 +53,7 @@ final class Document implements Node, AsContent
      *
      * @param Maybe<Type> $type
      * @param Maybe<Encoding> $encoding
-     * @param Sequence<Node> $children
+     * @param Sequence<Node|Element> $children
      */
     public static function of(
         Version $version,
@@ -105,7 +106,7 @@ final class Document implements Node, AsContent
     }
 
     #[\Override]
-    public function prependChild(Node $child): Node
+    public function prependChild(Node|Element $child): self
     {
         $document = clone $this;
         $document->children = $this->children->prepend(Sequence::of($child));
@@ -114,7 +115,7 @@ final class Document implements Node, AsContent
     }
 
     #[\Override]
-    public function appendChild(Node $child): Node
+    public function appendChild(Node|Element $child): self
     {
         $document = clone $this;
         $document->children = ($this->children)($child);
@@ -134,7 +135,7 @@ final class Document implements Node, AsContent
     public function content(): string
     {
         $children = $this->children->map(
-            static fn(Node $child): string => $child->toString(),
+            static fn($child) => $child->toString(),
         );
 
         return Str::of('')->join($children)->toString();

@@ -12,7 +12,7 @@ use Innmind\Immutable\Maybe;
 interface Reader
 {
     /**
-     * @return Maybe<Node>
+     * @return Maybe<Node|Element>
      */
     public function __invoke(Content $content): Maybe;
 }

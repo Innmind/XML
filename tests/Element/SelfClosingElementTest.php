@@ -24,14 +24,6 @@ class SelfClosingElementTest extends TestCase
 {
     use BlackBox;
 
-    public function testInterface()
-    {
-        $this->assertInstanceOf(
-            Node::class,
-            Element::selfClosing(Name::of('foo')),
-        );
-    }
-
     public function testName()
     {
         $node = Element::selfClosing(Name::of('foo'));

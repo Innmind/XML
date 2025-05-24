@@ -3,7 +3,10 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Node;
 
-use Innmind\Xml\Node;
+use Innmind\Xml\{
+    Node,
+    Element,
+};
 use Innmind\Immutable\Sequence;
 
 /**
@@ -51,7 +54,7 @@ final class ProcessingInstruction implements Node
      * This operation will do nothing
      */
     #[\Override]
-    public function prependChild(Node $child): Node
+    public function prependChild(Node|Element $child): self
     {
         return $this;
     }
@@ -60,7 +63,7 @@ final class ProcessingInstruction implements Node
      * This operation will do nothing
      */
     #[\Override]
-    public function appendChild(Node $child): Node
+    public function appendChild(Node|Element $child): self
     {
         return $this;
     }
