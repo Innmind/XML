@@ -33,6 +33,8 @@ final class Attributes
         /**
          * @psalm-suppress MixedArgument
          * @psalm-suppress ImpureMethodCall
+         * @var string $name
+         * @var \DOMAttr $attribute
          */
         foreach ($node->attributes ?? [] as $name => $attribute) {
             /**

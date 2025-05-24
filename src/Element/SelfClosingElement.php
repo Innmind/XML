@@ -15,6 +15,7 @@ use Innmind\Immutable\{
     Map,
     Sequence,
     Maybe,
+    Predicate\Instance,
 };
 
 /**
@@ -67,8 +68,7 @@ final class SelfClosingElement implements Element
             return Maybe::nothing();
         }
 
-        /** @var Set<Attribute> */
-        $attributes ??= Set::of();
+        $attributes ??= Set::of()->keep(Instance::of(Attribute::class));
 
         return Maybe::just(new self(
             $name,
@@ -83,21 +83,25 @@ final class SelfClosingElement implements Element
         ));
     }
 
+    #[\Override]
     public function name(): string
     {
         return $this->name;
     }
 
+    #[\Override]
     public function attributes(): Map
     {
         return $this->attributes;
     }
 
+    #[\Override]
     public function attribute(string $name): Maybe
     {
         return $this->attributes->get($name);
     }
 
+    #[\Override]
     public function removeAttribute(string $name): self
     {
         return new self(
@@ -106,6 +110,7 @@ final class SelfClosingElement implements Element
         );
     }
 
+    #[\Override]
     public function addAttribute(Attribute $attribute): self
     {
         return new self(
@@ -117,16 +122,19 @@ final class SelfClosingElement implements Element
         );
     }
 
+    #[\Override]
     public function children(): Sequence
     {
         return Sequence::of();
     }
 
+    #[\Override]
     public function filterChild(callable $filter): self
     {
         return $this;
     }
 
+    #[\Override]
     public function mapChild(callable $map): self
     {
         return $this;
@@ -135,6 +143,7 @@ final class SelfClosingElement implements Element
     /**
      * This operation will do nothing
      */
+    #[\Override]
     public function prependChild(Node $child): self
     {
         return $this;
@@ -143,16 +152,19 @@ final class SelfClosingElement implements Element
     /**
      * This operation will do nothing
      */
+    #[\Override]
     public function appendChild(Node $child): self
     {
         return $this;
     }
 
+    #[\Override]
     public function content(): string
     {
         return '';
     }
 
+    #[\Override]
     public function toString(): string
     {
         $attributes = $this

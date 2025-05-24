@@ -8,7 +8,7 @@ use Innmind\Immutable\Maybe;
 /**
  * @psalm-immutable
  */
-class Attribute
+final class Attribute
 {
     /** @var non-empty-string */
     private string $name;

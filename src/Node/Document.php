@@ -76,11 +76,13 @@ final class Document implements Node, AsContent
         return $this->type;
     }
 
+    #[\Override]
     public function children(): Sequence
     {
         return $this->children;
     }
 
+    #[\Override]
     public function filterChild(callable $filter): self
     {
         return new self(
@@ -91,6 +93,7 @@ final class Document implements Node, AsContent
         );
     }
 
+    #[\Override]
     public function mapChild(callable $map): self
     {
         return new self(
@@ -101,6 +104,7 @@ final class Document implements Node, AsContent
         );
     }
 
+    #[\Override]
     public function prependChild(Node $child): Node
     {
         $document = clone $this;
@@ -109,6 +113,7 @@ final class Document implements Node, AsContent
         return $document;
     }
 
+    #[\Override]
     public function appendChild(Node $child): Node
     {
         $document = clone $this;
@@ -125,6 +130,7 @@ final class Document implements Node, AsContent
         return $this->encoding;
     }
 
+    #[\Override]
     public function content(): string
     {
         $children = $this->children->map(
@@ -134,6 +140,7 @@ final class Document implements Node, AsContent
         return Str::of('')->join($children)->toString();
     }
 
+    #[\Override]
     public function toString(): string
     {
         $string = $this->tag();
@@ -146,6 +153,7 @@ final class Document implements Node, AsContent
         return $string."\n".$this->content();
     }
 
+    #[\Override]
     public function asContent(): Content
     {
         return Content::ofLines(

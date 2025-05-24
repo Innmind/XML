@@ -17,6 +17,7 @@ use Innmind\Immutable\{
     Set,
     Str,
     Maybe,
+    Predicate\Instance,
 };
 
 /**
@@ -84,8 +85,7 @@ final class Element implements ElementInterface, AsContent
             return Maybe::nothing();
         }
 
-        /** @var Set<Attribute> */
-        $attributes ??= Set::of();
+        $attributes ??= Set::of()->keep(Instance::of(Attribute::class));
         /** @var Sequence<Node> */
         $children ??= Sequence::of();
 
@@ -103,21 +103,25 @@ final class Element implements ElementInterface, AsContent
         ));
     }
 
+    #[\Override]
     public function name(): string
     {
         return $this->name;
     }
 
+    #[\Override]
     public function attributes(): Map
     {
         return $this->attributes;
     }
 
+    #[\Override]
     public function attribute(string $name): Maybe
     {
         return $this->attributes->get($name);
     }
 
+    #[\Override]
     public function removeAttribute(string $name): self
     {
         if (!$this->attributes->contains($name)) {
@@ -130,6 +134,7 @@ final class Element implements ElementInterface, AsContent
         return $element;
     }
 
+    #[\Override]
     public function addAttribute(Attribute $attribute): self
     {
         $element = clone $this;
@@ -141,11 +146,13 @@ final class Element implements ElementInterface, AsContent
         return $element;
     }
 
+    #[\Override]
     public function children(): Sequence
     {
         return $this->children;
     }
 
+    #[\Override]
     public function filterChild(callable $filter): self
     {
         return new self(
@@ -155,6 +162,7 @@ final class Element implements ElementInterface, AsContent
         );
     }
 
+    #[\Override]
     public function mapChild(callable $map): self
     {
         return new self(
@@ -164,6 +172,7 @@ final class Element implements ElementInterface, AsContent
         );
     }
 
+    #[\Override]
     public function prependChild(Node $child): self
     {
         $element = clone $this;
@@ -172,6 +181,7 @@ final class Element implements ElementInterface, AsContent
         return $element;
     }
 
+    #[\Override]
     public function appendChild(Node $child): self
     {
         $element = clone $this;
@@ -180,6 +190,7 @@ final class Element implements ElementInterface, AsContent
         return $element;
     }
 
+    #[\Override]
     public function content(): string
     {
         $children = $this->children->map(
@@ -189,6 +200,7 @@ final class Element implements ElementInterface, AsContent
         return Str::of('')->join($children)->toString();
     }
 
+    #[\Override]
     public function toString(): string
     {
         return \sprintf(
@@ -199,6 +211,7 @@ final class Element implements ElementInterface, AsContent
         );
     }
 
+    #[\Override]
     public function asContent(): Content
     {
         return Content::ofLines(
