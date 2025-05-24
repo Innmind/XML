@@ -5,7 +5,7 @@ namespace Tests\Innmind\Xml\Translator\NodeTranslator\Visitor;
 
 use Innmind\Xml\Translator\NodeTranslator\Visitor\Attributes;
 use Innmind\Immutable\Set;
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class AttributesTest extends TestCase
 {

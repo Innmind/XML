@@ -10,7 +10,7 @@ use Innmind\Xml\{
     Node\Comment,
 };
 use Innmind\Immutable\Map;
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class CommentTranslatorTest extends TestCase
 {

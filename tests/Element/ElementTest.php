@@ -15,9 +15,9 @@ use Innmind\Immutable\{
     Set,
     Sequence,
 };
-use PHPUnit\Framework\TestCase;
 use Innmind\BlackBox\{
     PHPUnit\BlackBox,
+    PHPUnit\Framework\TestCase,
     Set as DataSet,
 };
 
@@ -372,9 +372,9 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testFilterChild()
+    public function testFilterChild(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
                 DataSet::strings()
                     ->madeOf(DataSet::strings()->unicode()->char())
@@ -386,7 +386,7 @@ class ElementTest extends TestCase
                         ->map(Element::of(...)),
                 )->between(0, 10),
             )
-            ->then(function($name, $children) {
+            ->prove(function($name, $children) {
                 $element = Element::of(
                     $name,
                     null,
@@ -403,9 +403,9 @@ class ElementTest extends TestCase
             });
     }
 
-    public function testMapChild()
+    public function testMapChild(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
                 DataSet::strings()
                     ->madeOf(DataSet::strings()->unicode()->char())
@@ -421,7 +421,7 @@ class ElementTest extends TestCase
                     ->between(1, 10)
                     ->map(Element::of(...)),
             )
-            ->then(function($name, $children, $replacement) {
+            ->prove(function($name, $children, $replacement) {
                 $element = Element::of(
                     $name,
                     null,

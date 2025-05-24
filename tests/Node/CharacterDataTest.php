@@ -8,9 +8,9 @@ use Innmind\Xml\{
     Node,
 };
 use Innmind\Immutable\Sequence;
-use PHPUnit\Framework\TestCase;
 use Innmind\BlackBox\{
     PHPUnit\BlackBox,
+    PHPUnit\Framework\TestCase,
     Set,
 };
 
@@ -74,11 +74,11 @@ class CharacterDataTest extends TestCase
         );
     }
 
-    public function testFilterChild()
+    public function testFilterChild(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(Set::strings()->unicode())
-            ->then(function($data) {
+            ->prove(function($data) {
                 $characterData = CharacterData::of($data);
 
                 $this->assertSame(
@@ -88,11 +88,11 @@ class CharacterDataTest extends TestCase
             });
     }
 
-    public function testMapChild()
+    public function testMapChild(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(Set::strings()->unicode())
-            ->then(function($data) {
+            ->prove(function($data) {
                 $characterData = CharacterData::of($data);
 
                 $this->assertSame(

@@ -17,9 +17,9 @@ use Innmind\Immutable\{
     Sequence,
     Maybe,
 };
-use PHPUnit\Framework\TestCase;
 use Innmind\BlackBox\{
     PHPUnit\BlackBox,
+    PHPUnit\Framework\TestCase,
     Set,
 };
 
@@ -259,9 +259,9 @@ class DocumentTest extends TestCase
         );
     }
 
-    public function testFilterChild()
+    public function testFilterChild(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
                 Set::integers()->between(0, 10),
                 Set::integers()->between(0, 10),
@@ -272,7 +272,7 @@ class DocumentTest extends TestCase
                         ->map(Element::of(...)),
                 )->between(0, 10),
             )
-            ->then(function($major, $minor, $children) {
+            ->prove(function($major, $minor, $children) {
                 $element = Document::of(
                     Version::of($major, $minor),
                     Maybe::nothing(),
@@ -290,9 +290,9 @@ class DocumentTest extends TestCase
             });
     }
 
-    public function testMapChild()
+    public function testMapChild(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
                 Set::integers()->between(0, 10),
                 Set::integers()->between(0, 10),
@@ -307,7 +307,7 @@ class DocumentTest extends TestCase
                     ->between(1, 10)
                     ->map(Element::of(...)),
             )
-            ->then(function($major, $minor, $children, $replacement) {
+            ->prove(function($major, $minor, $children, $replacement) {
                 $element = Document::of(
                     Version::of($major, $minor),
                     Maybe::nothing(),

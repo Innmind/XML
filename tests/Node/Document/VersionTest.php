@@ -7,7 +7,7 @@ use Innmind\Xml\{
     Node\Document\Version,
     Exception\DomainException,
 };
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class VersionTest extends TestCase
 {

@@ -7,13 +7,12 @@ use Innmind\Xml\{
     Node\Document\Encoding,
     Exception\DomainException,
 };
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class EncodingTest extends TestCase
 {
-    /**
-     * @dataProvider cases
-     */
+    #[DataProvider('cases')]
     public function testInterface($string)
     {
         $encoding = Encoding::of($string);
@@ -21,9 +20,7 @@ class EncodingTest extends TestCase
         $this->assertSame($string, $encoding->toString());
     }
 
-    /**
-     * @dataProvider invalid
-     */
+    #[DataProvider('invalid')]
     public function testThrowWhenInvalidName($name)
     {
         $this->expectException(DomainException::class);

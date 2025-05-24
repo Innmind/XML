@@ -14,9 +14,9 @@ use Innmind\Immutable\{
     Set,
     Sequence,
 };
-use PHPUnit\Framework\TestCase;
 use Innmind\BlackBox\{
     PHPUnit\BlackBox,
+    PHPUnit\Framework\TestCase,
     Set as DataSet,
 };
 
@@ -255,15 +255,15 @@ class SelfClosingElementTest extends TestCase
         );
     }
 
-    public function testFilterChild()
+    public function testFilterChild(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
                 DataSet::strings()
                     ->madeOf(DataSet::strings()->unicode()->char())
                     ->between(1, 255),
             )
-            ->then(function($name) {
+            ->prove(function($name) {
                 $element = SelfClosingElement::of($name);
 
                 $this->assertSame(
@@ -273,15 +273,15 @@ class SelfClosingElementTest extends TestCase
             });
     }
 
-    public function testMapChild()
+    public function testMapChild(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
                 DataSet::strings()
                     ->madeOf(DataSet::strings()->unicode()->char())
                     ->between(1, 255),
             )
-            ->then(function($name) {
+            ->prove(function($name) {
                 $element = SelfClosingElement::of($name);
 
                 $this->assertSame(
