@@ -57,8 +57,8 @@ final class Element implements ElementInterface, AsContent
      */
     public static function of(
         string $name,
-        Set $attributes = null,
-        Sequence $children = null,
+        ?Set $attributes = null,
+        ?Sequence $children = null,
     ): self {
         return self::maybe($name, $attributes, $children)->match(
             static fn($self) => $self,
@@ -76,8 +76,8 @@ final class Element implements ElementInterface, AsContent
      */
     public static function maybe(
         string $name,
-        Set $attributes = null,
-        Sequence $children = null,
+        ?Set $attributes = null,
+        ?Sequence $children = null,
     ): Maybe {
         if ($name === '') {
             /** @var Maybe<self> */

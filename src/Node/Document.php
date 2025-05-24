@@ -58,7 +58,7 @@ final class Document implements Node, AsContent
         Version $version,
         Maybe $type,
         Maybe $encoding,
-        Sequence $children = null,
+        ?Sequence $children = null,
     ): self {
         return new self($version, $type, $encoding, $children ?? Sequence::of());
     }

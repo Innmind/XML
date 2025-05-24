@@ -17,7 +17,7 @@ final class Reader implements ReaderInterface
 {
     private Translator $translate;
 
-    private function __construct(Translator $translate = null)
+    private function __construct(?Translator $translate = null)
     {
         $this->translate = $translate ?? Translator::default();
     }
@@ -46,7 +46,7 @@ final class Reader implements ReaderInterface
             ->flatMap($this->translate);
     }
 
-    public static function of(Translator $translate = null): self
+    public static function of(?Translator $translate = null): self
     {
         return new self($translate);
     }
