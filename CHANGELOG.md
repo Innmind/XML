@@ -12,11 +12,12 @@
 - `Innmind\Xml\Element::name()` now returns a `Innmind\Xml\Element\Name`
 - `Innmind\Xml\Element\Element::of()` name argument now expects a `Name`
 - `Innmind\Xml\Element\SelfClosingElement::of()` name argument now expects a `Name`
+- `Innmind\Xml\Element` is now a final class
 
 ### Removed
 
-- `Innmind\Xml\Element\Element::maybe()`
-- `Innmind\Xml\Element\SelfClosingElement::maybe()`
+- `Innmind\Xml\Element\Element` use `Innmind\Xml\Element` instead
+- `Innmind\Xml\Element\SelfClosingElement` use `Innmind\Xml\Element` instead
 
 ### Fixed
 

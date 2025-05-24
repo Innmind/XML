@@ -9,8 +9,7 @@ use Innmind\Xml\{
     Node\Document\Type,
     Node\Document\Encoding,
     Node,
-    Element\Element,
-    Element\SelfClosingElement,
+    Element,
     Element\Name,
     AsContent,
 };
@@ -145,7 +144,7 @@ class DocumentTest extends TestCase
                 Version::of(2, 1),
                 Maybe::just(Type::of('html')),
                 Maybe::just(Encoding::of('utf-8')),
-                Sequence::of(SelfClosingElement::of(Name::of('foo'))),
+                Sequence::of(Element::selfClosing(Name::of('foo'))),
             )->toString(),
         );
     }

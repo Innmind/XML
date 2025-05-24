@@ -9,8 +9,7 @@ use Innmind\Xml\{
     Translator\NodeTranslator\Visitor\Attributes,
     Translator\NodeTranslator\Visitor\Children,
     Node,
-    Element\SelfClosingElement,
-    Element\Element,
+    Element,
     Element\Name,
 };
 use Innmind\Immutable\Maybe;
@@ -42,7 +41,7 @@ final class ElementTranslator implements NodeTranslator
                 static fn($node) => Maybe::all(
                     Name::maybe($node->nodeName),
                     Attributes::of()($node),
-                )->map(SelfClosingElement::of(...)),
+                )->map(Element::selfClosing(...)),
             )
             ->otherwise(static fn() => $node->flatMap(
                 static fn($node) => Maybe::all(

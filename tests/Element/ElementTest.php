@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace Tests\Innmind\Xml\Element;
 
 use Innmind\Xml\{
-    Element\Element,
+    Element,
     Element\Name,
     Node,
     Attribute,

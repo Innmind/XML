@@ -6,7 +6,7 @@ namespace Tests\Innmind\Xml\Visitor;
 use Innmind\Xml\{
     Visitor\ParentNode,
     Reader\Reader,
-    Element\Element,
+    Element,
     Element\Name,
 };
 use Innmind\Filesystem\File\Content;

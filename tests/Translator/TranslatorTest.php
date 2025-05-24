@@ -6,8 +6,7 @@ namespace Tests\Innmind\Xml\Translator;
 use Innmind\Xml\{
     Translator\Translator,
     Translator\NodeTranslators,
-    Element\Element,
-    Element\SelfClosingElement,
+    Element,
     Node\Document,
     Node\Text,
     Node\CharacterData,
@@ -103,8 +102,9 @@ XML
             static fn($node) => $node,
             static fn() => null,
         );
-        $this->assertInstanceOf(SelfClosingElement::class, $foobar);
+        $this->assertInstanceOf(Element::class, $foobar);
         $this->assertSame('foobar', $foobar->name()->toString());
+        $this->assertSame('<foobar/>', $foobar->toString());
         $linebreak = $foo->children()->get(2)->match(
             static fn($node) => $node,
             static fn() => null,
