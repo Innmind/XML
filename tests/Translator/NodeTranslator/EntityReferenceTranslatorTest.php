@@ -4,30 +4,18 @@ declare(strict_types = 1);
 namespace Tests\Innmind\Xml\Translator\NodeTranslator;
 
 use Innmind\Xml\{
-    Translator\NodeTranslator\EntityReferenceTranslator,
-    Translator\NodeTranslator,
     Translator\Translator,
     Node,
 };
-use Innmind\Immutable\Map;
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class EntityReferenceTranslatorTest extends TestCase
 {
-    public function testInterface()
-    {
-        $this->assertInstanceOf(
-            NodeTranslator::class,
-            EntityReferenceTranslator::of(),
-        );
-    }
-
     public function testTranslate()
     {
-        $translate = EntityReferenceTranslator::of();
+        $translate = Translator::default();
         $node = $translate(
             new \DOMEntityReference('gt'),
-            Translator::of(Map::of()),
         )->match(
             static fn($node) => $node,
             static fn() => null,
@@ -35,16 +23,5 @@ class EntityReferenceTranslatorTest extends TestCase
 
         $this->assertInstanceOf(Node::class, $node);
         $this->assertSame('gt', $node->content());
-    }
-
-    public function testReturnNothingWhenInvalidNode()
-    {
-        $this->assertNull(EntityReferenceTranslator::of()(
-            new \DOMNode,
-            Translator::of(Map::of()),
-        )->match(
-            static fn($node) => $node,
-            static fn() => null,
-        ));
     }
 }

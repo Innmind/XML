@@ -3,14 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Translator;
 
-use Innmind\Xml\Translator\NodeTranslator\{
-    ElementTranslator,
-    CharacterDataTranslator,
-    CommentTranslator,
-    ProcessingInstructionTranslator,
-    TextTranslator,
-    EntityReferenceTranslator,
-};
+use Innmind\Xml\Translator\NodeTranslator\ElementTranslator;
 use Innmind\Immutable\Map;
 
 final class NodeTranslators
@@ -27,11 +20,6 @@ final class NodeTranslators
          */
         return Map::of(
             [\XML_ELEMENT_NODE, ElementTranslator::of()],
-            [\XML_CDATA_SECTION_NODE, CharacterDataTranslator::of()],
-            [\XML_TEXT_NODE, TextTranslator::of()],
-            [\XML_COMMENT_NODE, CommentTranslator::of()],
-            [\XML_PI_NODE, ProcessingInstructionTranslator::of()],
-            [\XML_ENTITY_REF_NODE, EntityReferenceTranslator::of()],
         );
     }
 }

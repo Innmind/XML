@@ -33,12 +33,14 @@ final class Translator
      */
     public function __invoke(\DOMNode $node): Maybe
     {
-        return ($this->document)($node, $this)->otherwise(
-            fn() => $this
-                ->translators
-                ->get($node->nodeType)
-                ->flatMap(fn($translate) => $translate($node, $this)),
-        );
+        return ($this->document)($node, $this)
+            ->otherwise(static fn() => Maybe::of(self::translateNode($node)))
+            ->otherwise(
+                fn() => $this
+                    ->translators
+                    ->get($node->nodeType)
+                    ->flatMap(fn($translate) => $translate($node, $this)),
+            );
     }
 
     /**
@@ -63,5 +65,24 @@ final class Translator
             DocumentTranslator::of(),
             NodeTranslators::defaults(),
         );
+    }
+
+    /**
+     * @psalm-pure
+     */
+    private static function translateNode(\DOMNode $node): ?Node
+    {
+        /** @psalm-suppress ImpurePropertyFetch */
+        return match ($node->nodeType) {
+            \XML_COMMENT_NODE => Node::comment($node->data),
+            \XML_TEXT_NODE => Node::text($node->data),
+            \XML_CDATA_SECTION_NODE => Node::characterData($node->data),
+            \XML_ENTITY_REF_NODE => Node::entityReference($node->nodeName),
+            \XML_PI_NODE => Node::processingInstruction(
+                $node->nodeName,
+                $node->data,
+            ),
+            default => null,
+        };
     }
 }
