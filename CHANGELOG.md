@@ -24,6 +24,7 @@
 - `Innmind\Xml\Node\EntityReference` is now internal, use `Innmind\Xml\Node::entityReference()` instead
 - `Innmind\Xml\Node\ProcessingInformation` is now internal, use `Innmind\Xml\Node::processingInformation()` instead
 - `Innmind\Xml\Node\Text` is now internal, use `Innmind\Xml\Node::text()` instead
+- `Innmind\Xml\Reader` is now a final class
 
 ### Removed
 
