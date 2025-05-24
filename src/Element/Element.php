@@ -8,7 +8,6 @@ use Innmind\Xml\{
     Attribute,
     Node,
     AsContent,
-    Exception\DomainException,
 };
 use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\{
@@ -48,54 +47,30 @@ final class Element implements ElementInterface, AsContent
     /**
      * @psalm-pure
      *
-     * @param non-empty-string $name
      * @param Set<Attribute>|null $attributes
      * @param Sequence<Node>|null $children
-     *
-     * @throws DomainException If the name is empty
      */
     public static function of(
-        string $name,
+        Name $name,
         ?Set $attributes = null,
         ?Sequence $children = null,
     ): self {
-        return self::maybe($name, $attributes, $children)->match(
-            static fn($self) => $self,
-            static fn() => throw new DomainException,
+        $attributes ??= Set::of()->keep(Instance::of(Attribute::class));
+        /** @var Sequence<Node> */
+        $children ??= Sequence::of();
+
+        return new self(
+            $name,
+            Map::of(
+                ...$attributes
+                    ->map(static fn($attribute) => [
+                        $attribute->name(),
+                        $attribute,
+                    ])
+                    ->toList(),
+            ),
+            $children,
         );
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @param Set<Attribute>|null $attributes
-     * @param Sequence<Node>|null $children
-     *
-     * @return Maybe<self>
-     */
-    public static function maybe(
-        string $name,
-        ?Set $attributes = null,
-        ?Sequence $children = null,
-    ): Maybe {
-        return Name::maybe($name)->map(static function($name) use ($attributes, $children) {
-            $attributes ??= Set::of()->keep(Instance::of(Attribute::class));
-            /** @var Sequence<Node> */
-            $children ??= Sequence::of();
-
-            return new self(
-                $name,
-                Map::of(
-                    ...$attributes
-                        ->map(static fn($attribute) => [
-                            $attribute->name(),
-                            $attribute,
-                        ])
-                        ->toList(),
-                ),
-                $children,
-            );
-        });
     }
 
     #[\Override]

@@ -11,12 +11,9 @@ use Innmind\Xml\{
     Node,
     Element\SelfClosingElement,
     Element\Element,
+    Element\Name,
 };
-use Innmind\Immutable\{
-    Maybe,
-    Set,
-    Sequence,
-};
+use Innmind\Immutable\Maybe;
 
 /**
  * @psalm-immutable
@@ -41,20 +38,18 @@ final class ElementTranslator implements NodeTranslator
          */
         return $node
             ->filter(static fn($node) => $node->childNodes->length === 0)
-            ->flatMap(static fn($node) => Attributes::of()($node)->flatMap(
-                static fn($attributes) => SelfClosingElement::maybe(
-                    $node->nodeName,
-                    $attributes,
-                ),
-            ))
+            ->flatMap(
+                static fn($node) => Maybe::all(
+                    Name::maybe($node->nodeName),
+                    Attributes::of()($node),
+                )->map(SelfClosingElement::of(...)),
+            )
             ->otherwise(static fn() => $node->flatMap(
-                static fn($node) => Maybe::all(Attributes::of()($node), Children::of($translate)($node))->flatMap(
-                    static fn(Set $attributes, Sequence $children) => Element::maybe(
-                        $node->nodeName,
-                        $attributes,
-                        $children,
-                    ),
-                ),
+                static fn($node) => Maybe::all(
+                    Name::maybe($node->nodeName),
+                    Attributes::of()($node),
+                    Children::of($translate)($node),
+                )->map(Element::of(...)),
             ));
     }
 

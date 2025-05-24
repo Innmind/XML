@@ -10,6 +10,7 @@ use Innmind\Xml\{
     Node\Document,
     Node,
     Element\SelfClosingElement,
+    Element\Name,
 };
 use Innmind\Immutable\{
     Map,
@@ -38,7 +39,7 @@ XML
         );
 
         $translate = DocumentTranslator::of();
-        $foo = SelfClosingElement::of('foo');
+        $foo = SelfClosingElement::of(Name::of('foo'));
         $node = $translate(
             $document,
             Translator::of(

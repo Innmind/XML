@@ -11,6 +11,7 @@ use Innmind\Xml\{
     Node,
     Element\Element,
     Element\SelfClosingElement,
+    Element\Name,
     AsContent,
 };
 use Innmind\Immutable\{
@@ -111,7 +112,7 @@ class DocumentTest extends TestCase
                 Version::of(1),
                 Maybe::nothing(),
                 Maybe::nothing(),
-                Sequence::of(Element::of('foo')),
+                Sequence::of(Element::of(Name::of('foo'))),
             )->content(),
         );
     }
@@ -144,7 +145,7 @@ class DocumentTest extends TestCase
                 Version::of(2, 1),
                 Maybe::just(Type::of('html')),
                 Maybe::just(Encoding::of('utf-8')),
-                Sequence::of(SelfClosingElement::of('foo')),
+                Sequence::of(SelfClosingElement::of(Name::of('foo'))),
             )->toString(),
         );
     }
@@ -156,9 +157,9 @@ class DocumentTest extends TestCase
             Maybe::just(Type::of('html')),
             Maybe::just(Encoding::of('utf-8')),
             Sequence::of(
-                Element::of('foo'),
-                Element::of('bar'),
-                Element::of('baz'),
+                Element::of(Name::of('foo')),
+                Element::of(Name::of('bar')),
+                Element::of(Name::of('baz')),
             ),
         );
 
@@ -220,9 +221,9 @@ class DocumentTest extends TestCase
             Maybe::just(Type::of('html')),
             Maybe::just(Encoding::of('utf-8')),
             Sequence::of(
-                Element::of('foo'),
-                Element::of('bar'),
-                Element::of('baz'),
+                Element::of(Name::of('foo')),
+                Element::of(Name::of('bar')),
+                Element::of(Name::of('baz')),
             ),
         );
 
@@ -269,6 +270,7 @@ class DocumentTest extends TestCase
                     Set::strings()
                         ->madeOf(Set::strings()->unicode()->char())
                         ->between(1, 10)
+                        ->map(Name::of(...))
                         ->map(Element::of(...)),
                 )->between(0, 10),
             )
@@ -300,11 +302,13 @@ class DocumentTest extends TestCase
                     Set::strings()
                         ->madeOf(Set::strings()->unicode()->char())
                         ->between(1, 10)
+                        ->map(Name::of(...))
                         ->map(Element::of(...)),
                 )->between(1, 10),
                 Set::strings()
                     ->madeOf(Set::strings()->unicode()->char())
                     ->between(1, 10)
+                    ->map(Name::of(...))
                     ->map(Element::of(...)),
             )
             ->prove(function($major, $minor, $children, $replacement) {
@@ -332,12 +336,12 @@ class DocumentTest extends TestCase
             Maybe::just(Encoding::of('utf-8')),
             Sequence::of(
                 Element::of(
-                    'root',
+                    Name::of('root'),
                     null,
                     Sequence::of(
-                        Element::of('foo'),
-                        Element::of('bar'),
-                        Element::of('baz'),
+                        Element::of(Name::of('foo')),
+                        Element::of(Name::of('bar')),
+                        Element::of(Name::of('baz')),
                     ),
                 ),
             ),

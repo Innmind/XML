@@ -10,6 +10,13 @@
 
 - Requires `innmind/filesystem:~8.1`
 - `Innmind\Xml\Element::name()` now returns a `Innmind\Xml\Element\Name`
+- `Innmind\Xml\Element\Element::of()` name argument now expects a `Name`
+- `Innmind\Xml\Element\SelfClosingElement::of()` name argument now expects a `Name`
+
+### Removed
+
+- `Innmind\Xml\Element\Element::maybe()`
+- `Innmind\Xml\Element\SelfClosingElement::maybe()`
 
 ### Fixed
 

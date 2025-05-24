@@ -7,7 +7,6 @@ use Innmind\Xml\{
     Element,
     Node,
     Attribute,
-    Exception\DomainException,
 };
 use Innmind\Immutable\{
     Set,
@@ -39,43 +38,23 @@ final class SelfClosingElement implements Element
     /**
      * @psalm-pure
      *
-     * @param non-empty-string $name
      * @param Set<Attribute>|null $attributes
-     *
-     * @throws DomainException If the name is empty
      */
-    public static function of(string $name, ?Set $attributes = null): self
+    public static function of(Name $name, ?Set $attributes = null): self
     {
-        return self::maybe($name, $attributes)->match(
-            static fn($self) => $self,
-            static fn() => throw new DomainException,
+        $attributes ??= Set::of()->keep(Instance::of(Attribute::class));
+
+        return new self(
+            $name,
+            Map::of(
+                ...$attributes
+                    ->map(static fn($attribute) => [
+                        $attribute->name(),
+                        $attribute,
+                    ])
+                    ->toList(),
+            ),
         );
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @param Set<Attribute>|null $attributes
-     *
-     * @return Maybe<self>
-     */
-    public static function maybe(string $name, ?Set $attributes = null): Maybe
-    {
-        return Name::maybe($name)->map(static function($name) use ($attributes) {
-            $attributes ??= Set::of()->keep(Instance::of(Attribute::class));
-
-            return new self(
-                $name,
-                Map::of(
-                    ...$attributes
-                        ->map(static fn($attribute) => [
-                            $attribute->name(),
-                            $attribute,
-                        ])
-                        ->toList(),
-                ),
-            );
-        });
     }
 
     #[\Override]
