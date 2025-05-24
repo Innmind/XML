@@ -23,15 +23,12 @@ final class NextSibling
      */
     public function __invoke(Node $tree): Maybe
     {
-        $children = ParentNode::of($this->node)($tree)->map(
-            static fn($parent) => $parent->children(),
-        );
-
-        return $children
-            ->flatMap(fn($children) => $children->indexOf($this->node))
-            ->flatMap(static fn($position) => $children->flatMap(
-                static fn($children) => $children->get($position + 1),
-            ));
+        return ParentNode::of($this->node)($tree)
+            ->toSequence()
+            ->flatMap(static fn($parent) => $parent->children())
+            ->dropWhile(fn($node) => $node !== $this->node)
+            ->drop(1)
+            ->first();
     }
 
     /**

@@ -45,7 +45,7 @@ final class SelfClosingElement implements Element
      *
      * @throws DomainException If the name is empty
      */
-    public static function of(string $name, Set $attributes = null): self
+    public static function of(string $name, ?Set $attributes = null): self
     {
         return self::maybe($name, $attributes)->match(
             static fn($self) => $self,
@@ -60,7 +60,7 @@ final class SelfClosingElement implements Element
      *
      * @return Maybe<self>
      */
-    public static function maybe(string $name, Set $attributes = null): Maybe
+    public static function maybe(string $name, ?Set $attributes = null): Maybe
     {
         if ($name === '') {
             /** @var Maybe<self> */
