@@ -35,6 +35,7 @@
 - `Innmind\Xml\Node::mapChild()`
 - `Innmind\Xml\Node::prependChild()`
 - `Innmind\Xml\Node::appendChild()`
+- `Innmind\Xml\AsContent`
 
 ### Fixed
 

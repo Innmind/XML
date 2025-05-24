@@ -146,10 +146,7 @@ final class Document
         return Content::ofLines(
             $this
                 ->children
-                ->flatMap(static fn($node) => match (true) {
-                    $node instanceof AsContent => $node->asContent()->lines(),
-                    default => Content::ofString($node->toString())->lines(),
-                })
+                ->flatMap(static fn($node) => $node->asContent()->lines())
                 ->prepend($this->type->match(
                     static fn($type) => Sequence::of(Content\Line::of(Str::of($type->toString()))),
                     static fn() => Sequence::of(),

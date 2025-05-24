@@ -8,7 +8,6 @@ use Innmind\Xml\{
     Element\Name,
     Node,
     Attribute,
-    AsContent,
 };
 use Innmind\Immutable\{
     Map,
@@ -24,14 +23,6 @@ use Innmind\BlackBox\{
 class ElementTest extends TestCase
 {
     use BlackBox;
-
-    public function testInterface()
-    {
-        $this->assertInstanceOf(
-            AsContent::class,
-            Element::of(Name::of('foo')),
-        );
-    }
 
     public function testName()
     {

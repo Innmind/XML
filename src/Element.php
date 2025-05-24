@@ -17,7 +17,7 @@ use Innmind\Immutable\{
 /**
  * @psalm-immutable
  */
-final class Element implements AsContent
+final class Element
 {
     /**
      * @param Map<non-empty-string, Attribute> $attributes
@@ -244,7 +244,6 @@ final class Element implements AsContent
         );
     }
 
-    #[\Override]
     public function asContent(): Content
     {
         if ($this->selfClosing) {
@@ -255,10 +254,7 @@ final class Element implements AsContent
             $this
                 ->children
                 ->flatMap(
-                    static fn($node) => match (true) {
-                        $node instanceof AsContent => $node->asContent()->lines(),
-                        default => Content::ofString($node->toString())->lines(),
-                    },
+                    static fn($node) => $node->asContent()->lines(),
                 )
                 ->map(static fn($line) => $line->map(
                     static fn($string) => $string->prepend('    '), // to correctly indent the file
