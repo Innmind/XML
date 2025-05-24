@@ -225,7 +225,7 @@ class ElementTest extends TestCase
         );
 
         $element2 = $element->prependChild(
-            $node = $this->createMock(Node::class),
+            $node = Node\Text::of(''),
         );
 
         $this->assertNotSame($element, $element2);
@@ -287,7 +287,7 @@ class ElementTest extends TestCase
         );
 
         $element2 = $element->appendChild(
-            $node = $this->createMock(Node::class),
+            $node = Node\Text::of(''),
         );
 
         $this->assertNotSame($element, $element2);

@@ -49,7 +49,7 @@ class TextTest extends TestCase
         $this->assertSame(
             $node,
             $node->prependChild(
-                $this->createMock(Node::class),
+                Text::of(''),
             ),
         );
     }
@@ -61,7 +61,7 @@ class TextTest extends TestCase
         $this->assertSame(
             $node,
             $node->appendChild(
-                $this->createMock(Node::class),
+                Text::of(''),
             ),
         );
     }

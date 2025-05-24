@@ -49,7 +49,7 @@ class CommentTest extends TestCase
         $this->assertSame(
             $node,
             $node->prependChild(
-                $this->createMock(Node::class),
+                Node\Text::of(''),
             ),
         );
     }
@@ -61,7 +61,7 @@ class CommentTest extends TestCase
         $this->assertSame(
             $node,
             $node->appendChild(
-                $this->createMock(Node::class),
+                Node\Text::of(''),
             ),
         );
     }

@@ -163,7 +163,7 @@ class DocumentTest extends TestCase
         );
 
         $document2 = $document->prependChild(
-            $node = $this->createMock(Node::class),
+            $node = Node\Text::of(''),
         );
 
         $this->assertNotSame($document, $document2);
@@ -227,7 +227,7 @@ class DocumentTest extends TestCase
         );
 
         $document2 = $document->appendChild(
-            $node = $this->createMock(Node::class),
+            $node = Node\Text::of(''),
         );
 
         $this->assertNotSame($document, $document2);
