@@ -20,6 +20,7 @@ final class EntityReferenceTranslator implements NodeTranslator
     {
     }
 
+    #[\Override]
     public function __invoke(\DOMNode $node, Translator $translate): Maybe
     {
         /**

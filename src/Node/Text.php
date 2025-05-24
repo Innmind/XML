@@ -26,16 +26,19 @@ final class Text implements Node
         return new self($data);
     }
 
+    #[\Override]
     public function children(): Sequence
     {
         return $this->data->children();
     }
 
+    #[\Override]
     public function filterChild(callable $filter): self
     {
         return $this;
     }
 
+    #[\Override]
     public function mapChild(callable $map): self
     {
         return $this;
@@ -44,6 +47,7 @@ final class Text implements Node
     /**
      * This operation will do nothing
      */
+    #[\Override]
     public function prependChild(Node $child): Node
     {
         return $this;
@@ -52,16 +56,19 @@ final class Text implements Node
     /**
      * This operation will do nothing
      */
+    #[\Override]
     public function appendChild(Node $child): Node
     {
         return $this;
     }
 
+    #[\Override]
     public function content(): string
     {
         return $this->data->content();
     }
 
+    #[\Override]
     public function toString(): string
     {
         return $this->data->content();

@@ -29,16 +29,19 @@ final class ProcessingInstruction implements Node
         return new self($kind, $value);
     }
 
+    #[\Override]
     public function children(): Sequence
     {
         return Sequence::of();
     }
 
+    #[\Override]
     public function filterChild(callable $filter): self
     {
         return $this;
     }
 
+    #[\Override]
     public function mapChild(callable $map): self
     {
         return $this;
@@ -47,6 +50,7 @@ final class ProcessingInstruction implements Node
     /**
      * This operation will do nothing
      */
+    #[\Override]
     public function prependChild(Node $child): Node
     {
         return $this;
@@ -55,16 +59,19 @@ final class ProcessingInstruction implements Node
     /**
      * This operation will do nothing
      */
+    #[\Override]
     public function appendChild(Node $child): Node
     {
         return $this;
     }
 
+    #[\Override]
     public function content(): string
     {
         return $this->value;
     }
 
+    #[\Override]
     public function toString(): string
     {
         return \sprintf(

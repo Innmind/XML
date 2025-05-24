@@ -22,6 +22,7 @@ final class Reader implements ReaderInterface
         $this->translate = $translate ?? Translator::default();
     }
 
+    #[\Override]
     public function __invoke(Content $content): Maybe
     {
         return Maybe::just($content->toString())
