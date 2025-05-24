@@ -8,9 +8,9 @@ use Innmind\Xml\{
     Node,
 };
 use Innmind\Immutable\Sequence;
-use PHPUnit\Framework\TestCase;
 use Innmind\BlackBox\{
     PHPUnit\BlackBox,
+    PHPUnit\Framework\TestCase,
     Set,
 };
 
@@ -49,7 +49,7 @@ class EntityReferenceTest extends TestCase
         $this->assertSame(
             $node,
             $node->prependChild(
-                $this->createMock(Node::class),
+                Node\Text::of(''),
             ),
         );
     }
@@ -61,7 +61,7 @@ class EntityReferenceTest extends TestCase
         $this->assertSame(
             $node,
             $node->appendChild(
-                $this->createMock(Node::class),
+                Node\Text::of(''),
             ),
         );
     }
@@ -74,11 +74,11 @@ class EntityReferenceTest extends TestCase
         );
     }
 
-    public function testFilterChild()
+    public function testFilterChild(): BlackBox\Proof
     {
-        $this
-            ->forAll(Set\Unicode::strings())
-            ->then(function($data) {
+        return $this
+            ->forAll(Set::strings()->unicode())
+            ->prove(function($data) {
                 $reference = EntityReference::of($data);
 
                 $this->assertSame(
@@ -88,11 +88,11 @@ class EntityReferenceTest extends TestCase
             });
     }
 
-    public function testMapChild()
+    public function testMapChild(): BlackBox\Proof
     {
-        $this
-            ->forAll(Set\Unicode::strings())
-            ->then(function($data) {
+        return $this
+            ->forAll(Set::strings()->unicode())
+            ->prove(function($data) {
                 $reference = EntityReference::of($data);
 
                 $this->assertSame(

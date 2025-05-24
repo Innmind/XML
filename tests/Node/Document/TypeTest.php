@@ -7,13 +7,12 @@ use Innmind\Xml\{
     Node\Document\Type,
     Exception\DomainException,
 };
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class TypeTest extends TestCase
 {
-    /**
-     * @dataProvider cases
-     */
+    #[DataProvider('cases')]
     public function testInterface($name, $public, $system, $string)
     {
         $type = Type::of($name, $public, $system);

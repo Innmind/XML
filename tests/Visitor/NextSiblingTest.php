@@ -8,7 +8,7 @@ use Innmind\Xml\{
     Reader\Reader,
 };
 use Innmind\Filesystem\File\Content;
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class NextSiblingTest extends TestCase
 {

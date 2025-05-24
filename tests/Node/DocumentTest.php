@@ -17,9 +17,9 @@ use Innmind\Immutable\{
     Sequence,
     Maybe,
 };
-use PHPUnit\Framework\TestCase;
 use Innmind\BlackBox\{
     PHPUnit\BlackBox,
+    PHPUnit\Framework\TestCase,
     Set,
 };
 
@@ -163,7 +163,7 @@ class DocumentTest extends TestCase
         );
 
         $document2 = $document->prependChild(
-            $node = $this->createMock(Node::class),
+            $node = Node\Text::of(''),
         );
 
         $this->assertNotSame($document, $document2);
@@ -227,7 +227,7 @@ class DocumentTest extends TestCase
         );
 
         $document2 = $document->appendChild(
-            $node = $this->createMock(Node::class),
+            $node = Node\Text::of(''),
         );
 
         $this->assertNotSame($document, $document2);
@@ -259,20 +259,20 @@ class DocumentTest extends TestCase
         );
     }
 
-    public function testFilterChild()
+    public function testFilterChild(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
-                Set\Integers::between(0, 10),
-                Set\Integers::between(0, 10),
-                Set\Sequence::of(
-                    Set\Decorate::immutable(
-                        static fn($name) => Element::of($name),
-                        Set\Strings::madeOf(Set\Unicode::any())->between(1, 10),
-                    ),
+                Set::integers()->between(0, 10),
+                Set::integers()->between(0, 10),
+                Set::sequence(
+                    Set::strings()
+                        ->madeOf(Set::strings()->unicode()->char())
+                        ->between(1, 10)
+                        ->map(Element::of(...)),
                 )->between(0, 10),
             )
-            ->then(function($major, $minor, $children) {
+            ->prove(function($major, $minor, $children) {
                 $element = Document::of(
                     Version::of($major, $minor),
                     Maybe::nothing(),
@@ -290,24 +290,24 @@ class DocumentTest extends TestCase
             });
     }
 
-    public function testMapChild()
+    public function testMapChild(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
-                Set\Integers::between(0, 10),
-                Set\Integers::between(0, 10),
-                Set\Sequence::of(
-                    Set\Decorate::immutable(
-                        static fn($name) => Element::of($name),
-                        Set\Strings::madeOf(Set\Unicode::any())->between(1, 10),
-                    ),
+                Set::integers()->between(0, 10),
+                Set::integers()->between(0, 10),
+                Set::sequence(
+                    Set::strings()
+                        ->madeOf(Set::strings()->unicode()->char())
+                        ->between(1, 10)
+                        ->map(Element::of(...)),
                 )->between(1, 10),
-                Set\Decorate::immutable(
-                    static fn($name) => Element::of($name),
-                    Set\Strings::madeOf(Set\Unicode::any())->between(1, 10),
-                ),
+                Set::strings()
+                    ->madeOf(Set::strings()->unicode()->char())
+                    ->between(1, 10)
+                    ->map(Element::of(...)),
             )
-            ->then(function($major, $minor, $children, $replacement) {
+            ->prove(function($major, $minor, $children, $replacement) {
                 $element = Document::of(
                     Version::of($major, $minor),
                     Maybe::nothing(),

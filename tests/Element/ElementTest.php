@@ -15,9 +15,9 @@ use Innmind\Immutable\{
     Set,
     Sequence,
 };
-use PHPUnit\Framework\TestCase;
 use Innmind\BlackBox\{
     PHPUnit\BlackBox,
+    PHPUnit\Framework\TestCase,
     Set as DataSet,
 };
 
@@ -225,7 +225,7 @@ class ElementTest extends TestCase
         );
 
         $element2 = $element->prependChild(
-            $node = $this->createMock(Node::class),
+            $node = Node\Text::of(''),
         );
 
         $this->assertNotSame($element, $element2);
@@ -287,7 +287,7 @@ class ElementTest extends TestCase
         );
 
         $element2 = $element->appendChild(
-            $node = $this->createMock(Node::class),
+            $node = Node\Text::of(''),
         );
 
         $this->assertNotSame($element, $element2);
@@ -372,19 +372,21 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testFilterChild()
+    public function testFilterChild(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
-                DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 255),
-                DataSet\Sequence::of(
-                    DataSet\Decorate::immutable(
-                        static fn($name) => Element::of($name),
-                        DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 255),
-                    ),
+                DataSet::strings()
+                    ->madeOf(DataSet::strings()->unicode()->char())
+                    ->between(1, 255),
+                DataSet::sequence(
+                    DataSet::strings()
+                        ->madeOf(DataSet::strings()->unicode()->char())
+                        ->between(1, 255)
+                        ->map(Element::of(...)),
                 )->between(0, 10),
             )
-            ->then(function($name, $children) {
+            ->prove(function($name, $children) {
                 $element = Element::of(
                     $name,
                     null,
@@ -401,23 +403,25 @@ class ElementTest extends TestCase
             });
     }
 
-    public function testMapChild()
+    public function testMapChild(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
-                DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 255),
-                DataSet\Sequence::of(
-                    DataSet\Decorate::immutable(
-                        static fn($name) => Element::of($name),
-                        DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 10),
-                    ),
+                DataSet::strings()
+                    ->madeOf(DataSet::strings()->unicode()->char())
+                    ->between(1, 255),
+                DataSet::sequence(
+                    DataSet::strings()
+                        ->madeOf(DataSet::strings()->unicode()->char())
+                        ->between(1, 10)
+                        ->map(Element::of(...)),
                 )->between(1, 10),
-                DataSet\Decorate::immutable(
-                    static fn($name) => Element::of($name),
-                    DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 10),
-                ),
+                DataSet::strings()
+                    ->madeOf(DataSet::strings()->unicode()->char())
+                    ->between(1, 10)
+                    ->map(Element::of(...)),
             )
-            ->then(function($name, $children, $replacement) {
+            ->prove(function($name, $children, $replacement) {
                 $element = Element::of(
                     $name,
                     null,

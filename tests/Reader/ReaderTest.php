@@ -12,7 +12,7 @@ use Innmind\Filesystem\File\Content;
 use Innmind\IO\IO;
 use Innmind\Stream\Streams;
 use Innmind\Url\Path;
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class ReaderTest extends TestCase
 {

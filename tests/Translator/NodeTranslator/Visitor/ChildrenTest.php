@@ -9,7 +9,7 @@ use Innmind\Xml\{
     Translator\NodeTranslators,
 };
 use Innmind\Immutable\Sequence;
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class ChildrenTest extends TestCase
 {

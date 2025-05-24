@@ -10,7 +10,7 @@ use Innmind\Xml\{
     Node\Text,
 };
 use Innmind\Immutable\Map;
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class TextTranslatorTest extends TestCase
 {
