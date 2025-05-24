@@ -7,7 +7,6 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
     Node,
-    Node\ProcessingInstruction,
 };
 use Innmind\Immutable\{
     Maybe,
@@ -29,7 +28,7 @@ final class ProcessingInstructionTranslator implements NodeTranslator
         /** @var Maybe<Node> */
         return Maybe::just($node)
             ->keep(Instance::of(\DOMProcessingInstruction::class))
-            ->map(static fn($node) => ProcessingInstruction::of(
+            ->map(static fn($node) => Node::processingInstruction(
                 $node->nodeName,
                 $node->data,
             ));

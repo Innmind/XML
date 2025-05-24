@@ -7,7 +7,7 @@ use Innmind\Xml\{
     Translator\NodeTranslator\TextTranslator,
     Translator\NodeTranslator,
     Translator\Translator,
-    Node\Text,
+    Node,
 };
 use Innmind\Immutable\Map;
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
@@ -43,7 +43,7 @@ XML
             static fn() => null,
         );
 
-        $this->assertInstanceOf(Text::class, $node);
+        $this->assertInstanceOf(Node::class, $node);
         $this->assertSame('foo', $node->content());
     }
 

@@ -6,15 +6,17 @@ namespace Innmind\Xml\Translator\NodeTranslator;
 use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
+    Document,
+    Document\Type,
+    Document\Version,
+    Document\Encoding,
+    Element,
     Node,
-    Node\Document\Type,
-    Node\Document\Version,
-    Node\Document\Encoding,
-    Node\Document,
 };
 use Innmind\Immutable\{
     Sequence,
     Maybe,
+    Predicate\Instance,
 };
 
 /**
@@ -30,12 +32,10 @@ final class DocumentTranslator implements NodeTranslator
     public function __invoke(\DOMNode $node, Translator $translate): Maybe
     {
         /**
-         * @psalm-suppress ArgumentTypeCoercion
          * @psalm-suppress MixedArgumentTypeCoercion
-         * @var Maybe<Node>
          */
         return Maybe::just($node)
-            ->filter(static fn($node) => $node instanceof \DOMDocument)
+            ->keep(Instance::of(\DOMDocument::class))
             ->flatMap(
                 fn(\DOMDocument $node) => Maybe::all(
                     $this->buildVersion($node),
@@ -102,11 +102,14 @@ final class DocumentTranslator implements NodeTranslator
                 continue;
             }
 
-            /** @psalm-suppress MixedArgumentTypeCoercion */
             $children = $children->flatMap(
-                static fn($children) => $translate($child)->map(
-                    static fn($node) => ($children)($node),
-                ),
+                static fn($children) => $translate($child)
+                    ->keep(
+                        Instance::of(Node::class)->or(
+                            Instance::of(Element::class),
+                        ),
+                    )
+                    ->map($children),
             );
         }
 

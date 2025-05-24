@@ -1,17 +1,16 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\Xml\Node;
+namespace Tests\Innmind\Xml;
 
 use Innmind\Xml\{
-    Node\Document,
-    Node\Document\Version,
-    Node\Document\Type,
-    Node\Document\Encoding,
-    Node,
+    Document,
+    Document\Version,
+    Document\Type,
+    Document\Encoding,
     Element,
     Element\Name,
-    AsContent,
+    Node,
 };
 use Innmind\Immutable\{
     Sequence,
@@ -26,18 +25,6 @@ use Innmind\BlackBox\{
 class DocumentTest extends TestCase
 {
     use BlackBox;
-
-    public function testInterface()
-    {
-        $this->assertInstanceOf(
-            Node::class,
-            Document::of(Version::of(1), Maybe::nothing(), Maybe::nothing()),
-        );
-        $this->assertInstanceOf(
-            AsContent::class,
-            Document::of(Version::of(1), Maybe::nothing(), Maybe::nothing()),
-        );
-    }
 
     public function testVersion()
     {
@@ -163,7 +150,7 @@ class DocumentTest extends TestCase
         );
 
         $document2 = $document->prependChild(
-            $node = Node\Text::of(''),
+            $node = Node::text(''),
         );
 
         $this->assertNotSame($document, $document2);
@@ -227,7 +214,7 @@ class DocumentTest extends TestCase
         );
 
         $document2 = $document->appendChild(
-            $node = Node\Text::of(''),
+            $node = Node::text(''),
         );
 
         $this->assertNotSame($document, $document2);

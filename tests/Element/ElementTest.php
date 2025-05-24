@@ -222,7 +222,7 @@ class ElementTest extends TestCase
         );
 
         $element2 = $element->prependChild(
-            $node = Node\Text::of(''),
+            $node = Node::text(''),
         );
 
         $this->assertNotSame($element, $element2);
@@ -284,7 +284,7 @@ class ElementTest extends TestCase
         );
 
         $element2 = $element->appendChild(
-            $node = Node\Text::of(''),
+            $node = Node::text(''),
         );
 
         $this->assertNotSame($element, $element2);

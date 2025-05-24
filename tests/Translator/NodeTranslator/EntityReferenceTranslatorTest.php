@@ -7,7 +7,7 @@ use Innmind\Xml\{
     Translator\NodeTranslator\EntityReferenceTranslator,
     Translator\NodeTranslator,
     Translator\Translator,
-    Node\EntityReference,
+    Node,
 };
 use Innmind\Immutable\Map;
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
@@ -33,7 +33,7 @@ class EntityReferenceTranslatorTest extends TestCase
             static fn() => null,
         );
 
-        $this->assertInstanceOf(EntityReference::class, $node);
+        $this->assertInstanceOf(Node::class, $node);
         $this->assertSame('gt', $node->content());
     }
 

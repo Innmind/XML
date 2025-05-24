@@ -1,15 +1,12 @@
 <?php
 declare(strict_types = 1);
 
-namespace Innmind\Xml\Node;
+namespace Innmind\Xml;
 
 use Innmind\Xml\{
-    Node,
-    Element,
-    Node\Document\Type,
-    Node\Document\Version,
-    Node\Document\Encoding,
-    AsContent,
+    Document\Type,
+    Document\Version,
+    Document\Encoding,
 };
 use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\{
@@ -21,31 +18,19 @@ use Innmind\Immutable\{
 /**
  * @psalm-immutable
  */
-final class Document implements Node, AsContent
+final class Document
 {
-    private Version $version;
-    /** @var Maybe<Type> */
-    private Maybe $type;
-    /** @var Maybe<Encoding> */
-    private Maybe $encoding;
-    /** @var Sequence<Node|Element> */
-    private Sequence $children;
-
     /**
      * @param Maybe<Type> $type
      * @param Maybe<Encoding> $encoding
      * @param Sequence<Node|Element> $children
      */
     private function __construct(
-        Version $version,
-        Maybe $type,
-        Maybe $encoding,
-        Sequence $children,
+        private Version $version,
+        private Maybe $type,
+        private Maybe $encoding,
+        private Sequence $children,
     ) {
-        $this->version = $version;
-        $this->type = $type;
-        $this->encoding = $encoding;
-        $this->children = $children;
     }
 
     /**
@@ -77,13 +62,17 @@ final class Document implements Node, AsContent
         return $this->type;
     }
 
-    #[\Override]
+    /**
+     * @return Sequence<Node|Element>
+     */
     public function children(): Sequence
     {
         return $this->children;
     }
 
-    #[\Override]
+    /**
+     * @param callable(Node|Element): bool $filter
+     */
     public function filterChild(callable $filter): self
     {
         return new self(
@@ -94,7 +83,9 @@ final class Document implements Node, AsContent
         );
     }
 
-    #[\Override]
+    /**
+     * @param callable(Node|Element): (Node|Element) $map
+     */
     public function mapChild(callable $map): self
     {
         return new self(
@@ -105,7 +96,6 @@ final class Document implements Node, AsContent
         );
     }
 
-    #[\Override]
     public function prependChild(Node|Element $child): self
     {
         $document = clone $this;
@@ -114,7 +104,6 @@ final class Document implements Node, AsContent
         return $document;
     }
 
-    #[\Override]
     public function appendChild(Node|Element $child): self
     {
         $document = clone $this;
@@ -131,7 +120,6 @@ final class Document implements Node, AsContent
         return $this->encoding;
     }
 
-    #[\Override]
     public function content(): string
     {
         $children = $this->children->map(
@@ -141,7 +129,6 @@ final class Document implements Node, AsContent
         return Str::of('')->join($children)->toString();
     }
 
-    #[\Override]
     public function toString(): string
     {
         $string = $this->tag();
@@ -154,7 +141,6 @@ final class Document implements Node, AsContent
         return $string."\n".$this->content();
     }
 
-    #[\Override]
     public function asContent(): Content
     {
         return Content::ofLines(

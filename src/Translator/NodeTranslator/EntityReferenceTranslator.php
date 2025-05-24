@@ -7,9 +7,11 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
     Node,
-    Node\EntityReference,
 };
-use Innmind\Immutable\Maybe;
+use Innmind\Immutable\{
+    Maybe,
+    Predicate\Instance,
+};
 
 /**
  * @psalm-immutable
@@ -23,13 +25,9 @@ final class EntityReferenceTranslator implements NodeTranslator
     #[\Override]
     public function __invoke(\DOMNode $node, Translator $translate): Maybe
     {
-        /**
-         * @psalm-suppress ArgumentTypeCoercion
-         * @var Maybe<Node>
-         */
         return Maybe::just($node)
-            ->filter(static fn($node) => $node instanceof \DOMEntityReference)
-            ->map(static fn(\DOMEntityReference $node) => EntityReference::of($node->nodeName));
+            ->keep(Instance::of(\DOMEntityReference::class))
+            ->map(static fn(\DOMEntityReference $node) => Node::entityReference($node->nodeName));
     }
 
     /**

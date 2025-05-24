@@ -6,7 +6,7 @@ namespace Tests\Innmind\Xml\Reader;
 use Innmind\Xml\{
     Reader\Reader,
     Reader as ReaderInterface,
-    Node\Document,
+    Document,
 };
 use Innmind\Filesystem\{
     Adapter\Filesystem,

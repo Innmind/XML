@@ -7,9 +7,11 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
     Node,
-    Node\Comment,
 };
-use Innmind\Immutable\Maybe;
+use Innmind\Immutable\{
+    Maybe,
+    Predicate\Instance,
+};
 
 /**
  * @psalm-immutable
@@ -23,13 +25,9 @@ final class CommentTranslator implements NodeTranslator
     #[\Override]
     public function __invoke(\DOMNode $node, Translator $translate): Maybe
     {
-        /**
-         * @psalm-suppress ArgumentTypeCoercion
-         * @var Maybe<Node>
-         */
         return Maybe::just($node)
-            ->filter(static fn($node) => $node instanceof \DOMComment)
-            ->map(static fn(\DOMComment $node) => Comment::of($node->data));
+            ->keep(Instance::of(\DOMComment::class))
+            ->map(static fn(\DOMComment $node) => Node::comment($node->data));
     }
 
     /**

@@ -6,6 +6,7 @@ namespace Innmind\Xml\Visitor;
 use Innmind\Xml\{
     Node,
     Element,
+    Document,
 };
 use Innmind\Immutable\Maybe;
 
@@ -22,14 +23,18 @@ final class ParentNode
     }
 
     /**
-     * @return Maybe<Node|Element>
+     * @return Maybe<Element>
      */
-    public function __invoke(Node|Element $tree): Maybe
+    public function __invoke(Document|Node|Element $tree): Maybe
     {
-        /** @var Maybe<Node|Element> */
+        /** @var Maybe<Element> */
         $parent = Maybe::nothing();
 
-        /** @var Maybe<Node|Element> */
+        if ($tree instanceof Node) {
+            return $parent;
+        }
+
+        /** @var Maybe<Element> */
         return $tree->children()->reduce(
             $parent,
             function(Maybe $parent, $child) use ($tree): Maybe {

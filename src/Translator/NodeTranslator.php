@@ -6,6 +6,7 @@ namespace Innmind\Xml\Translator;
 use Innmind\Xml\{
     Node,
     Element,
+    Document,
 };
 use Innmind\Immutable\Maybe;
 
@@ -15,7 +16,7 @@ use Innmind\Immutable\Maybe;
 interface NodeTranslator
 {
     /**
-     * @return Maybe<Node|Element>
+     * @return Maybe<Document|Node|Element>
      */
     public function __invoke(\DOMNode $node, Translator $translate): Maybe;
 }

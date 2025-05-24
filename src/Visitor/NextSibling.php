@@ -6,6 +6,7 @@ namespace Innmind\Xml\Visitor;
 use Innmind\Xml\{
     Node,
     Element,
+    Document,
 };
 use Innmind\Immutable\Maybe;
 
@@ -24,7 +25,7 @@ final class NextSibling
     /**
      * @return Maybe<Node|Element>
      */
-    public function __invoke(Node $tree): Maybe
+    public function __invoke(Document|Node|Element $tree): Maybe
     {
         return ParentNode::of($this->node)($tree)
             ->toSequence()

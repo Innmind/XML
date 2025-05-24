@@ -7,9 +7,11 @@ use Innmind\Xml\{
     Translator\NodeTranslator,
     Translator\Translator,
     Node,
-    Node\CharacterData,
 };
-use Innmind\Immutable\Maybe;
+use Innmind\Immutable\{
+    Maybe,
+    Predicate\Instance,
+};
 
 /**
  * @psalm-immutable
@@ -23,13 +25,9 @@ final class CharacterDataTranslator implements NodeTranslator
     #[\Override]
     public function __invoke(\DOMNode $node, Translator $translate): Maybe
     {
-        /**
-         * @psalm-suppress ArgumentTypeCoercion
-         * @var Maybe<Node>
-         */
         return Maybe::just($node)
-            ->filter(static fn($node) => $node instanceof \DOMCharacterData)
-            ->map(static fn(\DOMCharacterData $node) => CharacterData::of($node->data));
+            ->keep(Instance::of(\DOMCharacterData::class))
+            ->map(static fn(\DOMCharacterData $node) => Node::characterData($node->data));
     }
 
     /**

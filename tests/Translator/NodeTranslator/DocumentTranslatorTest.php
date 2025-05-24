@@ -7,7 +7,7 @@ use Innmind\Xml\{
     Translator\NodeTranslator\DocumentTranslator,
     Translator\NodeTranslator,
     Translator\Translator,
-    Node\Document,
+    Document,
     Element,
     Element\Name,
 };

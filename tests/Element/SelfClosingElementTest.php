@@ -197,7 +197,7 @@ class SelfClosingElementTest extends TestCase
         $this->assertSame(
             $node,
             $node->prependChild(
-                Node\Text::of(''),
+                Node::text(''),
             ),
         );
     }
@@ -209,7 +209,7 @@ class SelfClosingElementTest extends TestCase
         $this->assertSame(
             $node,
             $node->appendChild(
-                Node\Text::of(''),
+                Node::text(''),
             ),
         );
     }

@@ -3,16 +3,11 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Node;
 
-use Innmind\Xml\{
-    Node,
-    Element,
-};
-use Innmind\Immutable\Sequence;
-
 /**
+ * @internal
  * @psalm-immutable
  */
-final class EntityReference implements Node
+final class EntityReference implements Implementation
 {
     private string $data;
 
@@ -27,42 +22,6 @@ final class EntityReference implements Node
     public static function of(string $data): self
     {
         return new self($data);
-    }
-
-    #[\Override]
-    public function children(): Sequence
-    {
-        return Sequence::of();
-    }
-
-    #[\Override]
-    public function filterChild(callable $filter): self
-    {
-        return $this;
-    }
-
-    #[\Override]
-    public function mapChild(callable $map): self
-    {
-        return $this;
-    }
-
-    /**
-     * This operation will do nothing
-     */
-    #[\Override]
-    public function prependChild(Node|Element $child): self
-    {
-        return $this;
-    }
-
-    /**
-     * This operation will do nothing
-     */
-    #[\Override]
-    public function appendChild(Node|Element $child): self
-    {
-        return $this;
     }
 
     #[\Override]

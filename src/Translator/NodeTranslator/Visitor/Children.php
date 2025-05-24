@@ -11,6 +11,7 @@ use Innmind\Xml\{
 use Innmind\Immutable\{
     Sequence,
     Maybe,
+    Predicate\Instance,
 };
 
 /**
@@ -38,11 +39,14 @@ final class Children
          * @var \DOMNode $child
          */
         foreach ($node->childNodes as $child) {
-            /** @psalm-suppress MixedArgumentTypeCoercion */
             $children = $children->flatMap(
-                fn($children) => ($this->translate)($child)->map(
-                    static fn($node) => ($children)($node),
-                ),
+                fn($children) => ($this->translate)($child)
+                    ->keep(
+                        Instance::of(Node::class)->or(
+                            Instance::of(Element::class),
+                        ),
+                    )
+                    ->map($children),
             );
         }
 

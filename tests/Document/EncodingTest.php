@@ -1,10 +1,10 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\Xml\Node\Document;
+namespace Tests\Innmind\Xml\Document;
 
 use Innmind\Xml\{
-    Node\Document\Encoding,
+    Document\Encoding,
     Exception\DomainException,
 };
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;

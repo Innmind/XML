@@ -7,10 +7,8 @@ use Innmind\Xml\{
     Translator\Translator,
     Translator\NodeTranslators,
     Element,
-    Node\Document,
-    Node\Text,
-    Node\CharacterData,
-    Node\Comment,
+    Node,
+    Document,
 };
 use Innmind\Immutable\Map;
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
@@ -96,7 +94,7 @@ XML
             static fn($node) => $node,
             static fn() => null,
         );
-        $this->assertInstanceOf(Text::class, $linebreak);
+        $this->assertInstanceOf(Node::class, $linebreak);
         $this->assertSame("\n    ", $linebreak->content());
         $foobar = $foo->children()->get(1)->match(
             static fn($node) => $node,
@@ -109,7 +107,7 @@ XML
             static fn($node) => $node,
             static fn() => null,
         );
-        $this->assertInstanceOf(Text::class, $linebreak);
+        $this->assertInstanceOf(Node::class, $linebreak);
         $this->assertSame("\n    ", $linebreak->content());
         $div = $foo->children()->get(3)->match(
             static fn($node) => $node,
@@ -123,37 +121,37 @@ XML
             static fn($node) => $node,
             static fn() => null,
         );
-        $this->assertInstanceOf(Text::class, $linebreak);
+        $this->assertInstanceOf(Node::class, $linebreak);
         $this->assertSame("\n        ", $linebreak->content());
         $cdata = $div->children()->get(1)->match(
             static fn($node) => $node,
             static fn() => null,
         );
-        $this->assertInstanceOf(CharacterData::class, $cdata);
+        $this->assertInstanceOf(Node::class, $cdata);
         $this->assertSame('whatever', $cdata->content());
         $linebreak = $div->children()->get(2)->match(
             static fn($node) => $node,
             static fn() => null,
         );
-        $this->assertInstanceOf(Text::class, $linebreak);
+        $this->assertInstanceOf(Node::class, $linebreak);
         $this->assertSame("\n    ", $linebreak->content());
         $linebreak = $foo->children()->get(4)->match(
             static fn($node) => $node,
             static fn() => null,
         );
-        $this->assertInstanceOf(Text::class, $linebreak);
+        $this->assertInstanceOf(Node::class, $linebreak);
         $this->assertSame("\n    ", $linebreak->content());
         $comment = $foo->children()->get(5)->match(
             static fn($node) => $node,
             static fn() => null,
         );
-        $this->assertInstanceOf(Comment::class, $comment);
+        $this->assertInstanceOf(Node::class, $comment);
         $this->assertSame('foobaz', $comment->content());
         $text = $foo->children()->get(6)->match(
             static fn($node) => $node,
             static fn() => null,
         );
-        $this->assertInstanceOf(Text::class, $text);
+        $this->assertInstanceOf(Node::class, $text);
         $this->assertSame("\n    hey!\n", $text->content());
         $this->assertSame($xml, $node->toString());
     }

@@ -6,6 +6,7 @@ namespace Innmind\Xml\Visitor;
 use Innmind\Xml\{
     Node,
     Element,
+    Document,
 };
 
 /**
@@ -18,8 +19,12 @@ final class Text
     {
     }
 
-    public function __invoke(Node|Element $tree): string
+    public function __invoke(Document|Node|Element $tree): string
     {
+        if ($tree instanceof Node) {
+            return $tree->content();
+        }
+
         return $tree->children()->match(
             fn($node, $children) => $children->reduce(
                 $this($node),

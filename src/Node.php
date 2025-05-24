@@ -3,29 +3,78 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml;
 
-use Innmind\Immutable\Sequence;
+use Innmind\Xml\Node\{
+    Implementation,
+    CharacterData,
+    Comment,
+    EntityReference,
+    ProcessingInstruction,
+    Text,
+};
+use Innmind\Filesystem\File\Content;
 
 /**
  * @psalm-immutable
  */
-interface Node
+final class Node
 {
-    /**
-     * @return Sequence<self|Element>
-     */
-    public function children(): Sequence;
+    private function __construct(
+        private Implementation $implementation,
+    ) {
+    }
 
     /**
-     * @param callable(self|Element): bool $filter
+     * @psalm-pure
      */
-    public function filterChild(callable $filter): self;
+    public static function characterData(string $data): self
+    {
+        return new self(CharacterData::of($data));
+    }
 
     /**
-     * @param callable(self|Element): (self|Element) $map
+     * @psalm-pure
      */
-    public function mapChild(callable $map): self;
-    public function prependChild(self|Element $child): self;
-    public function appendChild(self|Element $child): self;
-    public function content(): string;
-    public function toString(): string;
+    public static function text(string $data): self
+    {
+        return new self(Text::of($data));
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function comment(string $data): self
+    {
+        return new self(Comment::of($data));
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function entityReference(string $data): self
+    {
+        return new self(EntityReference::of($data));
+    }
+
+    /**
+     * @psalm-pure
+     */
+    public static function processingInstruction(string $kind, string $value): self
+    {
+        return new self(ProcessingInstruction::of($kind, $value));
+    }
+
+    public function content(): string
+    {
+        return $this->implementation->content();
+    }
+
+    public function asContent(): Content
+    {
+        return Content::ofString($this->implementation->content());
+    }
+
+    public function toString(): string
+    {
+        return $this->implementation->toString();
+    }
 }
