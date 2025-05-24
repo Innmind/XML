@@ -263,13 +263,13 @@ class DocumentTest extends TestCase
     {
         $this
             ->forAll(
-                Set\Integers::between(0, 10),
-                Set\Integers::between(0, 10),
-                Set\Sequence::of(
-                    Set\Decorate::immutable(
-                        static fn($name) => Element::of($name),
-                        Set\Strings::madeOf(Set\Unicode::any())->between(1, 10),
-                    ),
+                Set::integers()->between(0, 10),
+                Set::integers()->between(0, 10),
+                Set::sequence(
+                    Set::strings()
+                        ->madeOf(Set::strings()->unicode()->char())
+                        ->between(1, 10)
+                        ->map(Element::of(...)),
                 )->between(0, 10),
             )
             ->then(function($major, $minor, $children) {
@@ -294,18 +294,18 @@ class DocumentTest extends TestCase
     {
         $this
             ->forAll(
-                Set\Integers::between(0, 10),
-                Set\Integers::between(0, 10),
-                Set\Sequence::of(
-                    Set\Decorate::immutable(
-                        static fn($name) => Element::of($name),
-                        Set\Strings::madeOf(Set\Unicode::any())->between(1, 10),
-                    ),
+                Set::integers()->between(0, 10),
+                Set::integers()->between(0, 10),
+                Set::sequence(
+                    Set::strings()
+                        ->madeOf(Set::strings()->unicode()->char())
+                        ->between(1, 10)
+                        ->map(Element::of(...)),
                 )->between(1, 10),
-                Set\Decorate::immutable(
-                    static fn($name) => Element::of($name),
-                    Set\Strings::madeOf(Set\Unicode::any())->between(1, 10),
-                ),
+                Set::strings()
+                    ->madeOf(Set::strings()->unicode()->char())
+                    ->between(1, 10)
+                    ->map(Element::of(...)),
             )
             ->then(function($major, $minor, $children, $replacement) {
                 $element = Document::of(

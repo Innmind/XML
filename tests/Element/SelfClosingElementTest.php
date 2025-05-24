@@ -258,7 +258,11 @@ class SelfClosingElementTest extends TestCase
     public function testFilterChild()
     {
         $this
-            ->forAll(DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 255))
+            ->forAll(
+                DataSet::strings()
+                    ->madeOf(DataSet::strings()->unicode()->char())
+                    ->between(1, 255),
+            )
             ->then(function($name) {
                 $element = SelfClosingElement::of($name);
 
@@ -272,7 +276,11 @@ class SelfClosingElementTest extends TestCase
     public function testMapChild()
     {
         $this
-            ->forAll(DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 255))
+            ->forAll(
+                DataSet::strings()
+                    ->madeOf(DataSet::strings()->unicode()->char())
+                    ->between(1, 255),
+            )
             ->then(function($name) {
                 $element = SelfClosingElement::of($name);
 

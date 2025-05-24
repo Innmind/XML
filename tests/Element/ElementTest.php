@@ -376,12 +376,14 @@ class ElementTest extends TestCase
     {
         $this
             ->forAll(
-                DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 255),
-                DataSet\Sequence::of(
-                    DataSet\Decorate::immutable(
-                        static fn($name) => Element::of($name),
-                        DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 255),
-                    ),
+                DataSet::strings()
+                    ->madeOf(DataSet::strings()->unicode()->char())
+                    ->between(1, 255),
+                DataSet::sequence(
+                    DataSet::strings()
+                        ->madeOf(DataSet::strings()->unicode()->char())
+                        ->between(1, 255)
+                        ->map(Element::of(...)),
                 )->between(0, 10),
             )
             ->then(function($name, $children) {
@@ -405,17 +407,19 @@ class ElementTest extends TestCase
     {
         $this
             ->forAll(
-                DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 255),
-                DataSet\Sequence::of(
-                    DataSet\Decorate::immutable(
-                        static fn($name) => Element::of($name),
-                        DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 10),
-                    ),
+                DataSet::strings()
+                    ->madeOf(DataSet::strings()->unicode()->char())
+                    ->between(1, 255),
+                DataSet::sequence(
+                    DataSet::strings()
+                        ->madeOf(DataSet::strings()->unicode()->char())
+                        ->between(1, 10)
+                        ->map(Element::of(...)),
                 )->between(1, 10),
-                DataSet\Decorate::immutable(
-                    static fn($name) => Element::of($name),
-                    DataSet\Strings::madeOf(DataSet\Unicode::any())->between(1, 10),
-                ),
+                DataSet::strings()
+                    ->madeOf(DataSet::strings()->unicode()->char())
+                    ->between(1, 10)
+                    ->map(Element::of(...)),
             )
             ->then(function($name, $children, $replacement) {
                 $element = Element::of(

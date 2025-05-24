@@ -77,7 +77,7 @@ class CommentTest extends TestCase
     public function testFilterChild()
     {
         $this
-            ->forAll(Set\Unicode::strings())
+            ->forAll(Set::strings()->unicode())
             ->then(function($data) {
                 $comment = Comment::of($data);
 
@@ -91,7 +91,7 @@ class CommentTest extends TestCase
     public function testMapChild()
     {
         $this
-            ->forAll(Set\Unicode::strings())
+            ->forAll(Set::strings()->unicode())
             ->then(function($data) {
                 $comment = Comment::of($data);
 

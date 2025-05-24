@@ -77,7 +77,7 @@ class CharacterDataTest extends TestCase
     public function testFilterChild()
     {
         $this
-            ->forAll(Set\Unicode::strings())
+            ->forAll(Set::strings()->unicode())
             ->then(function($data) {
                 $characterData = CharacterData::of($data);
 
@@ -91,7 +91,7 @@ class CharacterDataTest extends TestCase
     public function testMapChild()
     {
         $this
-            ->forAll(Set\Unicode::strings())
+            ->forAll(Set::strings()->unicode())
             ->then(function($data) {
                 $characterData = CharacterData::of($data);
 

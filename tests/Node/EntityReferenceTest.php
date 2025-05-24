@@ -77,7 +77,7 @@ class EntityReferenceTest extends TestCase
     public function testFilterChild()
     {
         $this
-            ->forAll(Set\Unicode::strings())
+            ->forAll(Set::strings()->unicode())
             ->then(function($data) {
                 $reference = EntityReference::of($data);
 
@@ -91,7 +91,7 @@ class EntityReferenceTest extends TestCase
     public function testMapChild()
     {
         $this
-            ->forAll(Set\Unicode::strings())
+            ->forAll(Set::strings()->unicode())
             ->then(function($data) {
                 $reference = EntityReference::of($data);
 
