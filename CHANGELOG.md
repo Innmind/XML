@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Requires `innmind/filesystem:~8.1`
+
 ### Fixed
 
 - PHP `8.4` deprecations

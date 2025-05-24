@@ -8,10 +8,14 @@ use Innmind\Xml\{
     Reader as ReaderInterface,
     Node\Document,
 };
-use Innmind\Filesystem\File\Content;
-use Innmind\IO\IO;
-use Innmind\Stream\Streams;
+use Innmind\Filesystem\{
+    Adapter\Filesystem,
+    File,
+    File\Content,
+    Name,
+};
 use Innmind\Url\Path;
+use Innmind\Immutable\Predicate\Instance;
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class ReaderTest extends TestCase
@@ -83,17 +87,15 @@ XML;
 
     public function testProcessingInstructionsAreReadCorrectly()
     {
-        $streams = Streams::fromAmbientAuthority();
-        $io = IO::of(static fn($period) => match ($period) {
-            null => $streams->watch()->waitForever(),
-            default => $streams->watch()->timeoutAfter($period),
-        });
+        $content = Filesystem::mount(Path::of('fixtures/'))
+            ->get(Name::of('theatlantic.xml'))
+            ->keep(Instance::of(File::class))
+            ->match(
+                static fn($file) => $file->content(),
+                static fn() => null,
+            );
 
-        $node = ($this->read)(Content::atPath(
-            $streams->readable(),
-            $io->readable(),
-            Path::of('fixtures/theatlantic.xml'),
-        ))->match(
+        $node = ($this->read)($content)->match(
             static fn($node) => $node,
             static fn() => null,
         );
