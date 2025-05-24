@@ -7,6 +7,7 @@ use Innmind\Xml\{
     Node,
     Element,
     Document,
+    Translator\NodeTranslator\DocumentTranslator,
 };
 use Innmind\Immutable\{
     Map,
@@ -18,15 +19,13 @@ use Innmind\Immutable\{
  */
 final class Translator
 {
-    /** @var Map<int, NodeTranslator> */
-    private Map $translators;
-
     /**
      * @param Map<int, NodeTranslator> $translators
      */
-    private function __construct(Map $translators)
-    {
-        $this->translators = $translators;
+    private function __construct(
+        private DocumentTranslator $document,
+        private Map $translators,
+    ) {
     }
 
     /**
@@ -34,10 +33,12 @@ final class Translator
      */
     public function __invoke(\DOMNode $node): Maybe
     {
-        return $this
-            ->translators
-            ->get($node->nodeType)
-            ->flatMap(fn($translate) => $translate($node, $this));
+        return ($this->document)($node, $this)->otherwise(
+            fn() => $this
+                ->translators
+                ->get($node->nodeType)
+                ->flatMap(fn($translate) => $translate($node, $this)),
+        );
     }
 
     /**
@@ -47,7 +48,10 @@ final class Translator
      */
     public static function of(Map $translators): self
     {
-        return new self($translators);
+        return new self(
+            DocumentTranslator::of(),
+            $translators,
+        );
     }
 
     /**
@@ -55,6 +59,9 @@ final class Translator
      */
     public static function default(): self
     {
-        return new self(NodeTranslators::defaults());
+        return new self(
+            DocumentTranslator::of(),
+            NodeTranslators::defaults(),
+        );
     }
 }

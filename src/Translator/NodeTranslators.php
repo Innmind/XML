@@ -4,7 +4,6 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Translator;
 
 use Innmind\Xml\Translator\NodeTranslator\{
-    DocumentTranslator,
     ElementTranslator,
     CharacterDataTranslator,
     CommentTranslator,
@@ -27,7 +26,6 @@ final class NodeTranslators
          * @var Map<int, NodeTranslator>
          */
         return Map::of(
-            [\XML_DOCUMENT_NODE, DocumentTranslator::of()],
             [\XML_ELEMENT_NODE, ElementTranslator::of()],
             [\XML_CDATA_SECTION_NODE, CharacterDataTranslator::of()],
             [\XML_TEXT_NODE, TextTranslator::of()],

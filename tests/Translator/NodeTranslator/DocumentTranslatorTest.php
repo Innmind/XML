@@ -19,14 +19,6 @@ use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class DocumentTranslatorTest extends TestCase
 {
-    public function testInterface()
-    {
-        $this->assertInstanceOf(
-            NodeTranslator::class,
-            DocumentTranslator::of(),
-        );
-    }
-
     public function testTranslate()
     {
         $document = new \DOMDocument;

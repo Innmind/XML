@@ -10,7 +10,6 @@ use Innmind\Xml\{
     Node,
     Document,
 };
-use Innmind\Immutable\Map;
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class TranslatorTest extends TestCase
@@ -154,13 +153,5 @@ XML
         $this->assertInstanceOf(Node::class, $text);
         $this->assertSame("\n    hey!\n", $text->content());
         $this->assertSame($xml, $node->toString());
-    }
-
-    public function testReturnNothingWhenNoTranslatorFoundForANodeType()
-    {
-        $this->assertNull(Translator::of(Map::of())(new \DOMDocument)->match(
-            static fn($node) => $node,
-            static fn() => null,
-        ));
     }
 }

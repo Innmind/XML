@@ -4,7 +4,6 @@ declare(strict_types = 1);
 namespace Innmind\Xml\Translator\NodeTranslator;
 
 use Innmind\Xml\{
-    Translator\NodeTranslator,
     Translator\Translator,
     Document,
     Document\Type,
@@ -20,15 +19,18 @@ use Innmind\Immutable\{
 };
 
 /**
+ * @internal
  * @psalm-immutable
  */
-final class DocumentTranslator implements NodeTranslator
+final class DocumentTranslator
 {
     private function __construct()
     {
     }
 
-    #[\Override]
+    /**
+     * @return Maybe<Document>
+     */
     public function __invoke(\DOMNode $node, Translator $translate): Maybe
     {
         /**

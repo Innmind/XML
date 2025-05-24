@@ -5,7 +5,6 @@ namespace Tests\Innmind\Xml\Translator;
 
 use Innmind\Xml\Translator\{
     NodeTranslators,
-    NodeTranslator\DocumentTranslator,
     NodeTranslator\ElementTranslator,
     NodeTranslator\CharacterDataTranslator,
     NodeTranslator\CommentTranslator,
@@ -23,14 +22,7 @@ class NodeTranslatorsTest extends TestCase
         $defaults = NodeTranslators::defaults();
 
         $this->assertInstanceOf(Map::class, $defaults);
-        $this->assertCount(7, $defaults);
-        $this->assertInstanceOf(
-            DocumentTranslator::class,
-            $defaults->get(\XML_DOCUMENT_NODE)->match(
-                static fn($translator) => $translator,
-                static fn() => null,
-            ),
-        );
+        $this->assertCount(6, $defaults);
         $this->assertInstanceOf(
             ElementTranslator::class,
             $defaults->get(\XML_ELEMENT_NODE)->match(
