@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml;
 
+use Innmind\Xml\Element\Name;
 use Innmind\Immutable\{
     Map,
     Maybe,
@@ -13,10 +14,7 @@ use Innmind\Immutable\{
  */
 interface Element extends Node
 {
-    /**
-     * @return non-empty-string
-     */
-    public function name(): string;
+    public function name(): Name;
 
     /**
      * @return Map<non-empty-string, Attribute>

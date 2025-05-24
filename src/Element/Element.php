@@ -25,20 +25,18 @@ use Innmind\Immutable\{
  */
 final class Element implements ElementInterface, AsContent
 {
-    /** @var non-empty-string */
-    private string $name;
+    private Name $name;
     /** @var Map<non-empty-string, Attribute> */
     private Map $attributes;
     /** @var Sequence<Node> */
     private Sequence $children;
 
     /**
-     * @param non-empty-string $name
      * @param Map<non-empty-string, Attribute> $attributes
      * @param Sequence<Node> $children
      */
     private function __construct(
-        string $name,
+        Name $name,
         Map $attributes,
         Sequence $children,
     ) {
@@ -80,31 +78,28 @@ final class Element implements ElementInterface, AsContent
         ?Set $attributes = null,
         ?Sequence $children = null,
     ): Maybe {
-        if ($name === '') {
-            /** @var Maybe<self> */
-            return Maybe::nothing();
-        }
+        return Name::maybe($name)->map(static function($name) use ($attributes, $children) {
+            $attributes ??= Set::of()->keep(Instance::of(Attribute::class));
+            /** @var Sequence<Node> */
+            $children ??= Sequence::of();
 
-        $attributes ??= Set::of()->keep(Instance::of(Attribute::class));
-        /** @var Sequence<Node> */
-        $children ??= Sequence::of();
-
-        return Maybe::just(new self(
-            $name,
-            Map::of(
-                ...$attributes
-                    ->map(static fn($attribute) => [
-                        $attribute->name(),
-                        $attribute,
-                    ])
-                    ->toList(),
-            ),
-            $children,
-        ));
+            return new self(
+                $name,
+                Map::of(
+                    ...$attributes
+                        ->map(static fn($attribute) => [
+                            $attribute->name(),
+                            $attribute,
+                        ])
+                        ->toList(),
+                ),
+                $children,
+            );
+        });
     }
 
     #[\Override]
-    public function name(): string
+    public function name(): Name
     {
         return $this->name;
     }
@@ -242,7 +237,7 @@ final class Element implements ElementInterface, AsContent
 
         return \sprintf(
             '<%s%s>',
-            $this->name(),
+            $this->name()->toString(),
             !$attributes->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
         );
     }
@@ -251,7 +246,7 @@ final class Element implements ElementInterface, AsContent
     {
         return \sprintf(
             '</%s>',
-            $this->name(),
+            $this->name()->toString(),
         );
     }
 }

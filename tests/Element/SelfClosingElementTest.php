@@ -36,7 +36,7 @@ class SelfClosingElementTest extends TestCase
     {
         $node = SelfClosingElement::of('foo');
 
-        $this->assertSame('foo', $node->name());
+        $this->assertSame('foo', $node->name()->toString());
     }
 
     public function testThrowWhenEmptyName()

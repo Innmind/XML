@@ -41,7 +41,7 @@ class ElementTest extends TestCase
     {
         $node = Element::of('foo');
 
-        $this->assertSame('foo', $node->name());
+        $this->assertSame('foo', $node->name()->toString());
     }
 
     public function testThrowWhenEmptyName()
@@ -396,8 +396,8 @@ class ElementTest extends TestCase
                 $element2 = $element->filterChild(static fn() => false);
                 $element3 = $element->filterChild(static fn() => true);
 
-                $this->assertSame($name, $element2->name());
-                $this->assertSame($name, $element3->name());
+                $this->assertSame($name, $element2->name()->toString());
+                $this->assertSame($name, $element3->name()->toString());
                 $this->assertTrue($element2->children()->empty());
                 $this->assertTrue($element3->children()->equals($element->children()));
             });
@@ -430,7 +430,7 @@ class ElementTest extends TestCase
 
                 $element2 = $element->mapChild(static fn($child) => $replacement);
 
-                $this->assertSame($name, $element2->name());
+                $this->assertSame($name, $element2->name()->toString());
                 $this->assertFalse($element2->children()->equals($element->children()));
                 $this->assertSame($element->children()->size(), $element2->children()->size());
                 $this->assertTrue($element2->children()->contains($replacement));

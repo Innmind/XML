@@ -86,7 +86,7 @@ XML
             static fn() => null,
         );
         $this->assertInstanceOf(Element::class, $foo);
-        $this->assertSame('foo', $foo->name());
+        $this->assertSame('foo', $foo->name()->toString());
         $this->assertCount(1, $foo->attributes());
         $this->assertSame('baz', $foo->attribute('bar')->match(
             static fn($attribute) => $attribute->value(),
@@ -104,7 +104,7 @@ XML
             static fn() => null,
         );
         $this->assertInstanceOf(SelfClosingElement::class, $foobar);
-        $this->assertSame('foobar', $foobar->name());
+        $this->assertSame('foobar', $foobar->name()->toString());
         $linebreak = $foo->children()->get(2)->match(
             static fn($node) => $node,
             static fn() => null,
@@ -116,7 +116,7 @@ XML
             static fn() => null,
         );
         $this->assertInstanceOf(Element::class, $div);
-        $this->assertSame('div', $div->name());
+        $this->assertSame('div', $div->name()->toString());
         $this->assertTrue($div->attributes()->empty());
         $this->assertCount(3, $div->children());
         $linebreak = $div->children()->get(0)->match(

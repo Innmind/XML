@@ -23,16 +23,14 @@ use Innmind\Immutable\{
  */
 final class SelfClosingElement implements Element
 {
-    /** @var non-empty-string */
-    private string $name;
+    private Name $name;
     /** @var Map<non-empty-string, Attribute> */
     private Map $attributes;
 
     /**
-     * @param non-empty-string $name
      * @param Map<non-empty-string, Attribute> $attributes
      */
-    private function __construct(string $name, Map $attributes)
+    private function __construct(Name $name, Map $attributes)
     {
         $this->name = $name;
         $this->attributes = $attributes;
@@ -63,28 +61,25 @@ final class SelfClosingElement implements Element
      */
     public static function maybe(string $name, ?Set $attributes = null): Maybe
     {
-        if ($name === '') {
-            /** @var Maybe<self> */
-            return Maybe::nothing();
-        }
+        return Name::maybe($name)->map(static function($name) use ($attributes) {
+            $attributes ??= Set::of()->keep(Instance::of(Attribute::class));
 
-        $attributes ??= Set::of()->keep(Instance::of(Attribute::class));
-
-        return Maybe::just(new self(
-            $name,
-            Map::of(
-                ...$attributes
-                    ->map(static fn($attribute) => [
-                        $attribute->name(),
-                        $attribute,
-                    ])
-                    ->toList(),
-            ),
-        ));
+            return new self(
+                $name,
+                Map::of(
+                    ...$attributes
+                        ->map(static fn($attribute) => [
+                            $attribute->name(),
+                            $attribute,
+                        ])
+                        ->toList(),
+                ),
+            );
+        });
     }
 
     #[\Override]
-    public function name(): string
+    public function name(): Name
     {
         return $this->name;
     }
@@ -176,7 +171,7 @@ final class SelfClosingElement implements Element
 
         return \sprintf(
             '<%s%s/>',
-            $this->name(),
+            $this->name()->toString(),
             !$this->attributes()->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
         );
     }

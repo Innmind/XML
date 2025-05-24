@@ -2,9 +2,14 @@
 
 ## [Unreleased]
 
+### Added
+
+- `Innmind\Xml\Element\Name`
+
 ### Changed
 
 - Requires `innmind/filesystem:~8.1`
+- `Innmind\Xml\Element::name()` now returns a `Innmind\Xml\Element\Name`
 
 ### Fixed
 
