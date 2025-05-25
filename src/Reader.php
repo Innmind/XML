@@ -13,9 +13,9 @@ final class Reader
 {
     private Translator $translate;
 
-    private function __construct(?Translator $translate = null)
+    private function __construct()
     {
-        $this->translate = $translate ?? Translator::default();
+        $this->translate = Translator::default();
     }
 
     /**
@@ -45,8 +45,8 @@ final class Reader
             ->flatMap($this->translate);
     }
 
-    public static function of(?Translator $translate = null): self
+    public static function of(): self
     {
-        return new self($translate);
+        return new self();
     }
 }
