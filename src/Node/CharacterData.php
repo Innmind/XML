@@ -33,6 +33,10 @@ final class CharacterData implements Implementation
     #[\Override]
     public function toString(): string
     {
-        return '<![CDATA['.$this->value.']]>';
+        $writer = new \XMLWriter;
+        $writer->openMemory();
+        $writer->writeCdata($this->value);
+
+        return $writer->outputMemory();
     }
 }
