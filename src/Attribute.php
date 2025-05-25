@@ -54,9 +54,4 @@ final class Attribute
     {
         return $this->value;
     }
-
-    public function toString(): string
-    {
-        return $this->name.\sprintf('="%s"', $this->value);
-    }
 }
