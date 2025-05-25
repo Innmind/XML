@@ -6,14 +6,15 @@ namespace Innmind\Xml\Translator;
 use Innmind\Xml\{
     Node,
     Element,
+    Element\Name,
     Document,
     Document\Type,
     Document\Version,
     Document\Encoding,
+    Translator\NodeTranslator\Visitor\Attributes,
     Translator\NodeTranslator\Visitor\Children,
 };
 use Innmind\Immutable\{
-    Map,
     Maybe,
     Sequence,
     Predicate\Instance,
@@ -24,11 +25,7 @@ use Innmind\Immutable\{
  */
 final class Translator
 {
-    /**
-     * @param Map<int, NodeTranslator> $translators
-     */
     private function __construct(
-        private Map $translators,
     ) {
     }
 
@@ -40,24 +37,7 @@ final class Translator
         return $this
             ->buildDocument($node)
             ->otherwise(static fn() => Maybe::of(self::translateNode($node)))
-            ->otherwise(
-                fn() => $this
-                    ->translators
-                    ->get($node->nodeType)
-                    ->flatMap(fn($translate) => $translate($node, $this)),
-            );
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @param Map<int, NodeTranslator> $translators
-     */
-    public static function of(Map $translators): self
-    {
-        return new self(
-            $translators,
-        );
+            ->otherwise(fn() => $this->translateElement($node));
     }
 
     /**
@@ -65,9 +45,7 @@ final class Translator
      */
     public static function default(): self
     {
-        return new self(
-            NodeTranslators::defaults(),
-        );
+        return new self();
     }
 
     /**
@@ -157,5 +135,32 @@ final class Translator
         }
 
         return null;
+    }
+
+    /**
+     * @return Maybe<Element>
+     */
+    private function translateElement(\DOMNode $node): Maybe
+    {
+        if ($node->nodeType === \XML_ELEMENT_NODE && $node instanceof \DOMElement) {
+            /**
+             * @psalm-suppress ImpureFunctionCall
+             * @psalm-suppress ImpureMethodCall
+             */
+            return Maybe::all(
+                Name::maybe($node->nodeName),
+                Attributes::of()($node),
+                Children::of($this)(
+                    Sequence::of(...\array_values(\iterator_to_array($node->childNodes)))
+                        ->keep(Instance::of(\DOMNode::class))
+                ),
+            )->map(match ($node->childNodes->length) {
+                0 => Element::selfClosing(...),
+                default => Element::of(...),
+            });
+        }
+
+        /** @var Maybe<Element> */
+        return Maybe::nothing();
     }
 }

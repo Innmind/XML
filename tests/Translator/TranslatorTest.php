@@ -5,7 +5,6 @@ namespace Tests\Innmind\Xml\Translator;
 
 use Innmind\Xml\{
     Translator\Translator,
-    Translator\NodeTranslators,
     Element,
     Node,
     Document,
@@ -18,17 +17,7 @@ class TranslatorTest extends TestCase
 
     public function setUp(): void
     {
-        $this->translate = Translator::of(
-            NodeTranslators::defaults(),
-        );
-    }
-
-    public function testDefault()
-    {
-        $this->assertEquals(
-            $this->translate,
-            Translator::default(),
-        );
+        $this->translate = Translator::default();
     }
 
     public function testTranslate()
