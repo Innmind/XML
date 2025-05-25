@@ -33,6 +33,10 @@ final class Text implements Implementation
     #[\Override]
     public function toString(): string
     {
-        return $this->data->content();
+        $writer = new \XMLWriter;
+        $writer->openMemory();
+        $writer->text($this->data->content());
+
+        return $writer->outputMemory();
     }
 }
