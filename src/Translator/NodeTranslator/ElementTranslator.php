@@ -8,7 +8,6 @@ use Innmind\Xml\{
     Translator\Translator,
     Translator\NodeTranslator\Visitor\Attributes,
     Translator\NodeTranslator\Visitor\Children,
-    Node,
     Element,
     Element\Name,
 };
@@ -30,24 +29,9 @@ final class ElementTranslator implements NodeTranslator
     #[\Override]
     public function __invoke(\DOMNode $node, Translator $translate): Maybe
     {
-        /** @var Maybe<\DOMElement> */
-        $node = Maybe::just($node)
-            ->filter(static fn($node) => $node instanceof \DOMElement);
-
-        /**
-         * @psalm-suppress MixedArgumentTypeCoercion
-         * @psalm-suppress MixedArgument
-         * @var Maybe<Node>
-         */
-        return $node
-            ->filter(static fn($node) => $node->childNodes->length === 0)
+        return Maybe::just($node)
+            ->keep(Instance::of(\DOMElement::class))
             ->flatMap(
-                static fn($node) => Maybe::all(
-                    Name::maybe($node->nodeName),
-                    Attributes::of()($node),
-                )->map(Element::selfClosing(...)),
-            )
-            ->otherwise(static fn() => $node->flatMap(
                 static fn($node) => Maybe::all(
                     Name::maybe($node->nodeName),
                     Attributes::of()($node),
@@ -55,8 +39,11 @@ final class ElementTranslator implements NodeTranslator
                         Sequence::of(...\array_values(\iterator_to_array($node->childNodes)))
                             ->keep(Instance::of(\DOMNode::class))
                     ),
-                )->map(Element::of(...)),
-            ));
+                )->map(match ($node->childNodes->length) {
+                    0 => Element::selfClosing(...),
+                    default => Element::of(...),
+                }),
+            );
     }
 
     /**
