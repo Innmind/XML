@@ -33,6 +33,10 @@ final class Comment implements Implementation
     #[\Override]
     public function toString(): string
     {
-        return '<!--'.$this->value.'-->';
+        $writer = new \XMLWriter;
+        $writer->openMemory();
+        $writer->writeComment($this->value);
+
+        return $writer->outputMemory();
     }
 }
