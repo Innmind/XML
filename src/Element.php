@@ -222,25 +222,28 @@ final class Element
     public function toString(): string
     {
         if ($this->selfClosing) {
-            $attributes = $this
-                ->attributes()
+            $writer = new \XMLWriter;
+            $writer->openMemory();
+            $writer->startElement($this->name->toString());
+            $_ = $this
+                ->attributes
                 ->values()
-                ->map(
-                    static fn(Attribute $attribute): string => $attribute->toString(),
-                );
+                ->foreach(static fn($attribute) => $writer->writeAttribute(
+                    $attribute->name(),
+                    $attribute->value(),
+                ));
+            $writer->endElement();
 
-            return \sprintf(
-                '<%s%s/>',
-                $this->name()->toString(),
-                !$this->attributes()->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
-            );
+            return $writer->outputMemory();
         }
+
+        [$openingTag, $closingTag] = $this->tags();
 
         return \sprintf(
             '%s%s%s',
-            $this->openingTag(),
+            $openingTag,
             $this->content(),
-            $this->closingTag(),
+            $closingTag,
         );
     }
 
@@ -249,6 +252,8 @@ final class Element
         if ($this->selfClosing) {
             return Content::ofString($this->toString());
         }
+
+        [$openingTag, $closingTag] = $this->tags();
 
         return Content::ofLines(
             $this
@@ -259,32 +264,27 @@ final class Element
                 ->map(static fn($line) => $line->map(
                     static fn($string) => $string->prepend('    '), // to correctly indent the file
                 ))
-                ->prepend(Sequence::of(Content\Line::of(Str::of($this->openingTag()))))
-                ->add(Content\Line::of(Str::of($this->closingTag()))),
+                ->prepend(Sequence::of(Content\Line::of(Str::of($openingTag))))
+                ->add(Content\Line::of(Str::of($closingTag))),
         );
     }
 
-    private function openingTag(): string
+    private function tags(): array
     {
-        $attributes = $this
+        $writer = new \XMLWriter;
+        $writer->openMemory();
+        $writer->startElement($this->name->toString());
+        $_ = $this
             ->attributes
             ->values()
-            ->map(
-                static fn(Attribute $attribute): string => $attribute->toString(),
-            );
+            ->foreach(static fn($attribute) => $writer->writeAttribute(
+                $attribute->name(),
+                $attribute->value(),
+            ));
+        $writer->writeRaw('');
+        $opening = $writer->outputMemory();
+        $writer->fullEndElement();
 
-        return \sprintf(
-            '<%s%s>',
-            $this->name()->toString(),
-            !$attributes->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
-        );
-    }
-
-    private function closingTag(): string
-    {
-        return \sprintf(
-            '</%s>',
-            $this->name()->toString(),
-        );
+        return [$opening, $writer->outputMemory()];
     }
 }
