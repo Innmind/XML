@@ -70,7 +70,7 @@ final class Node
 
     public function asContent(): Content
     {
-        return Content::ofString($this->implementation->content());
+        return Content::ofString($this->implementation->toString());
     }
 
     public function toString(): string
