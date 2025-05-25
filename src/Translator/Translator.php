@@ -12,7 +12,6 @@ use Innmind\Xml\{
     Document\Version,
     Document\Encoding,
     Attribute,
-    Translator\NodeTranslator\Visitor\Children,
 };
 use Innmind\Immutable\{
     Maybe,
@@ -37,8 +36,7 @@ final class Translator
     {
         return $this
             ->buildDocument($node)
-            ->otherwise(static fn() => Maybe::of(self::translateNode($node)))
-            ->otherwise(fn() => $this->translateElement($node));
+            ->otherwise(fn() => $this->child($node));
     }
 
     /**
@@ -47,6 +45,15 @@ final class Translator
     public static function default(): self
     {
         return new self();
+    }
+
+    /**
+     * @return Maybe<Node|Element>
+     */
+    private function child(\DOMNode $node): Maybe
+    {
+        return Maybe::of(self::translateNode($node))
+            ->otherwise(fn() => $this->translateElement($node));
     }
 
     /**
@@ -60,7 +67,7 @@ final class Translator
             ->flatMap(
                 fn(\DOMDocument $node) => Maybe::all(
                     self::buildVersion($node),
-                    Children::of($this)(
+                    $this->children(
                         Sequence::of(...\array_values(\iterator_to_array($node->childNodes)))
                             ->keep(Instance::of(\DOMNode::class))
                             ->exclude(static fn($child) => $child->nodeType === \XML_DOCUMENT_TYPE_NODE),
@@ -151,9 +158,9 @@ final class Translator
             return Maybe::all(
                 Name::maybe($node->nodeName),
                 self::attributes($node),
-                Children::of($this)(
+                $this->children(
                     Sequence::of(...\array_values(\iterator_to_array($node->childNodes)))
-                        ->keep(Instance::of(\DOMNode::class))
+                        ->keep(Instance::of(\DOMNode::class)),
                 ),
             )->map(match ($node->childNodes->length) {
                 0 => Element::selfClosing(...),
@@ -190,6 +197,29 @@ final class Translator
                     $attribute->name,
                     $attribute->value,
                 )->map($attributes),
+            );
+    }
+
+    /**
+     * @param Sequence<\DOMNode> $children
+     *
+     * @return Maybe<Sequence<Node|Element>>
+     */
+    private function children(Sequence $children): Maybe
+    {
+        /** @var Sequence<Node|Element> */
+        $translated = Sequence::of();
+
+        /**
+         * @psalm-suppress ImpureFunctionCall
+         * @psalm-suppress ImpureMethodCall
+         */
+        return $children
+            ->sink($translated)
+            ->maybe(
+                fn($translated, $child) => $this
+                    ->child($child)
+                    ->map($translated),
             );
     }
 }
