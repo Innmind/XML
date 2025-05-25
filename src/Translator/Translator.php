@@ -7,11 +7,16 @@ use Innmind\Xml\{
     Node,
     Element,
     Document,
-    Translator\NodeTranslator\DocumentTranslator,
+    Document\Type,
+    Document\Version,
+    Document\Encoding,
+    Translator\NodeTranslator\Visitor\Children,
 };
 use Innmind\Immutable\{
     Map,
     Maybe,
+    Sequence,
+    Predicate\Instance,
 };
 
 /**
@@ -23,7 +28,6 @@ final class Translator
      * @param Map<int, NodeTranslator> $translators
      */
     private function __construct(
-        private DocumentTranslator $document,
         private Map $translators,
     ) {
     }
@@ -33,7 +37,8 @@ final class Translator
      */
     public function __invoke(\DOMNode $node): Maybe
     {
-        return ($this->document)($node, $this)
+        return $this
+            ->buildDocument($node)
             ->otherwise(static fn() => Maybe::of(self::translateNode($node)))
             ->otherwise(
                 fn() => $this
@@ -51,7 +56,6 @@ final class Translator
     public static function of(Map $translators): self
     {
         return new self(
-            DocumentTranslator::of(),
             $translators,
         );
     }
@@ -62,8 +66,64 @@ final class Translator
     public static function default(): self
     {
         return new self(
-            DocumentTranslator::of(),
             NodeTranslators::defaults(),
+        );
+    }
+
+    /**
+     * @return Maybe<Document>
+     */
+    private function buildDocument(\DOMNode $node): Maybe
+    {
+        /** @psalm-suppress MixedArgumentTypeCoercion */
+        return Maybe::just($node)
+            ->keep(Instance::of(\DOMDocument::class))
+            ->flatMap(
+                fn(\DOMDocument $node) => Maybe::all(
+                    self::buildVersion($node),
+                    Children::of($this)(
+                        Sequence::of(...\array_values(\iterator_to_array($node->childNodes)))
+                            ->keep(Instance::of(\DOMNode::class))
+                            ->exclude(static fn($child) => $child->nodeType === \XML_DOCUMENT_TYPE_NODE),
+                    ),
+                )->map(static fn(Version $version, Sequence $children) => Document::of(
+                    $version,
+                    Maybe::of($node->doctype)->flatMap(self::buildDoctype(...)),
+                    Maybe::of($node->encoding)->flatMap(Encoding::maybe(...)),
+                    $children,
+                )),
+            );
+    }
+
+    /**
+     * @psalm-pure
+     * @psalm-suppress ImpurePropertyFetch
+     *
+     * @return Maybe<Version>
+     */
+    private static function buildVersion(\DOMDocument $document): Maybe
+    {
+        [$major, $minor] = \explode('.', $document->xmlVersion ?? '');
+
+        return Version::maybe(
+            (int) $major,
+            (int) $minor,
+        );
+    }
+
+    /**
+     * @psalm-pure
+     * @psalm-suppress ImpurePropertyFetch
+     *
+     * @return Maybe<Type>
+     */
+    private static function buildDoctype(\DOMDocumentType $type): Maybe
+    {
+        /** @psalm-suppress MixedArgument */
+        return Type::maybe(
+            $type->name,
+            $type->publicId,
+            $type->systemId,
         );
     }
 

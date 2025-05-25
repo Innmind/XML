@@ -4,16 +4,8 @@ declare(strict_types = 1);
 namespace Tests\Innmind\Xml\Translator\NodeTranslator;
 
 use Innmind\Xml\{
-    Translator\NodeTranslator\DocumentTranslator,
-    Translator\NodeTranslator,
     Translator\Translator,
     Document,
-    Element,
-    Element\Name,
-};
-use Innmind\Immutable\{
-    Map,
-    Maybe,
 };
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
@@ -29,45 +21,13 @@ class DocumentTranslatorTest extends TestCase
 XML
         );
 
-        $translate = DocumentTranslator::of();
-        $foo = Element::selfClosing(Name::of('foo'));
-        $node = $translate(
-            $document,
-            Translator::of(
-                Map::of([
-                    \XML_ELEMENT_NODE,
-                    new class($foo) implements NodeTranslator {
-                        private $foo;
-
-                        public function __construct(Element $foo)
-                        {
-                            $this->foo = $foo;
-                        }
-
-                        public function __invoke(\DOMNode $node, Translator $translate): Maybe
-                        {
-                            return Maybe::just($this->foo);
-                        }
-                    },
-                ]),
-            ),
-        )->match(
+        $translate = Translator::default();
+        $node = $translate($document)->match(
             static fn($node) => $node,
             static fn() => null,
         );
 
         $this->assertInstanceOf(Document::class, $node);
         $this->assertSame($xml, $node->toString());
-    }
-
-    public function testReturnNothingWhenInvalidNode()
-    {
-        $this->assertNull(DocumentTranslator::of()(
-            new \DOMNode,
-            Translator::of(Map::of()),
-        )->match(
-            static fn($node) => $node,
-            static fn() => null,
-        ));
     }
 }
