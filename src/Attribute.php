@@ -10,22 +10,13 @@ use Innmind\Immutable\Maybe;
  */
 final class Attribute
 {
-    /** @var non-empty-string */
-    private string $name;
-    private string $value;
-    private bool $renderEmptyValue;
-
     /**
      * @param non-empty-string $name
      */
     private function __construct(
-        string $name,
-        string $value = '',
-        bool $renderEmptyValue = false,
+        private string $name,
+        private string $value = '',
     ) {
-        $this->name = $name;
-        $this->value = $value;
-        $this->renderEmptyValue = $renderEmptyValue;
     }
 
     /**
@@ -52,16 +43,6 @@ final class Attribute
     }
 
     /**
-     * @psalm-pure
-     *
-     * @param non-empty-string $name
-     */
-    public static function empty(string $name): self
-    {
-        return new self($name, '', true);
-    }
-
-    /**
      * @return non-empty-string
      */
     public function name(): string
@@ -76,10 +57,6 @@ final class Attribute
 
     public function toString(): string
     {
-        return $this->name.(match ([$this->value, $this->renderEmptyValue]) {
-            ['', true] => '=""',
-            ['', false] => '',
-            default => \sprintf('="%s"', $this->value),
-        });
+        return $this->name.\sprintf('="%s"', $this->value);
     }
 }

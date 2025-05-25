@@ -26,6 +26,7 @@
 - `Innmind\Xml\Node\ProcessingInformation` is now internal, use `Innmind\Xml\Node::processingInformation()` instead
 - `Innmind\Xml\Node\Text` is now internal, use `Innmind\Xml\Node::text()` instead
 - `Innmind\Xml\Reader` is now a final class
+- `Innmind\Xml\Attribute` always render its value even if it's empty
 
 ### Removed
 
@@ -37,6 +38,7 @@
 - `Innmind\Xml\Node::prependChild()`
 - `Innmind\Xml\Node::appendChild()`
 - `Innmind\Xml\AsContent`
+- `Innmind\Xml\Attribute::empty()`
 
 ### Fixed
 
