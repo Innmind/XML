@@ -20,7 +20,7 @@ composer require innmind/xml
 
 ```php
 use Innmind\Xml\{
-    Reader\Reader,
+    Reader,
     Node,
 };
 use Innmind\Filesystem\File\Content;
@@ -29,7 +29,7 @@ use Innmind\Immutable\Maybe;
 $read = Reader::of();
 
 $tree = $read(
-    Content\Lines::ofContent('<root><foo some="attribute"/></root>')
+    Content::ofString('<root><foo some="attribute"/></root>')
 ); // Maybe<Node>
 ```
 

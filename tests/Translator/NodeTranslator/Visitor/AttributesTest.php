@@ -3,30 +3,19 @@ declare(strict_types = 1);
 
 namespace Tests\Innmind\Xml\Translator\NodeTranslator\Visitor;
 
-use Innmind\Xml\Translator\NodeTranslator\Visitor\Attributes;
+use Innmind\Xml\Translator;
 use Innmind\Immutable\Set;
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class AttributesTest extends TestCase
 {
-    public function testSimpleNode()
-    {
-        $attributes = Attributes::of()(new \DOMNode)->match(
-            static fn($attributes) => $attributes,
-            static fn() => null,
-        );
-
-        $this->assertInstanceOf(Set::class, $attributes);
-        $this->assertCount(0, $attributes);
-    }
-
     public function testNoAttributes()
     {
         $document = new \DOMDocument;
         $document->loadXML('<foo/>');
 
-        $attributes = Attributes::of()($document->childNodes->item(0))->match(
-            static fn($attributes) => $attributes,
+        $attributes = Translator::default()($document->childNodes->item(0))->match(
+            static fn($element) => $element->attributes()->values()->toSet(),
             static fn() => null,
         );
 
@@ -39,8 +28,8 @@ class AttributesTest extends TestCase
         $document = new \DOMDocument;
         $document->loadXML('<hr bar="baz" foobar=""/>');
 
-        $attributes = Attributes::of()($document->childNodes->item(0))->match(
-            static fn($attributes) => $attributes,
+        $attributes = Translator::default()($document->childNodes->item(0))->match(
+            static fn($element) => $element->attributes()->values()->toSet(),
             static fn() => null,
         );
 

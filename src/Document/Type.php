@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace Innmind\Xml\Node\Document;
+namespace Innmind\Xml\Document;
 
 use Innmind\Xml\Exception\DomainException;
 use Innmind\Immutable\Maybe;

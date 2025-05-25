@@ -4,24 +4,13 @@ declare(strict_types = 1);
 namespace Tests\Innmind\Xml\Translator\NodeTranslator;
 
 use Innmind\Xml\{
-    Translator\NodeTranslator\CommentTranslator,
-    Translator\NodeTranslator,
-    Translator\Translator,
-    Node\Comment,
+    Translator,
+    Node,
 };
-use Innmind\Immutable\Map;
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class CommentTranslatorTest extends TestCase
 {
-    public function testInterface()
-    {
-        $this->assertInstanceOf(
-            NodeTranslator::class,
-            CommentTranslator::of(),
-        );
-    }
-
     public function testTranslate()
     {
         $document = new \DOMDocument;
@@ -30,31 +19,19 @@ class CommentTranslatorTest extends TestCase
 XML
         );
 
-        $translate = CommentTranslator::of();
+        $translate = Translator::default();
         $node = $translate(
             $document
                 ->childNodes
                 ->item(0)
                 ->childNodes
                 ->item(0),
-            Translator::of(Map::of()),
         )->match(
             static fn($node) => $node,
             static fn() => null,
         );
 
-        $this->assertInstanceOf(Comment::class, $node);
+        $this->assertInstanceOf(Node::class, $node);
         $this->assertSame('foo', $node->content());
-    }
-
-    public function testReturnNothingWhenInvalidNode()
-    {
-        $this->assertNull(CommentTranslator::of()(
-            new \DOMNode,
-            Translator::of(Map::of()),
-        )->match(
-            static fn($node) => $node,
-            static fn() => null,
-        ));
     }
 }

@@ -3,13 +3,11 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Node;
 
-use Innmind\Xml\Node;
-use Innmind\Immutable\Sequence;
-
 /**
+ * @internal
  * @psalm-immutable
  */
-final class CharacterData implements Node
+final class CharacterData implements Implementation
 {
     private string $value;
 
@@ -24,42 +22,6 @@ final class CharacterData implements Node
     public static function of(string $data): self
     {
         return new self($data);
-    }
-
-    #[\Override]
-    public function children(): Sequence
-    {
-        return Sequence::of();
-    }
-
-    #[\Override]
-    public function filterChild(callable $filter): self
-    {
-        return $this;
-    }
-
-    #[\Override]
-    public function mapChild(callable $map): self
-    {
-        return $this;
-    }
-
-    /**
-     * This operation will do nothing
-     */
-    #[\Override]
-    public function prependChild(Node $child): Node
-    {
-        return $this;
-    }
-
-    /**
-     * This operation will do nothing
-     */
-    #[\Override]
-    public function appendChild(Node $child): Node
-    {
-        return $this;
     }
 
     #[\Override]

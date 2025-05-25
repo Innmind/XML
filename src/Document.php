@@ -1,14 +1,12 @@
 <?php
 declare(strict_types = 1);
 
-namespace Innmind\Xml\Node;
+namespace Innmind\Xml;
 
 use Innmind\Xml\{
-    Node,
-    Node\Document\Type,
-    Node\Document\Version,
-    Node\Document\Encoding,
-    AsContent,
+    Document\Type,
+    Document\Version,
+    Document\Encoding,
 };
 use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\{
@@ -20,31 +18,19 @@ use Innmind\Immutable\{
 /**
  * @psalm-immutable
  */
-final class Document implements Node, AsContent
+final class Document
 {
-    private Version $version;
-    /** @var Maybe<Type> */
-    private Maybe $type;
-    /** @var Maybe<Encoding> */
-    private Maybe $encoding;
-    /** @var Sequence<Node> */
-    private Sequence $children;
-
     /**
      * @param Maybe<Type> $type
      * @param Maybe<Encoding> $encoding
-     * @param Sequence<Node> $children
+     * @param Sequence<Node|Element> $children
      */
     private function __construct(
-        Version $version,
-        Maybe $type,
-        Maybe $encoding,
-        Sequence $children,
+        private Version $version,
+        private Maybe $type,
+        private Maybe $encoding,
+        private Sequence $children,
     ) {
-        $this->version = $version;
-        $this->type = $type;
-        $this->encoding = $encoding;
-        $this->children = $children;
     }
 
     /**
@@ -52,7 +38,7 @@ final class Document implements Node, AsContent
      *
      * @param Maybe<Type> $type
      * @param Maybe<Encoding> $encoding
-     * @param Sequence<Node> $children
+     * @param Sequence<Node|Element> $children
      */
     public static function of(
         Version $version,
@@ -76,13 +62,17 @@ final class Document implements Node, AsContent
         return $this->type;
     }
 
-    #[\Override]
+    /**
+     * @return Sequence<Node|Element>
+     */
     public function children(): Sequence
     {
         return $this->children;
     }
 
-    #[\Override]
+    /**
+     * @param callable(Node|Element): bool $filter
+     */
     public function filterChild(callable $filter): self
     {
         return new self(
@@ -93,7 +83,9 @@ final class Document implements Node, AsContent
         );
     }
 
-    #[\Override]
+    /**
+     * @param callable(Node|Element): (Node|Element) $map
+     */
     public function mapChild(callable $map): self
     {
         return new self(
@@ -104,8 +96,7 @@ final class Document implements Node, AsContent
         );
     }
 
-    #[\Override]
-    public function prependChild(Node $child): Node
+    public function prependChild(Node|Element $child): self
     {
         $document = clone $this;
         $document->children = $this->children->prepend(Sequence::of($child));
@@ -113,8 +104,7 @@ final class Document implements Node, AsContent
         return $document;
     }
 
-    #[\Override]
-    public function appendChild(Node $child): Node
+    public function appendChild(Node|Element $child): self
     {
         $document = clone $this;
         $document->children = ($this->children)($child);
@@ -130,17 +120,15 @@ final class Document implements Node, AsContent
         return $this->encoding;
     }
 
-    #[\Override]
     public function content(): string
     {
         $children = $this->children->map(
-            static fn(Node $child): string => $child->toString(),
+            static fn($child) => $child->toString(),
         );
 
         return Str::of('')->join($children)->toString();
     }
 
-    #[\Override]
     public function toString(): string
     {
         $string = $this->tag();
@@ -153,16 +141,12 @@ final class Document implements Node, AsContent
         return $string."\n".$this->content();
     }
 
-    #[\Override]
     public function asContent(): Content
     {
         return Content::ofLines(
             $this
                 ->children
-                ->flatMap(static fn($node) => match (true) {
-                    $node instanceof AsContent => $node->asContent()->lines(),
-                    default => Content::ofString($node->toString())->lines(),
-                })
+                ->flatMap(static fn($node) => $node->asContent()->lines())
                 ->prepend($this->type->match(
                     static fn($type) => Sequence::of(Content\Line::of(Str::of($type->toString()))),
                     static fn() => Sequence::of(),

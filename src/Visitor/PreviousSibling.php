@@ -3,7 +3,11 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Visitor;
 
-use Innmind\Xml\Node;
+use Innmind\Xml\{
+    Node,
+    Element,
+    Document,
+};
 use Innmind\Immutable\{
     Maybe,
     Sequence,
@@ -16,17 +20,17 @@ use Innmind\Immutable\{
  */
 final class PreviousSibling
 {
-    private Node $node;
+    private Node|Element $node;
 
-    private function __construct(Node $node)
+    private function __construct(Node|Element $node)
     {
         $this->node = $node;
     }
 
     /**
-     * @return Maybe<Node>
+     * @return Maybe<Node|Element>
      */
-    public function __invoke(Node $tree): Maybe
+    public function __invoke(Document|Node|Element $tree): Maybe
     {
         return ParentNode::of($this->node)($tree)
             ->toSequence()
@@ -44,13 +48,17 @@ final class PreviousSibling
             ->keep(Instance::of(Pair::class))
             ->find(fn($pair) => $pair->value() === $this->node)
             ->map(static fn($pair): mixed => $pair->key())
-            ->keep(Instance::of(Node::class));
+            ->keep(
+                Instance::of(Node::class)->or(
+                    Instance::of(Element::class),
+                ),
+            );
     }
 
     /**
      * @psalm-pure
      */
-    public static function of(Node $node): self
+    public static function of(Node|Element $node): self
     {
         return new self($node);
     }

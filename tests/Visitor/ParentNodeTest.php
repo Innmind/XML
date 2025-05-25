@@ -5,8 +5,9 @@ namespace Tests\Innmind\Xml\Visitor;
 
 use Innmind\Xml\{
     Visitor\ParentNode,
-    Reader\Reader,
-    Element\Element,
+    Reader,
+    Element,
+    Element\Name,
 };
 use Innmind\Filesystem\File\Content;
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
@@ -59,7 +60,7 @@ XML;
 
     public function testReturnNothingWhenNoParentFound()
     {
-        $this->assertNull(ParentNode::of(Element::of('foo'))(Element::of('bar'))->match(
+        $this->assertNull(ParentNode::of(Element::of(Name::of('foo')))(Element::of(Name::of('bar')))->match(
             static fn($node) => $node,
             static fn() => null,
         ));

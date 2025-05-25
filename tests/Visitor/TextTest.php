@@ -5,7 +5,7 @@ namespace Tests\Innmind\Xml\Visitor;
 
 use Innmind\Xml\{
     Visitor\Text,
-    Reader\Reader,
+    Reader,
 };
 use Innmind\Filesystem\File\Content;
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;

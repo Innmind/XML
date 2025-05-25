@@ -3,14 +3,12 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Node;
 
-use Innmind\Xml\Node;
-use Innmind\Immutable\Sequence;
-
 /**
+ * @internal
  * @psalm-immutable
  * @see http://xmlplease.com/xml/pi/
  */
-final class ProcessingInstruction implements Node
+final class ProcessingInstruction implements Implementation
 {
     private string $kind;
     private string $value;
@@ -27,42 +25,6 @@ final class ProcessingInstruction implements Node
     public static function of(string $kind, string $value): self
     {
         return new self($kind, $value);
-    }
-
-    #[\Override]
-    public function children(): Sequence
-    {
-        return Sequence::of();
-    }
-
-    #[\Override]
-    public function filterChild(callable $filter): self
-    {
-        return $this;
-    }
-
-    #[\Override]
-    public function mapChild(callable $map): self
-    {
-        return $this;
-    }
-
-    /**
-     * This operation will do nothing
-     */
-    #[\Override]
-    public function prependChild(Node $child): Node
-    {
-        return $this;
-    }
-
-    /**
-     * This operation will do nothing
-     */
-    #[\Override]
-    public function appendChild(Node $child): Node
-    {
-        return $this;
     }
 
     #[\Override]

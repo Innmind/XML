@@ -3,11 +3,7 @@ declare(strict_types = 1);
 
 namespace Tests\Innmind\Xml\Translator\NodeTranslator\Visitor;
 
-use Innmind\Xml\{
-    Translator\NodeTranslator\Visitor\Children,
-    Translator\Translator,
-    Translator\NodeTranslators,
-};
+use Innmind\Xml\Translator;
 use Innmind\Immutable\Sequence;
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
@@ -18,12 +14,10 @@ class ChildrenTest extends TestCase
         $document = new \DOMDocument;
         $document->loadXML('<root></root>');
 
-        $children = Children::of(
-            Translator::of(
-                NodeTranslators::defaults(),
-            ),
-        )($document->childNodes->item(0))->match(
-            static fn($children) => $children,
+        $children = Translator::default()(
+            $document->childNodes->item(0),
+        )->match(
+            static fn($element) => $element->children(),
             static fn() => null,
         );
 
@@ -36,12 +30,10 @@ class ChildrenTest extends TestCase
         $document = new \DOMDocument;
         $document->loadXML('<root><foo/><bar/></root>');
 
-        $children = Children::of(
-            Translator::of(
-                NodeTranslators::defaults(),
-            ),
-        )($document->childNodes->item(0))->match(
-            static fn($children) => $children,
+        $children = Translator::default()(
+            $document->childNodes->item(0),
+        )->match(
+            static fn($element) => $element->children(),
             static fn() => null,
         );
 

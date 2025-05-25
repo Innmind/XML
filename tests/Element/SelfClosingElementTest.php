@@ -4,10 +4,10 @@ declare(strict_types = 1);
 namespace Tests\Innmind\Xml\Element;
 
 use Innmind\Xml\{
-    Element\SelfClosingElement,
+    Element,
+    Element\Name,
     Node,
     Attribute,
-    Exception\DomainException,
 };
 use Innmind\Immutable\{
     Map,
@@ -24,39 +24,24 @@ class SelfClosingElementTest extends TestCase
 {
     use BlackBox;
 
-    public function testInterface()
-    {
-        $this->assertInstanceOf(
-            Node::class,
-            SelfClosingElement::of('foo'),
-        );
-    }
-
     public function testName()
     {
-        $node = SelfClosingElement::of('foo');
+        $node = Element::selfClosing(Name::of('foo'));
 
-        $this->assertSame('foo', $node->name());
-    }
-
-    public function testThrowWhenEmptyName()
-    {
-        $this->expectException(DomainException::class);
-
-        SelfClosingElement::of('');
+        $this->assertSame('foo', $node->name()->toString());
     }
 
     public function testDefaultAttributes()
     {
-        $node = SelfClosingElement::of('foo');
+        $node = Element::selfClosing(Name::of('foo'));
 
         $this->assertInstanceOf(Map::class, $node->attributes());
     }
 
     public function testAttribute()
     {
-        $node = SelfClosingElement::of(
-            'foo',
+        $node = Element::selfClosing(
+            Name::of('foo'),
             Set::of($expected = Attribute::of('foo')),
         );
 
@@ -68,8 +53,8 @@ class SelfClosingElementTest extends TestCase
 
     public function testRemoveAttribute()
     {
-        $node = SelfClosingElement::of(
-            'foo',
+        $node = Element::selfClosing(
+            Name::of('foo'),
             Set::of(
                 Attribute::of('foo'),
                 Attribute::of('bar'),
@@ -79,7 +64,7 @@ class SelfClosingElementTest extends TestCase
         $node2 = $node->removeAttribute('foo');
 
         $this->assertNotSame($node, $node2);
-        $this->assertInstanceOf(SelfClosingElement::class, $node2);
+        $this->assertInstanceOf(Element::class, $node2);
         $this->assertSame($node->name(), $node2->name());
         $this->assertTrue($node2->children()->empty());
         $this->assertNotSame($node->attributes(), $node2->attributes());
@@ -97,8 +82,8 @@ class SelfClosingElementTest extends TestCase
 
     public function testDoNothingWhenRemovingUnknownAttribute()
     {
-        $element = SelfClosingElement::of(
-            'foo',
+        $element = Element::selfClosing(
+            Name::of('foo'),
             Set::of(
                 Attribute::of('foo'),
                 Attribute::of('bar'),
@@ -110,8 +95,8 @@ class SelfClosingElementTest extends TestCase
 
     public function testReplaceAttribute()
     {
-        $node = SelfClosingElement::of(
-            'foo',
+        $node = Element::selfClosing(
+            Name::of('foo'),
             Set::of(
                 Attribute::of('foo'),
                 Attribute::of('bar'),
@@ -123,7 +108,7 @@ class SelfClosingElementTest extends TestCase
         );
 
         $this->assertNotSame($node, $node2);
-        $this->assertInstanceOf(SelfClosingElement::class, $node2);
+        $this->assertInstanceOf(Element::class, $node2);
         $this->assertSame($node->name(), $node2->name());
         $this->assertTrue($node2->children()->empty());
         $this->assertNotSame($node->attributes(), $node2->attributes());
@@ -148,8 +133,8 @@ class SelfClosingElementTest extends TestCase
 
     public function testAddAttribute()
     {
-        $node = SelfClosingElement::of(
-            'foo',
+        $node = Element::selfClosing(
+            Name::of('foo'),
             Set::of(
                 Attribute::of('foo'),
                 Attribute::of('bar'),
@@ -161,7 +146,7 @@ class SelfClosingElementTest extends TestCase
         );
 
         $this->assertNotSame($node, $node2);
-        $this->assertInstanceOf(SelfClosingElement::class, $node2);
+        $this->assertInstanceOf(Element::class, $node2);
         $this->assertSame($node->name(), $node2->name());
         $this->assertTrue($node2->children()->empty());
         $this->assertNotSame($node->attributes(), $node2->attributes());
@@ -190,7 +175,7 @@ class SelfClosingElementTest extends TestCase
 
     public function testChildren()
     {
-        $node = SelfClosingElement::of('foo');
+        $node = Element::selfClosing(Name::of('foo'));
 
         $this->assertTrue(
             $node
@@ -201,30 +186,30 @@ class SelfClosingElementTest extends TestCase
 
     public function testHasChildren()
     {
-        $node = SelfClosingElement::of('foo');
+        $node = Element::selfClosing(Name::of('foo'));
         $this->assertTrue($node->children()->empty());
     }
 
     public function testDoNothingWhenPrependingChild()
     {
-        $node = SelfClosingElement::of('foo');
+        $node = Element::selfClosing(Name::of('foo'));
 
         $this->assertSame(
             $node,
             $node->prependChild(
-                Node\Text::of(''),
+                Node::text(''),
             ),
         );
     }
 
     public function testDoNothingWhenAppendingChild()
     {
-        $node = SelfClosingElement::of('foo');
+        $node = Element::selfClosing(Name::of('foo'));
 
         $this->assertSame(
             $node,
             $node->appendChild(
-                Node\Text::of(''),
+                Node::text(''),
             ),
         );
     }
@@ -233,7 +218,7 @@ class SelfClosingElementTest extends TestCase
     {
         $this->assertSame(
             '',
-            SelfClosingElement::of('foo')->content(),
+            Element::selfClosing(Name::of('foo'))->content(),
         );
     }
 
@@ -241,12 +226,12 @@ class SelfClosingElementTest extends TestCase
     {
         $this->assertSame(
             '<foo/>',
-            SelfClosingElement::of('foo')->toString(),
+            Element::selfClosing(Name::of('foo'))->toString(),
         );
         $this->assertSame(
             '<foo bar="baz" baz="foo"/>',
-            SelfClosingElement::of(
-                'foo',
+            Element::selfClosing(
+                Name::of('foo'),
                 Set::of(
                     Attribute::of('bar', 'baz'),
                     Attribute::of('baz', 'foo'),
@@ -261,10 +246,11 @@ class SelfClosingElementTest extends TestCase
             ->forAll(
                 DataSet::strings()
                     ->madeOf(DataSet::strings()->unicode()->char())
-                    ->between(1, 255),
+                    ->between(1, 255)
+                    ->map(Name::of(...)),
             )
             ->prove(function($name) {
-                $element = SelfClosingElement::of($name);
+                $element = Element::selfClosing($name);
 
                 $this->assertSame(
                     $element,
@@ -279,10 +265,11 @@ class SelfClosingElementTest extends TestCase
             ->forAll(
                 DataSet::strings()
                     ->madeOf(DataSet::strings()->unicode()->char())
-                    ->between(1, 255),
+                    ->between(1, 255)
+                    ->map(Name::of(...)),
             )
             ->prove(function($name) {
-                $element = SelfClosingElement::of($name);
+                $element = Element::selfClosing($name);
 
                 $this->assertSame(
                     $element,

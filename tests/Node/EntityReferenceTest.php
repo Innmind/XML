@@ -3,66 +3,24 @@ declare(strict_types = 1);
 
 namespace Tests\Innmind\Xml\Node;
 
-use Innmind\Xml\{
-    Node\EntityReference,
-    Node,
-};
-use Innmind\Immutable\Sequence;
-use Innmind\BlackBox\{
-    PHPUnit\BlackBox,
-    PHPUnit\Framework\TestCase,
-    Set,
-};
+use Innmind\Xml\Node;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class EntityReferenceTest extends TestCase
 {
-    use BlackBox;
-
     public function testInterface()
     {
         $this->assertInstanceOf(
             Node::class,
-            EntityReference::of('foo'),
+            Node::entityReference('foo'),
         );
-    }
-
-    public function testChildren()
-    {
-        $node = EntityReference::of('foo');
-
-        $this->assertInstanceOf(Sequence::class, $node->children());
-        $this->assertCount(0, $node->children());
     }
 
     public function testContent()
     {
         $this->assertSame(
             ' foo ',
-            EntityReference::of(' foo ')->content(),
-        );
-    }
-
-    public function testDoNothingWhenPrependingChild()
-    {
-        $node = EntityReference::of('foo');
-
-        $this->assertSame(
-            $node,
-            $node->prependChild(
-                Node\Text::of(''),
-            ),
-        );
-    }
-
-    public function testDoNothingWhenAppendingChild()
-    {
-        $node = EntityReference::of('foo');
-
-        $this->assertSame(
-            $node,
-            $node->appendChild(
-                Node\Text::of(''),
-            ),
+            Node::entityReference(' foo ')->content(),
         );
     }
 
@@ -70,35 +28,7 @@ class EntityReferenceTest extends TestCase
     {
         $this->assertSame(
             '&foo;',
-            EntityReference::of('foo')->toString(),
+            Node::entityReference('foo')->toString(),
         );
-    }
-
-    public function testFilterChild(): BlackBox\Proof
-    {
-        return $this
-            ->forAll(Set::strings()->unicode())
-            ->prove(function($data) {
-                $reference = EntityReference::of($data);
-
-                $this->assertSame(
-                    $reference,
-                    $reference->filterChild(static fn() => true),
-                );
-            });
-    }
-
-    public function testMapChild(): BlackBox\Proof
-    {
-        return $this
-            ->forAll(Set::strings()->unicode())
-            ->prove(function($data) {
-                $reference = EntityReference::of($data);
-
-                $this->assertSame(
-                    $reference,
-                    $reference->mapChild(static fn($child) => $child),
-                );
-            });
     }
 }

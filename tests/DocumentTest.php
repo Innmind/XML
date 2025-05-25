@@ -1,17 +1,16 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\Xml\Node;
+namespace Tests\Innmind\Xml;
 
 use Innmind\Xml\{
-    Node\Document,
-    Node\Document\Version,
-    Node\Document\Type,
-    Node\Document\Encoding,
+    Document,
+    Document\Version,
+    Document\Type,
+    Document\Encoding,
+    Element,
+    Element\Name,
     Node,
-    Element\Element,
-    Element\SelfClosingElement,
-    AsContent,
 };
 use Innmind\Immutable\{
     Sequence,
@@ -26,18 +25,6 @@ use Innmind\BlackBox\{
 class DocumentTest extends TestCase
 {
     use BlackBox;
-
-    public function testInterface()
-    {
-        $this->assertInstanceOf(
-            Node::class,
-            Document::of(Version::of(1), Maybe::nothing(), Maybe::nothing()),
-        );
-        $this->assertInstanceOf(
-            AsContent::class,
-            Document::of(Version::of(1), Maybe::nothing(), Maybe::nothing()),
-        );
-    }
 
     public function testVersion()
     {
@@ -111,7 +98,7 @@ class DocumentTest extends TestCase
                 Version::of(1),
                 Maybe::nothing(),
                 Maybe::nothing(),
-                Sequence::of(Element::of('foo')),
+                Sequence::of(Element::of(Name::of('foo'))),
             )->content(),
         );
     }
@@ -144,7 +131,7 @@ class DocumentTest extends TestCase
                 Version::of(2, 1),
                 Maybe::just(Type::of('html')),
                 Maybe::just(Encoding::of('utf-8')),
-                Sequence::of(SelfClosingElement::of('foo')),
+                Sequence::of(Element::selfClosing(Name::of('foo'))),
             )->toString(),
         );
     }
@@ -156,14 +143,14 @@ class DocumentTest extends TestCase
             Maybe::just(Type::of('html')),
             Maybe::just(Encoding::of('utf-8')),
             Sequence::of(
-                Element::of('foo'),
-                Element::of('bar'),
-                Element::of('baz'),
+                Element::of(Name::of('foo')),
+                Element::of(Name::of('bar')),
+                Element::of(Name::of('baz')),
             ),
         );
 
         $document2 = $document->prependChild(
-            $node = Node\Text::of(''),
+            $node = Node::text(''),
         );
 
         $this->assertNotSame($document, $document2);
@@ -220,14 +207,14 @@ class DocumentTest extends TestCase
             Maybe::just(Type::of('html')),
             Maybe::just(Encoding::of('utf-8')),
             Sequence::of(
-                Element::of('foo'),
-                Element::of('bar'),
-                Element::of('baz'),
+                Element::of(Name::of('foo')),
+                Element::of(Name::of('bar')),
+                Element::of(Name::of('baz')),
             ),
         );
 
         $document2 = $document->appendChild(
-            $node = Node\Text::of(''),
+            $node = Node::text(''),
         );
 
         $this->assertNotSame($document, $document2);
@@ -269,6 +256,7 @@ class DocumentTest extends TestCase
                     Set::strings()
                         ->madeOf(Set::strings()->unicode()->char())
                         ->between(1, 10)
+                        ->map(Name::of(...))
                         ->map(Element::of(...)),
                 )->between(0, 10),
             )
@@ -300,11 +288,13 @@ class DocumentTest extends TestCase
                     Set::strings()
                         ->madeOf(Set::strings()->unicode()->char())
                         ->between(1, 10)
+                        ->map(Name::of(...))
                         ->map(Element::of(...)),
                 )->between(1, 10),
                 Set::strings()
                     ->madeOf(Set::strings()->unicode()->char())
                     ->between(1, 10)
+                    ->map(Name::of(...))
                     ->map(Element::of(...)),
             )
             ->prove(function($major, $minor, $children, $replacement) {
@@ -332,12 +322,12 @@ class DocumentTest extends TestCase
             Maybe::just(Encoding::of('utf-8')),
             Sequence::of(
                 Element::of(
-                    'root',
+                    Name::of('root'),
                     null,
                     Sequence::of(
-                        Element::of('foo'),
-                        Element::of('bar'),
-                        Element::of('baz'),
+                        Element::of(Name::of('foo')),
+                        Element::of(Name::of('bar')),
+                        Element::of(Name::of('baz')),
                     ),
                 ),
             ),

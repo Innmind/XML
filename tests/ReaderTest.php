@@ -1,12 +1,11 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\Xml\Reader;
+namespace Tests\Innmind\Xml;
 
 use Innmind\Xml\{
-    Reader\Reader,
-    Reader as ReaderInterface,
-    Node\Document,
+    Reader,
+    Document,
 };
 use Innmind\Filesystem\{
     Adapter\Filesystem,
@@ -25,14 +24,6 @@ class ReaderTest extends TestCase
     public function setUp(): void
     {
         $this->read = Reader::of();
-    }
-
-    public function testInterface()
-    {
-        $this->assertInstanceOf(
-            ReaderInterface::class,
-            $this->read,
-        );
     }
 
     public function testUseDefaultTranslatorWhenNoneProvided()
