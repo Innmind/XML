@@ -11,12 +11,13 @@ use Innmind\Xml\{
     Document\Type,
     Document\Version,
     Document\Encoding,
-    Translator\NodeTranslator\Visitor\Attributes,
+    Attribute,
     Translator\NodeTranslator\Visitor\Children,
 };
 use Innmind\Immutable\{
     Maybe,
     Sequence,
+    Set,
     Predicate\Instance,
 };
 
@@ -149,7 +150,7 @@ final class Translator
              */
             return Maybe::all(
                 Name::maybe($node->nodeName),
-                Attributes::of()($node),
+                self::attributes($node),
                 Children::of($this)(
                     Sequence::of(...\array_values(\iterator_to_array($node->childNodes)))
                         ->keep(Instance::of(\DOMNode::class))
@@ -162,5 +163,33 @@ final class Translator
 
         /** @var Maybe<Element> */
         return Maybe::nothing();
+    }
+
+    /**
+     * @return Maybe<Set<Attribute>>
+     */
+    private static function attributes(\DOMElement $element): Maybe
+    {
+        /** @var Set<Attribute> */
+        $attributes = Set::of();
+        $attrs = [];
+
+        if ($element->attributes instanceof \DOMNamedNodeMap) {
+            /**
+             * @psalm-suppress ImpureFunctionCall
+             * @psalm-suppress ImpureMethodCall
+             */
+            $attrs = \iterator_to_array($element->attributes);
+        }
+
+        return Sequence::of(...\array_values($attrs))
+            ->keep(Instance::of(\DOMAttr::class))
+            ->sink($attributes)
+            ->maybe(
+                static fn($attributes, $attribute) => Attribute::maybe(
+                    $attribute->name,
+                    $attribute->value,
+                )->map($attributes),
+            );
     }
 }
