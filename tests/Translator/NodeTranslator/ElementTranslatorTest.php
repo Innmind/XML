@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace Tests\Innmind\Xml\Translator\NodeTranslator;
 
 use Innmind\Xml\{
-    Translator\Translator,
+    Translator,
     Element,
 };
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;

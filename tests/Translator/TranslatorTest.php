@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace Tests\Innmind\Xml\Translator;
 
 use Innmind\Xml\{
-    Translator\Translator,
+    Translator,
     Element,
     Node,
     Document,

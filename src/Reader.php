@@ -3,7 +3,6 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml;
 
-use Innmind\Xml\Translator\Translator;
 use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\Maybe;
 

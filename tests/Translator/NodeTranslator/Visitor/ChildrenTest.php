@@ -3,7 +3,7 @@ declare(strict_types = 1);
 
 namespace Tests\Innmind\Xml\Translator\NodeTranslator\Visitor;
 
-use Innmind\Xml\Translator\Translator;
+use Innmind\Xml\Translator;
 use Innmind\Immutable\Sequence;
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 

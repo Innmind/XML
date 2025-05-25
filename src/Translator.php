@@ -1,17 +1,13 @@
 <?php
 declare(strict_types = 1);
 
-namespace Innmind\Xml\Translator;
+namespace Innmind\Xml;
 
 use Innmind\Xml\{
-    Node,
-    Element,
     Element\Name,
-    Document,
     Document\Type,
     Document\Version,
     Document\Encoding,
-    Attribute,
 };
 use Innmind\Immutable\{
     Maybe,
