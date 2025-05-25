@@ -36,10 +36,10 @@ final class ProcessingInstruction implements Implementation
     #[\Override]
     public function toString(): string
     {
-        return \sprintf(
-            '<?%s %s?>',
-            $this->kind,
-            $this->value,
-        );
+        $writer = new \XMLWriter;
+        $writer->openMemory();
+        $writer->writePi($this->kind, $this->value);
+
+        return $writer->outputMemory();
     }
 }
