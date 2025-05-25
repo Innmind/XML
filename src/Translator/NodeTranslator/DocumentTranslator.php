@@ -9,8 +9,6 @@ use Innmind\Xml\{
     Document\Type,
     Document\Version,
     Document\Encoding,
-    Element,
-    Node,
 };
 use Innmind\Immutable\{
     Sequence,
@@ -41,7 +39,11 @@ final class DocumentTranslator
             ->flatMap(
                 fn(\DOMDocument $node) => Maybe::all(
                     $this->buildVersion($node),
-                    $this->buildChildren($node->childNodes, $translate),
+                    Visitor\Children::of($translate)(
+                        Sequence::of(...\array_values(\iterator_to_array($node->childNodes)))
+                            ->keep(Instance::of(\DOMNode::class))
+                            ->exclude(static fn($child) => $child->nodeType === \XML_DOCUMENT_TYPE_NODE),
+                    ),
                 )->map(fn(Version $version, Sequence $children) => Document::of(
                     $version,
                     Maybe::of($node->doctype)->flatMap($this->buildDoctype(...)),
@@ -83,34 +85,5 @@ final class DocumentTranslator
             $type->publicId,
             $type->systemId,
         );
-    }
-
-    /**
-     * @return Maybe<Sequence<Node|Element>>
-     */
-    private function buildChildren(
-        \DOMNodeList $nodes,
-        Translator $translate,
-    ): Maybe {
-        /** @var Sequence<Node|Element> */
-        $translated = Sequence::of();
-
-        /**
-         * @psalm-suppress ImpureFunctionCall
-         * @psalm-suppress ImpureMethodCall
-         */
-        return Sequence::of(...\array_values(\iterator_to_array($nodes)))
-            ->keep(Instance::of(\DOMNode::class))
-            ->exclude(static fn($child) => $child->nodeType === \XML_DOCUMENT_TYPE_NODE)
-            ->sink($translated)
-            ->maybe(
-                static fn($translated, $child) => $translate($child)
-                    ->keep(
-                        Instance::of(Node::class)->or(
-                            Instance::of(Element::class),
-                        ),
-                    )
-                    ->map($translated),
-            );
     }
 }

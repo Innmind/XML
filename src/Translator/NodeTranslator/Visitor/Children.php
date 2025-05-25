@@ -27,9 +27,11 @@ final class Children
     }
 
     /**
+     * @param Sequence<\DOMNode> $children
+     *
      * @return Maybe<Sequence<Node|Element>>
      */
-    public function __invoke(\DOMNode $node): Maybe
+    public function __invoke(Sequence $children): Maybe
     {
         /** @var Sequence<Node|Element> */
         $translated = Sequence::of();
@@ -38,8 +40,7 @@ final class Children
          * @psalm-suppress ImpureFunctionCall
          * @psalm-suppress ImpureMethodCall
          */
-        return Sequence::of(...\array_values(\iterator_to_array($node->childNodes)))
-            ->keep(Instance::of(\DOMNode::class))
+        return $children
             ->sink($translated)
             ->maybe(
                 fn($translated, $child) => ($this->translate)($child)

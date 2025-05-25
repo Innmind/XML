@@ -22,7 +22,7 @@ class ChildrenTest extends TestCase
             Translator::of(
                 NodeTranslators::defaults(),
             ),
-        )($document->childNodes->item(0))->match(
+        )(Sequence::of(...$document->childNodes->item(0)->childNodes))->match(
             static fn($children) => $children,
             static fn() => null,
         );
@@ -40,7 +40,7 @@ class ChildrenTest extends TestCase
             Translator::of(
                 NodeTranslators::defaults(),
             ),
-        )($document->childNodes->item(0))->match(
+        )(Sequence::of(...$document->childNodes->item(0)->childNodes))->match(
             static fn($children) => $children,
             static fn() => null,
         );

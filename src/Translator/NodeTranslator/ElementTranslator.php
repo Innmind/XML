@@ -12,7 +12,11 @@ use Innmind\Xml\{
     Element,
     Element\Name,
 };
-use Innmind\Immutable\Maybe;
+use Innmind\Immutable\{
+    Maybe,
+    Sequence,
+    Predicate\Instance,
+};
 
 /**
  * @psalm-immutable
@@ -47,7 +51,10 @@ final class ElementTranslator implements NodeTranslator
                 static fn($node) => Maybe::all(
                     Name::maybe($node->nodeName),
                     Attributes::of()($node),
-                    Children::of($translate)($node),
+                    Children::of($translate)(
+                        Sequence::of(...\array_values(\iterator_to_array($node->childNodes)))
+                            ->keep(Instance::of(\DOMNode::class))
+                    ),
                 )->map(Element::of(...)),
             ));
     }
