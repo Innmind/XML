@@ -45,7 +45,7 @@ final class DocumentTranslator
                 )->map(fn(Version $version, Sequence $children) => Document::of(
                     $version,
                     Maybe::of($node->doctype)->flatMap($this->buildDoctype(...)),
-                    Maybe::of($node->encoding)->flatMap($this->buildEncoding(...)),
+                    Maybe::of($node->encoding)->flatMap(Encoding::maybe(...)),
                     $children,
                 )),
             );
@@ -116,13 +116,5 @@ final class DocumentTranslator
         }
 
         return $children;
-    }
-
-    /**
-     * @return Maybe<Encoding>
-     */
-    private function buildEncoding(string $encoding): Maybe
-    {
-        return Encoding::maybe($encoding);
     }
 }
