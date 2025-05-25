@@ -7,6 +7,8 @@ use Innmind\Xml\Attribute;
 use Innmind\Immutable\{
     Set,
     Maybe,
+    Sequence,
+    Predicate\Instance,
 };
 
 /**
@@ -23,33 +25,32 @@ final class Attributes
      */
     public function __invoke(\DOMNode $node): Maybe
     {
-        /** @var Maybe<Set<Attribute>> */
-        $attributes = Maybe::just(Set::of());
+        /** @var Set<Attribute> */
+        $attributes = Set::of();
 
         if (!$node instanceof \DOMElement) {
-            return $attributes;
+            return Maybe::just($attributes);
         }
 
-        /**
-         * @psalm-suppress MixedArgument
-         * @psalm-suppress ImpureMethodCall
-         * @var string $name
-         * @var \DOMAttr $attribute
-         */
-        foreach ($node->attributes ?? [] as $name => $attribute) {
+        $attrs = [];
+
+        if ($node->attributes instanceof \DOMNamedNodeMap) {
             /**
-             * @psalm-suppress MixedArgument
-             * @psalm-suppress MixedPropertyFetch
-             * @psalm-suppress MixedArgumentTypeCoercion
+             * @psalm-suppress ImpureFunctionCall
+             * @psalm-suppress ImpureMethodCall
              */
-            $attributes = $attributes->flatMap(
-                static fn($attributes) => Attribute::maybe($name, $attribute->value)->map(
-                    static fn($attribute) => ($attributes)($attribute),
-                ),
-            );
+            $attrs = \iterator_to_array($node->attributes);
         }
 
-        return $attributes;
+        return Sequence::of(...\array_values($attrs))
+            ->keep(Instance::of(\DOMAttr::class))
+            ->sink($attributes)
+            ->maybe(
+                static fn($attributes, $attribute) => Attribute::maybe(
+                    $attribute->name,
+                    $attribute->value,
+                )->map($attributes),
+            );
     }
 
     /**
