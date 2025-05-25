@@ -157,16 +157,16 @@ final class Document
 
     private function tag(): string
     {
-        return \sprintf(
-            '<?xml version="%s"%s?>',
+        $writer = new \XMLWriter;
+        $writer->openMemory();
+        $writer->startDocument(
             $this->version->toString(),
-            $this
-                ->encoding
-                ->map(static fn($encoding) => ' encoding="'.$encoding->toString().'"')
-                ->match(
-                    static fn($encoding) => $encoding,
-                    static fn() => '',
-                ),
+            $this->encoding->match(
+                static fn($encoding) => $encoding->toString(),
+                static fn() => null,
+            ),
         );
+
+        return \trim($writer->outputMemory(), "\n");
     }
 }
