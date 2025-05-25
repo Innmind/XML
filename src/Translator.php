@@ -167,7 +167,9 @@ final class Translator
                 )->map(static fn(Version $version, Sequence $children) => Document::of(
                     $version,
                     Maybe::of($document->doctype)->flatMap(self::buildDoctype(...)),
-                    Maybe::of($document->encoding)->flatMap(Encoding::maybe(...)),
+                    Maybe::of(
+                        $document->encoding ?? $document->xmlEncoding,
+                    )->flatMap(Encoding::maybe(...)),
                     $children,
                 )),
             );
