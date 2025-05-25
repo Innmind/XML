@@ -69,20 +69,33 @@ final class Translator
 
     /**
      * @psalm-pure
+     * @psalm-suppress ImpurePropertyFetch
      */
     private static function translateNode(\DOMNode $node): ?Node
     {
-        /** @psalm-suppress ImpurePropertyFetch */
-        return match ($node->nodeType) {
-            \XML_COMMENT_NODE => Node::comment($node->data),
-            \XML_TEXT_NODE => Node::text($node->data),
-            \XML_CDATA_SECTION_NODE => Node::characterData($node->data),
-            \XML_ENTITY_REF_NODE => Node::entityReference($node->nodeName),
-            \XML_PI_NODE => Node::processingInstruction(
+        if ($node->nodeType === \XML_COMMENT_NODE && $node instanceof \DOMComment) {
+            return Node::comment($node->data);
+        }
+
+        if ($node->nodeType === \XML_TEXT_NODE && $node instanceof \DOMText) {
+            return Node::text($node->data);
+        }
+
+        if ($node->nodeType === \XML_CDATA_SECTION_NODE && $node instanceof \DOMCharacterData) {
+            return Node::characterData($node->data);
+        }
+
+        if ($node->nodeType === \XML_ENTITY_REF_NODE && $node instanceof \DOMEntityReference) {
+            return Node::entityReference($node->nodeName);
+        }
+
+        if ($node->nodeType === \XML_PI_NODE && $node instanceof \DOMProcessingInstruction) {
+            return Node::processingInstruction(
                 $node->nodeName,
                 $node->data,
-            ),
-            default => null,
-        };
+            );
+        }
+
+        return null;
     }
 }
