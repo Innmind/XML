@@ -48,8 +48,49 @@ final class Translator
      */
     private function child(\DOMNode $node): Maybe
     {
-        return Maybe::of(self::translateNode($node))
-            ->otherwise(fn() => $this->translateElement($node));
+        if ($node->nodeType === \XML_COMMENT_NODE && $node instanceof \DOMComment) {
+            return Maybe::just(Node::comment($node->data));
+        }
+
+        if ($node->nodeType === \XML_TEXT_NODE && $node instanceof \DOMText) {
+            return Maybe::just(Node::text($node->data));
+        }
+
+        if ($node->nodeType === \XML_CDATA_SECTION_NODE && $node instanceof \DOMCharacterData) {
+            return Maybe::just(Node::characterData($node->data));
+        }
+
+        if ($node->nodeType === \XML_ENTITY_REF_NODE && $node instanceof \DOMEntityReference) {
+            return Maybe::just(Node::entityReference($node->nodeName));
+        }
+
+        if ($node->nodeType === \XML_PI_NODE && $node instanceof \DOMProcessingInstruction) {
+            return Maybe::just(Node::processingInstruction(
+                $node->nodeName,
+                $node->data,
+            ));
+        }
+
+        if ($node->nodeType === \XML_ELEMENT_NODE && $node instanceof \DOMElement) {
+            /**
+             * @psalm-suppress ImpureFunctionCall
+             * @psalm-suppress ImpureMethodCall
+             */
+            return Maybe::all(
+                Name::maybe($node->nodeName),
+                self::attributes($node),
+                $this->children(
+                    Sequence::of(...\array_values(\iterator_to_array($node->childNodes)))
+                        ->keep(Instance::of(\DOMNode::class)),
+                ),
+            )->map(match ($node->childNodes->length) {
+                0 => Element::selfClosing(...),
+                default => Element::of(...),
+            });
+        }
+
+        /** @var Maybe<Node|Element> */
+        return Maybe::nothing();
     }
 
     /**
@@ -107,65 +148,6 @@ final class Translator
             $type->publicId,
             $type->systemId,
         );
-    }
-
-    /**
-     * @psalm-pure
-     * @psalm-suppress ImpurePropertyFetch
-     */
-    private static function translateNode(\DOMNode $node): ?Node
-    {
-        if ($node->nodeType === \XML_COMMENT_NODE && $node instanceof \DOMComment) {
-            return Node::comment($node->data);
-        }
-
-        if ($node->nodeType === \XML_TEXT_NODE && $node instanceof \DOMText) {
-            return Node::text($node->data);
-        }
-
-        if ($node->nodeType === \XML_CDATA_SECTION_NODE && $node instanceof \DOMCharacterData) {
-            return Node::characterData($node->data);
-        }
-
-        if ($node->nodeType === \XML_ENTITY_REF_NODE && $node instanceof \DOMEntityReference) {
-            return Node::entityReference($node->nodeName);
-        }
-
-        if ($node->nodeType === \XML_PI_NODE && $node instanceof \DOMProcessingInstruction) {
-            return Node::processingInstruction(
-                $node->nodeName,
-                $node->data,
-            );
-        }
-
-        return null;
-    }
-
-    /**
-     * @return Maybe<Element>
-     */
-    private function translateElement(\DOMNode $node): Maybe
-    {
-        if ($node->nodeType === \XML_ELEMENT_NODE && $node instanceof \DOMElement) {
-            /**
-             * @psalm-suppress ImpureFunctionCall
-             * @psalm-suppress ImpureMethodCall
-             */
-            return Maybe::all(
-                Name::maybe($node->nodeName),
-                self::attributes($node),
-                $this->children(
-                    Sequence::of(...\array_values(\iterator_to_array($node->childNodes)))
-                        ->keep(Instance::of(\DOMNode::class)),
-                ),
-            )->map(match ($node->childNodes->length) {
-                0 => Element::selfClosing(...),
-                default => Element::of(...),
-            });
-        }
-
-        /** @var Maybe<Element> */
-        return Maybe::nothing();
     }
 
     /**
