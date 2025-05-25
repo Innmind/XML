@@ -92,29 +92,25 @@ final class DocumentTranslator
         \DOMNodeList $nodes,
         Translator $translate,
     ): Maybe {
-        /** @var Maybe<Sequence<Node|Element>> */
-        $children = Maybe::just(Sequence::of());
+        /** @var Sequence<Node|Element> */
+        $translated = Sequence::of();
 
         /**
+         * @psalm-suppress ImpureFunctionCall
          * @psalm-suppress ImpureMethodCall
-         * @var \DOMNode $child
          */
-        foreach ($nodes as $child) {
-            if ($child->nodeType === \XML_DOCUMENT_TYPE_NODE) {
-                continue;
-            }
-
-            $children = $children->flatMap(
-                static fn($children) => $translate($child)
+        return Sequence::of(...\array_values(\iterator_to_array($nodes)))
+            ->keep(Instance::of(\DOMNode::class))
+            ->exclude(static fn($child) => $child->nodeType === \XML_DOCUMENT_TYPE_NODE)
+            ->sink($translated)
+            ->maybe(
+                static fn($translated, $child) => $translate($child)
                     ->keep(
                         Instance::of(Node::class)->or(
                             Instance::of(Element::class),
                         ),
                     )
-                    ->map($children),
+                    ->map($translated),
             );
-        }
-
-        return $children;
     }
 }

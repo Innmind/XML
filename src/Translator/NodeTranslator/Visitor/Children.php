@@ -31,26 +31,25 @@ final class Children
      */
     public function __invoke(\DOMNode $node): Maybe
     {
-        /** @var Maybe<Sequence<Node|Element>> */
-        $children = Maybe::just(Sequence::of());
+        /** @var Sequence<Node|Element> */
+        $translated = Sequence::of();
 
         /**
+         * @psalm-suppress ImpureFunctionCall
          * @psalm-suppress ImpureMethodCall
-         * @var \DOMNode $child
          */
-        foreach ($node->childNodes as $child) {
-            $children = $children->flatMap(
-                fn($children) => ($this->translate)($child)
+        return Sequence::of(...\array_values(\iterator_to_array($node->childNodes)))
+            ->keep(Instance::of(\DOMNode::class))
+            ->sink($translated)
+            ->maybe(
+                fn($translated, $child) => ($this->translate)($child)
                     ->keep(
                         Instance::of(Node::class)->or(
                             Instance::of(Element::class),
                         ),
                     )
-                    ->map($children),
+                    ->map($translated),
             );
-        }
-
-        return $children;
     }
 
     /**
