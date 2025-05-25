@@ -48,6 +48,9 @@ final class Translator
     /**
      * @psalm-suppress UndefinedClass Since the package still supports PHP 8.2
      * @psalm-suppress TypeDoesNotContainType
+     * @psalm-suppress MixedArgument
+     * @psalm-suppress MixedMethodCall
+     * @psalm-suppress MixedPropertyFetch
      *
      * @return Maybe<Node|Element>
      */
@@ -140,6 +143,9 @@ final class Translator
 
     /**
      * @psalm-suppress UndefinedClass Since the package still supports PHP 8.2
+     * @psalm-suppress MixedArgument
+     * @psalm-suppress MixedMethodCall
+     * @psalm-suppress UndefinedPropertyFetch
      *
      * @return Maybe<Document>
      */
@@ -212,6 +218,7 @@ final class Translator
     /**
      * @psalm-suppress UndefinedClass Since the package still supports PHP 8.2
      * @psalm-suppress TypeDoesNotContainType
+     * @psalm-suppress MixedArgument
      *
      * @return Maybe<Set<Attribute>>
      */
