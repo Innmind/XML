@@ -120,15 +120,6 @@ final class Document
         return $this->encoding;
     }
 
-    public function content(): string
-    {
-        $children = $this->children->map(
-            static fn($child) => $child->toString(),
-        );
-
-        return Str::of('')->join($children)->toString();
-    }
-
     public function asContent(Format $format = Format::pretty): Content
     {
         $writer = new \XMLWriter;

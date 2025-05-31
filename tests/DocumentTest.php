@@ -83,27 +83,6 @@ class DocumentTest extends TestCase
         ));
     }
 
-    public function testContentWithoutChildren()
-    {
-        $this->assertSame(
-            '',
-            Document::of(Version::of(1), Maybe::nothing(), Maybe::nothing())->content(),
-        );
-    }
-
-    public function testContentWithChildren()
-    {
-        $this->assertSame(
-            '<foo></foo>',
-            Document::of(
-                Version::of(1),
-                Maybe::nothing(),
-                Maybe::nothing(),
-                Sequence::of(Element::of(Name::of('foo'))),
-            )->content(),
-        );
-    }
-
     public function testCast()
     {
         $this->assertSame(
