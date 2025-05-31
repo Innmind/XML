@@ -8,6 +8,7 @@ use Innmind\Xml\{
     Element\Name,
     Node,
     Attribute,
+    Format,
 };
 use Innmind\Immutable\{
     Map,
@@ -218,7 +219,9 @@ class SelfClosingElementTest extends TestCase
     {
         $this->assertSame(
             '<foo/>',
-            Element::selfClosing(Name::of('foo'))->toString(),
+            Element::selfClosing(Name::of('foo'))
+                ->asContent(Format::inline)
+                ->toString(),
         );
         $this->assertSame(
             '<foo bar="baz" baz="foo"/>',
@@ -228,7 +231,9 @@ class SelfClosingElementTest extends TestCase
                     Attribute::of('bar', 'baz'),
                     Attribute::of('baz', 'foo'),
                 ),
-            )->toString(),
+            )
+                ->asContent(Format::inline)
+                ->toString(),
         );
     }
 

@@ -210,11 +210,6 @@ final class Element
         );
     }
 
-    public function toString(): string
-    {
-        return $this->asContent(Format::inline)->toString();
-    }
-
     public function asContent(Format $format = Format::pretty): Content
     {
         $writer = new \XMLWriter;

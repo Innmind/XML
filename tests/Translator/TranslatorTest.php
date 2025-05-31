@@ -79,7 +79,7 @@ class TranslatorTest extends TestCase
         );
         $this->assertInstanceOf(Element::class, $foobar);
         $this->assertSame('foobar', $foobar->name()->toString());
-        $this->assertSame('<foobar/>', $foobar->toString());
+        $this->assertSame('<foobar/>', $foobar->asContent(Format::inline)->toString());
         $linebreak = $foo->children()->get(2)->match(
             static fn($node) => $node,
             static fn() => null,

@@ -8,6 +8,7 @@ use Innmind\Xml\{
     Element\Name,
     Node,
     Attribute,
+    Format,
 };
 use Innmind\Immutable\{
     Map,
@@ -311,7 +312,9 @@ class ElementTest extends TestCase
     {
         $this->assertSame(
             '<foo></foo>',
-            Element::of(Name::of('foo'))->toString(),
+            Element::of(Name::of('foo'))
+                ->asContent(Format::inline)
+                ->toString(),
         );
         $this->assertSame(
             '<foo bar="baz" baz="foo"></foo>',
@@ -321,7 +324,9 @@ class ElementTest extends TestCase
                     Attribute::of('bar', 'baz'),
                     Attribute::of('baz', 'foo'),
                 ),
-            )->toString(),
+            )
+                ->asContent(Format::inline)
+                ->toString(),
         );
         $this->assertSame(
             '<foo bar="baz" baz="foo"><bar></bar><baz></baz></foo>',
@@ -335,7 +340,9 @@ class ElementTest extends TestCase
                     Element::of(Name::of('bar')),
                     Element::of(Name::of('baz')),
                 ),
-            )->toString(),
+            )
+                ->asContent(Format::inline)
+                ->toString(),
         );
     }
 
