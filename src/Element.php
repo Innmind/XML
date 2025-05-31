@@ -12,7 +12,6 @@ use Innmind\Immutable\{
     Set,
     Str,
     Predicate\Instance,
-    Monoid\Concat,
 };
 
 /**
@@ -222,25 +221,21 @@ final class Element
 
     public function toString(): string
     {
-        $writer = new \XMLWriter;
-        /** @psalm-suppress ImpureMethodCall */
-        $writer->openMemory();
-
-        return $this
-            ->render($writer)
-            ->fold(new Concat)
-            ->toString();
+        return $this->asContent(Format::inline)->toString();
     }
 
-    public function asContent(): Content
+    public function asContent(Format $format = Format::pretty): Content
     {
         $writer = new \XMLWriter;
         /** @psalm-suppress ImpureMethodCall */
         $writer->openMemory();
-        /** @psalm-suppress ImpureMethodCall */
-        $writer->setIndent(true);
-        /** @psalm-suppress ImpureMethodCall */
-        $writer->setIndentString('    ');
+
+        if ($format === Format::pretty) {
+            /** @psalm-suppress ImpureMethodCall */
+            $writer->setIndent(true);
+            /** @psalm-suppress ImpureMethodCall */
+            $writer->setIndentString('    ');
+        }
 
         return Content::ofChunks(
             $this->render($writer),

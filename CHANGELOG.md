@@ -6,6 +6,7 @@
 
 - `Innmind\Xml\Element\Name`
 - Support for the new PHP `8.4` `\Dom\*` API
+- `Innmind\Xml\Format`
 
 ### Changed
 

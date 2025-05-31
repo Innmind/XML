@@ -131,47 +131,25 @@ final class Document
 
     public function toString(): string
     {
-        $string = $this->tag();
-
-        $string .= $this->type->match(
-            static fn($type) => "\n".$type->toString(),
-            static fn() => '',
-        );
-
-        return $string."\n".$this->content();
+        return $this->asContent(Format::inline)->toString();
     }
 
-    public function asContent(): Content
+    public function asContent(Format $format = Format::pretty): Content
     {
         $writer = new \XMLWriter;
         /** @psalm-suppress ImpureMethodCall */
         $writer->openMemory();
-        /** @psalm-suppress ImpureMethodCall */
-        $writer->setIndent(true);
-        /** @psalm-suppress ImpureMethodCall */
-        $writer->setIndentString('    ');
+
+        if ($format === Format::pretty) {
+            /** @psalm-suppress ImpureMethodCall */
+            $writer->setIndent(true);
+            /** @psalm-suppress ImpureMethodCall */
+            $writer->setIndentString('    ');
+        }
 
         return Content::ofChunks(
             $this->render($writer),
         );
-    }
-
-    private function tag(): string
-    {
-        $writer = new \XMLWriter;
-        /** @psalm-suppress ImpureMethodCall */
-        $writer->openMemory();
-        /** @psalm-suppress ImpureMethodCall */
-        $writer->startDocument(
-            $this->version->toString(),
-            $this->encoding->match(
-                static fn($encoding) => $encoding->toString(),
-                static fn() => null,
-            ),
-        );
-
-        /** @psalm-suppress ImpureMethodCall */
-        return \trim($writer->outputMemory(), "\n");
     }
 
     /**
