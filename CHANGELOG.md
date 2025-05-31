@@ -40,6 +40,7 @@
 - `Innmind\Xml\AsContent`
 - `Innmind\Xml\Attribute::empty()`
 - `Innmind\Xml\Attribute::toString()`
+- `Innmind\Xml\Visitor\Text`
 
 ### Fixed
 
