@@ -26,6 +26,7 @@
 - `Innmind\Xml\Node\ProcessingInformation` is now internal, use `Innmind\Xml\Node::processingInformation()` instead
 - `Innmind\Xml\Node\Text` is now internal, use `Innmind\Xml\Node::text()` instead
 - `Innmind\Xml\Reader` is now a final class
+- `Innmind\Xml\Document\Encoding` is now an enum that only supports `utf-8` and `ascii`
 
 ### Removed
 
