@@ -11,6 +11,7 @@ use Innmind\Xml\{
     Element,
     Element\Name,
     Node,
+    Format,
 };
 use Innmind\Immutable\{
     Sequence,
@@ -107,7 +108,9 @@ class DocumentTest extends TestCase
     {
         $this->assertSame(
             '<?xml version="2.1"?>'."\n",
-            Document::of(Version::of(2, 1), Maybe::nothing(), Maybe::nothing())->toString(),
+            Document::of(Version::of(2, 1), Maybe::nothing(), Maybe::nothing())
+                ->asContent(Format::inline)
+                ->toString(),
         );
         $this->assertSame(
             '<?xml version="2.1" encoding="UTF-8"?>'."\n",
@@ -115,7 +118,9 @@ class DocumentTest extends TestCase
                 Version::of(2, 1),
                 Maybe::nothing(),
                 Encoding::of('utf-8'),
-            )->toString(),
+            )
+                ->asContent(Format::inline)
+                ->toString(),
         );
         $this->assertSame(
             '<?xml version="2.1" encoding="UTF-8"?>'."\n".'<!DOCTYPE html>'."\n",
@@ -123,7 +128,9 @@ class DocumentTest extends TestCase
                 Version::of(2, 1),
                 Maybe::just(Type::of('html')),
                 Encoding::of('utf-8'),
-            )->toString(),
+            )
+                ->asContent(Format::inline)
+                ->toString(),
         );
         $this->assertSame(
             '<?xml version="2.1" encoding="UTF-8"?>'."\n".'<!DOCTYPE html>'."\n".'<foo/>',
@@ -132,7 +139,9 @@ class DocumentTest extends TestCase
                 Maybe::just(Type::of('html')),
                 Encoding::of('utf-8'),
                 Sequence::of(Element::selfClosing(Name::of('foo'))),
-            )->toString(),
+            )
+                ->asContent(Format::inline)
+                ->toString(),
         );
     }
 

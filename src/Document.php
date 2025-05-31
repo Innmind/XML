@@ -129,11 +129,6 @@ final class Document
         return Str::of('')->join($children)->toString();
     }
 
-    public function toString(): string
-    {
-        return $this->asContent(Format::inline)->toString();
-    }
-
     public function asContent(Format $format = Format::pretty): Content
     {
         $writer = new \XMLWriter;

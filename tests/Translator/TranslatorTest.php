@@ -8,6 +8,7 @@ use Innmind\Xml\{
     Element,
     Node,
     Document,
+    Format,
 };
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -129,7 +130,7 @@ class TranslatorTest extends TestCase
         );
         $this->assertInstanceOf(Node::class, $text);
         $this->assertSame("\n    hey!\n", $text->content());
-        $this->assertSame($xml, $node->toString());
+        $this->assertSame($xml, $node->asContent(Format::inline)->toString());
     }
 
     public static function documents(): iterable

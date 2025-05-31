@@ -9,6 +9,7 @@ use Innmind\Xml\{
     Element,
     Node,
     Attribute,
+    Format,
 };
 use Innmind\Filesystem\{
     Adapter\Filesystem,
@@ -63,7 +64,7 @@ XML;
             static fn() => null,
         );
 
-        $this->assertSame($xml, $node->toString());
+        $this->assertSame($xml, $node->asContent(Format::inline)->toString());
     }
 
     public function testReturnNothingWhenEmpty()

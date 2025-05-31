@@ -42,6 +42,7 @@
 - `Innmind\Xml\Attribute::empty()`
 - `Innmind\Xml\Attribute::toString()`
 - `Innmind\Xml\Visitor\Text`
+- `Innmind\Xml\Document::toString()`, use `->asContent(Format::inline)->toString()` instead
 
 ### Fixed
 
