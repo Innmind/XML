@@ -223,6 +223,7 @@ final class Element
     public function toString(): string
     {
         $writer = new \XMLWriter;
+        /** @psalm-suppress ImpureMethodCall */
         $writer->openMemory();
 
         return $this
@@ -234,8 +235,11 @@ final class Element
     public function asContent(): Content
     {
         $writer = new \XMLWriter;
+        /** @psalm-suppress ImpureMethodCall */
         $writer->openMemory();
+        /** @psalm-suppress ImpureMethodCall */
         $writer->setIndent(true);
+        /** @psalm-suppress ImpureMethodCall */
         $writer->setIndentString('    ');
 
         return Content::ofChunks(
@@ -250,7 +254,9 @@ final class Element
     {
         $selfClosing = $this->selfClosing;
 
+        /** @psalm-suppress ImpureMethodCall */
         $writer->startElement($this->name->toString());
+        /** @psalm-suppress ImpureMethodCall */
         $_ = $this
             ->attributes
             ->values()
@@ -263,13 +269,16 @@ final class Element
             $writer->writeRaw('');
         }
 
+        /** @psalm-suppress ImpureMethodCall */
         $opening = Sequence::of(Str::of($writer->outputMemory()));
         $closing = Sequence::lazy(static function() use ($writer, $selfClosing) {
+            /** @psalm-suppress ImpureMethodCall */
             match ($selfClosing) {
                 true => $writer->endElement(),
                 false => $writer->fullEndElement(),
             };
 
+            /** @psalm-suppress ImpureMethodCall */
             yield Str::of($writer->outputMemory());
         });
         $children = $this->children->flatMap(
@@ -281,6 +290,10 @@ final class Element
                         Node::class,
                     );
 
+                    /**
+                     * @psalm-suppress PossiblyNullFunctionCall
+                     * @var Sequence<Str>
+                     */
                     return $write();
                 }
 

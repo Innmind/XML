@@ -75,6 +75,7 @@ final class Node
     public function asContent(): Content
     {
         $writer = new \XMLWriter;
+        /** @psalm-suppress ImpureMethodCall */
         $writer->openMemory();
 
         return Content::ofChunks($this->render($writer));

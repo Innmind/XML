@@ -34,6 +34,7 @@ final class Comment implements Implementation
     public function toString(): string
     {
         $writer = new \XMLWriter;
+        /** @psalm-suppress ImpureMethodCall */
         $writer->openMemory();
 
         return $this->render($writer);
@@ -42,8 +43,10 @@ final class Comment implements Implementation
     #[\Override]
     public function render(\XMLWriter $writer): string
     {
+        /** @psalm-suppress ImpureMethodCall */
         $writer->writeComment($this->value);
 
+        /** @psalm-suppress ImpureMethodCall */
         return $writer->outputMemory();
     }
 }

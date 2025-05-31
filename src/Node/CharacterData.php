@@ -34,6 +34,7 @@ final class CharacterData implements Implementation
     public function toString(): string
     {
         $writer = new \XMLWriter;
+        /** @psalm-suppress ImpureMethodCall */
         $writer->openMemory();
 
         return $this->render($writer);
@@ -42,8 +43,10 @@ final class CharacterData implements Implementation
     #[\Override]
     public function render(\XMLWriter $writer): string
     {
+        /** @psalm-suppress ImpureMethodCall */
         $writer->writeCdata($this->value);
 
+        /** @psalm-suppress ImpureMethodCall */
         return $writer->outputMemory();
     }
 }

@@ -144,8 +144,11 @@ final class Document
     public function asContent(): Content
     {
         $writer = new \XMLWriter;
+        /** @psalm-suppress ImpureMethodCall */
         $writer->openMemory();
+        /** @psalm-suppress ImpureMethodCall */
         $writer->setIndent(true);
+        /** @psalm-suppress ImpureMethodCall */
         $writer->setIndentString('    ');
 
         return Content::ofChunks(
@@ -156,7 +159,9 @@ final class Document
     private function tag(): string
     {
         $writer = new \XMLWriter;
+        /** @psalm-suppress ImpureMethodCall */
         $writer->openMemory();
+        /** @psalm-suppress ImpureMethodCall */
         $writer->startDocument(
             $this->version->toString(),
             $this->encoding->match(
@@ -165,6 +170,7 @@ final class Document
             ),
         );
 
+        /** @psalm-suppress ImpureMethodCall */
         return \trim($writer->outputMemory(), "\n");
     }
 
@@ -173,6 +179,7 @@ final class Document
      */
     private function render(\XMLWriter $writer): Sequence
     {
+        /** @psalm-suppress ImpureMethodCall */
         $writer->startDocument(
             $this->version->toString(),
             $this->encoding->match(
@@ -180,10 +187,12 @@ final class Document
                 static fn() => null,
             ),
         );
+        /** @psalm-suppress ImpureMethodCall */
         $this->type->match(
             static fn($type) => $writer->writeRaw($type->toString()."\n"),
             static fn() => null,
         );
+        /** @psalm-suppress ImpureMethodCall */
         $tag = Sequence::of(Str::of($writer->outputMemory()));
 
         $children = $this->children->flatMap(
@@ -194,6 +203,10 @@ final class Document
                     $child::class,
                 );
 
+                /**
+                 * @psalm-suppress PossiblyNullFunctionCall
+                 * @var Sequence<Str>
+                 */
                 return $write();
             },
         );
