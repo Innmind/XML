@@ -135,7 +135,7 @@ class TranslatorTest extends TestCase
     public static function documents(): iterable
     {
         $xml = <<<XML
-        <?xml version="1.0" encoding="utf-8"?>
+        <?xml version="1.0" encoding="UTF-8"?>
         <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
         <foo bar="baz">
             <foobar/>
