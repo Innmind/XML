@@ -3,51 +3,40 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Document;
 
-use Innmind\Xml\Exception\DomainException;
-use Innmind\Immutable\{
-    Str,
-    Maybe,
-};
+use Innmind\Immutable\Maybe;
 
 /**
  * @psalm-immutable
  */
-final class Encoding
+enum Encoding
 {
-    private string $string;
-
-    private function __construct(string $string)
-    {
-        $this->string = $string;
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @throws DomainException
-     */
-    public static function of(string $string): self
-    {
-        return self::maybe($string)->match(
-            static fn($self) => $self,
-            static fn() => throw new DomainException($string),
-        );
-    }
+    case utf8;
+    case ascii;
 
     /**
      * @psalm-pure
      *
      * @return Maybe<self>
      */
-    public static function maybe(string $string): Maybe
+    public static function of(string $value): Maybe
     {
-        return Maybe::just(Str::of($string))
-            ->filter(static fn($string) => $string->matches('~^[a-zA-Z0-9\-_:\(\)]+$~'))
-            ->map(static fn($string) => new self($string->toString()));
+        return Maybe::of(match ($value) {
+            'utf-8', 'UTF-8' => self::utf8,
+            'ascii', 'us-ascii', 'ASCII', 'US-ASCII' => self::ascii,
+            default => null,
+        });
     }
 
+    /**
+     * @return non-empty-string
+     */
     public function toString(): string
     {
-        return $this->string;
+        // @see https://www.iana.org/assignments/character-sets/character-sets.xml
+        // As described in the RFC above, "us-ascii" is the encouraged notation
+        return match ($this) {
+            self::utf8 => 'utf-8',
+            self::ascii => 'us-ascii',
+        };
     }
 }
