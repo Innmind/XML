@@ -28,7 +28,7 @@ class CharacterDataTest extends TestCase
     {
         $this->assertSame(
             '<![CDATA[foo]]>',
-            Node::characterData('foo')->toString(),
+            Node::characterData('foo')->asContent()->toString(),
         );
     }
 }

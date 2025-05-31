@@ -110,7 +110,7 @@ XML;
         );
         $this->assertSame(
             '<?xml-stylesheet type="text/xsl" href="/static/theatlantic/syndication/feeds/atom-to-html.6d0fbcbe7c3f.xsl" ?>',
-            $stylesheet->toString(),
+            $stylesheet->asContent()->toString(),
         );
     }
 

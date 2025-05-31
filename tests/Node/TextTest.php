@@ -28,7 +28,7 @@ class TextTest extends TestCase
     {
         $this->assertSame(
             'foo',
-            Node::text('foo')->toString(),
+            Node::text('foo')->asContent()->toString(),
         );
     }
 }

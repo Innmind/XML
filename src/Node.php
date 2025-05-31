@@ -81,11 +81,6 @@ final class Node
         return Content::ofChunks($this->render($writer));
     }
 
-    public function toString(): string
-    {
-        return $this->implementation->toString();
-    }
-
     /**
      * @return Sequence<Str>
      */

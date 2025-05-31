@@ -46,6 +46,7 @@
 - `Innmind\Xml\Document::content()`
 - `Innmind\Xml\Element::toString()`, use `->asContent(Format::inline)->toString()` instead
 - `Innmind\Xml\Element::content()`
+- `Innmind\Xml\Node::toString()`, use `->asContent()->toString()` instead
 
 ### Fixed
 

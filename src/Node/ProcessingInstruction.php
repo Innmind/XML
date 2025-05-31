@@ -34,16 +34,6 @@ final class ProcessingInstruction implements Implementation
     }
 
     #[\Override]
-    public function toString(): string
-    {
-        $writer = new \XMLWriter;
-        /** @psalm-suppress ImpureMethodCall */
-        $writer->openMemory();
-
-        return $this->render($writer);
-    }
-
-    #[\Override]
     public function render(\XMLWriter $writer): string
     {
         /** @psalm-suppress ImpureMethodCall */
