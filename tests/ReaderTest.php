@@ -6,6 +6,9 @@ namespace Tests\Innmind\Xml;
 use Innmind\Xml\{
     Reader,
     Document,
+    Element,
+    Node,
+    Attribute,
 };
 use Innmind\Filesystem\{
     Adapter\Filesystem,
@@ -14,11 +17,18 @@ use Innmind\Filesystem\{
     Name,
 };
 use Innmind\Url\Path;
+use Innmind\Immutable;
 use Innmind\Immutable\Predicate\Instance;
-use Innmind\BlackBox\PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\{
+    PHPUnit\BlackBox,
+    PHPUnit\Framework\TestCase,
+    Set,
+};
 
 class ReaderTest extends TestCase
 {
+    use BlackBox;
+
     private $read;
 
     public function setUp(): void
@@ -101,5 +111,151 @@ XML;
             '<?xml-stylesheet type="text/xsl" href="/static/theatlantic/syndication/feeds/atom-to-html.6d0fbcbe7c3f.xsl" ?>',
             $stylesheet->toString(),
         );
+    }
+
+    public function testAnyXmlTreeIsParseable(): BlackBox\Proof
+    {
+        $names = Set::strings()
+            ->madeOf(Set::strings()->chars()->lowercaseLetter())
+            ->atLeast(1);
+        $node = Set::either(
+            Set::strings()
+                ->madeOf(Set::strings()->chars()->ascii())
+                ->map(Node::characterData(...)),
+            Set::strings()
+                ->madeOf(
+                    Set::strings()
+                        ->chars()
+                        ->ascii()
+                        ->filter(static fn($char) => !\in_array(
+                            $char,
+                            ['&', '<'],
+                            true,
+                        )),
+                )
+                ->map(Node::text(...)),
+            Set::strings()
+                ->madeOf(
+                    Set::strings()
+                        ->chars()
+                        ->ascii()
+                        ->filter(static fn($char) => !\in_array(
+                            $char,
+                            ['-'],
+                            true,
+                        )),
+                )
+                ->map(Node::comment(...)),
+            Set::of('gt', 'lt', 'amp', 'apos', 'quot')->map(Node::entityReference(...)),
+            Set::of(Node::processingInstruction(
+                'xml-stylesheet',
+                'type="text/xsl" href="/static/theatlantic/syndication/feeds/atom-to-html.6d0fbcbe7c3f.xsl"',
+            )),
+        );
+        $attributes = Set::sequence(
+            Set::either(
+                $names
+                    ->map(Attribute::of(...)),
+                Set::compose(
+                    Attribute::of(...),
+                    $names,
+                    $names,
+                ),
+            ),
+        )
+            ->between(0, 4)
+            ->map(static fn($attributes) => Immutable\Set::of(...$attributes));
+        $leaf = Set::either(
+            Set::compose(
+                Element::selfClosing(...),
+                $names->map(Element\Name::of(...)),
+                $attributes,
+            ),
+            Set::compose(
+                Element::of(...),
+                $names->map(Element\Name::of(...)),
+                $attributes,
+            ),
+        );
+        $children = static function(int $recurse = 1) use (&$children, $leaf, $node, $names, $attributes) {
+            if ($recurse !== 1) {
+                return Set::of(Immutable\Sequence::of());
+            }
+
+            return Set::sequence(
+                Set::either(
+                    Set::integers()
+                        ->between(0, 25) // 4% chance to recurse
+                        ->flatMap(static fn($recurse) => $children(
+                            $recurse->unwrap(),
+                        ))
+                        ->flatMap(static fn($children) => Set::compose(
+                            static fn($name, $attributes) => $children->map(
+                                static fn($children) => Element::of(
+                                    $name,
+                                    $attributes,
+                                    $children,
+                                ),
+                            ),
+                            $names->map(Element\Name::of(...)),
+                            $attributes,
+                        )),
+                    $leaf,
+                    $node,
+                ),
+            )->map(static fn($values) => Immutable\Sequence::of(...$values));
+        };
+        $element = Set::compose(
+            Element::of(...),
+            $names->map(Element\Name::of(...)),
+            $attributes,
+            $children(),
+        );
+        $document = Set::compose(
+            Document::of(...),
+            Set::of(
+                Document\Version::of(1, 0),
+                Document\Version::of(1, 1),
+            ),
+            $names
+                ->map(Document\Type::of(...))
+                ->nullable()
+                ->map(Immutable\Maybe::of(...)),
+            Set::of(...Document\Encoding::cases())
+                ->nullable()
+                ->map(Immutable\Maybe::of(...)),
+            Set::sequence($element)->between(1, 1)->map(
+                static fn($elements) => Immutable\Sequence::of(...$elements),
+            ),
+        );
+
+        return $this
+            ->forAll(Set::either(
+                $document,
+                $element,
+                // a node needs to be in a document
+                $node->map(
+                    static fn($node) => Document::of(
+                        Document\Version::of(1, 0),
+                        Immutable\Maybe::nothing(),
+                        Immutable\Maybe::nothing(),
+                    )
+                        ->appendChild(Element::of(
+                            Element\Name::of('root'),
+                            null,
+                            Immutable\Sequence::of($node),
+                        )),
+                ),
+                $leaf,
+            ))
+            ->prove(function($tree) {
+                $this->assertNotNull(
+                    ($this->read)($tree->asContent())->match(
+                        static fn($node) => $node,
+                        static fn() => null,
+                    ),
+                    $tree->asContent()->toString(),
+                );
+            });
     }
 }
