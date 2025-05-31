@@ -11,9 +11,11 @@ use Innmind\Immutable\Maybe;
 final class Attribute
 {
     /**
+     * @param ?non-empty-string $namespace
      * @param non-empty-string $name
      */
     private function __construct(
+        private ?string $namespace,
         private string $name,
         private string $value = '',
     ) {
@@ -26,7 +28,21 @@ final class Attribute
      */
     public static function of(string $name, string $value = ''): self
     {
-        return new self($name, $value);
+        return new self(null, $name, $value);
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @param non-empty-string $namespace
+     * @param non-empty-string $name
+     */
+    public static function namespaced(
+        string $namespace,
+        string $name,
+        string $value = '',
+    ): self {
+        return new self($namespace, $name, $value);
     }
 
     /**
@@ -39,7 +55,7 @@ final class Attribute
             return Maybe::nothing();
         }
 
-        return Maybe::just(new self($name, $value));
+        return Maybe::just(new self(null, $name, $value));
     }
 
     /**
@@ -53,5 +69,21 @@ final class Attribute
     public function value(): string
     {
         return $this->value;
+    }
+
+    private function render(\XMLWriter $writer): void
+    {
+        if (\is_null($this->namespace)) {
+            /** @psalm-suppress ImpureMethodCall */
+            $writer->writeAttribute($this->name, $this->value);
+        } else {
+            /** @psalm-suppress ImpureMethodCall */
+            $writer->writeAttributeNs(
+                $this->namespace,
+                $this->name,
+                null,
+                $this->value,
+            );
+        }
     }
 }

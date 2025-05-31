@@ -493,4 +493,23 @@ class ElementTest extends TestCase
                 ->toString(),
         );
     }
+
+    public function testAsContentWithNamespacedAttribute()
+    {
+        $this->assertSame(
+            '<xades:IssuerName xmlns:xades="http://uri.etsi.org/01903/v1.3.2#"></xades:IssuerName>',
+            Element::of(
+                Name::namespaced('xades', 'IssuerName'),
+                Set::of(
+                    Attribute::namespaced(
+                        'xmlns',
+                        'xades',
+                        'http://uri.etsi.org/01903/v1.3.2#',
+                    ),
+                ),
+            )
+                ->asContent(Format::inline)
+                ->toString(),
+        );
+    }
 }

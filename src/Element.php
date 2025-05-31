@@ -244,14 +244,18 @@ final class Element
             $this->name,
             $this->name::class,
         ))();
-        /** @psalm-suppress ImpureMethodCall */
+        /**
+         * @psalm-suppress ImpureFunctionCall
+         * @psalm-suppress PossiblyNullFunctionCall
+         */
         $_ = $this
             ->attributes
             ->values()
-            ->foreach(static fn($attribute) => $writer->writeAttribute(
-                $attribute->name(),
-                $attribute->value(),
-            ));
+            ->foreach(static fn($attribute): mixed => (\Closure::bind(
+                fn() => $this->render($writer),
+                $attribute,
+                $attribute::class,
+            ))());
 
         /** @psalm-suppress ImpureMethodCall */
         $opening = Sequence::of(Str::of($writer->outputMemory()));
