@@ -129,7 +129,7 @@ XML;
                         ->ascii()
                         ->filter(static fn($char) => !\in_array(
                             $char,
-                            ['&', '<'],
+                            ['&', '<', '>'],
                             true,
                         )),
                 )
