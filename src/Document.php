@@ -143,15 +143,13 @@ final class Document
 
     public function asContent(): Content
     {
+        $writer = new \XMLWriter;
+        $writer->openMemory();
+        $writer->setIndent(true);
+        $writer->setIndentString('    ');
+
         return Content::ofLines(
-            $this
-                ->children
-                ->flatMap(static fn($node) => $node->asContent()->lines())
-                ->prepend($this->type->match(
-                    static fn($type) => Sequence::of(Content\Line::of(Str::of($type->toString()))),
-                    static fn() => Sequence::of(),
-                ))
-                ->prepend(Sequence::of(Content\Line::of(Str::of($this->tag())))),
+            $this->render($writer),
         );
     }
 
@@ -168,5 +166,38 @@ final class Document
         );
 
         return \trim($writer->outputMemory(), "\n");
+    }
+
+    /**
+     * @return Sequence<Str>
+     */
+    private function render(\XMLWriter $writer): Sequence
+    {
+        $writer->startDocument(
+            $this->version->toString(),
+            $this->encoding->match(
+                static fn($encoding) => $encoding->toString(),
+                static fn() => null,
+            ),
+        );
+        $this->type->match(
+            static fn($type) => $writer->writeRaw($type->toString()),
+            static fn() => null,
+        );
+        $tag = Sequence::of(Str::of($writer->outputMemory()));
+
+        $children = $this->children->flatMap(
+            static function($child) use ($writer) {
+                $write = \Closure::bind(
+                    fn() => $this->render($writer),
+                    $child,
+                    $child::class,
+                );
+
+                return $write();
+            },
+        );
+
+        return $children->prepend($tag);
     }
 }

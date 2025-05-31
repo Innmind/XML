@@ -259,6 +259,10 @@ final class Element
                 $attribute->value(),
             ));
 
+        if (!$this->selfClosing) {
+            $writer->writeRaw('');
+        }
+
         $opening = Sequence::of(Str::of($writer->outputMemory()));
         $closing = Sequence::lazy(static function() use ($writer, $selfClosing) {
             match ($selfClosing) {
