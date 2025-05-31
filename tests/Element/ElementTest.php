@@ -483,4 +483,14 @@ class ElementTest extends TestCase
         );
         $this->assertFalse($loaded);
     }
+
+    public function testAsContentWithNamespacedName()
+    {
+        $this->assertSame(
+            '<xades:IssuerName></xades:IssuerName>',
+            Element::of(Name::namespaced('xades', 'IssuerName'))
+                ->asContent(Format::inline)
+                ->toString(),
+        );
+    }
 }

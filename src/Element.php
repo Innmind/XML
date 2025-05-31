@@ -235,8 +235,15 @@ final class Element
     {
         $selfClosing = $this->selfClosing;
 
-        /** @psalm-suppress ImpureMethodCall */
-        $writer->startElement($this->name->toString());
+        /**
+         * @psalm-suppress ImpureFunctionCall
+         * @psalm-suppress PossiblyNullFunctionCall
+         */
+        (\Closure::bind(
+            fn() => $this->render($writer),
+            $this->name,
+            $this->name::class,
+        ))();
         /** @psalm-suppress ImpureMethodCall */
         $_ = $this
             ->attributes
