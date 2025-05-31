@@ -12,6 +12,10 @@ use Innmind\Xml\Node\{
     Text,
 };
 use Innmind\Filesystem\File\Content;
+use Innmind\Immutable\{
+    Sequence,
+    Str,
+};
 
 /**
  * @psalm-immutable
@@ -70,11 +74,24 @@ final class Node
 
     public function asContent(): Content
     {
-        return Content::ofString($this->implementation->toString());
+        $writer = new \XMLWriter;
+        $writer->openMemory();
+
+        return Content::ofChunks($this->render($writer));
     }
 
     public function toString(): string
     {
         return $this->implementation->toString();
+    }
+
+    /**
+     * @return Sequence<Str>
+     */
+    private function render(\XMLWriter $writer): Sequence
+    {
+        return Sequence::of(Str::of(
+            $this->implementation->render($writer),
+        ));
     }
 }

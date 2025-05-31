@@ -35,6 +35,13 @@ final class CharacterData implements Implementation
     {
         $writer = new \XMLWriter;
         $writer->openMemory();
+
+        return $this->render($writer);
+    }
+
+    #[\Override]
+    public function render(\XMLWriter $writer): string
+    {
         $writer->writeCdata($this->value);
 
         return $writer->outputMemory();

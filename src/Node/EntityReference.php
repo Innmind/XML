@@ -35,4 +35,10 @@ final class EntityReference implements Implementation
     {
         return "&{$this->data};";
     }
+
+    #[\Override]
+    public function render(\XMLWriter $writer): string
+    {
+        return $this->toString();
+    }
 }
