@@ -120,7 +120,16 @@ XML;
             ->atLeast(1);
         $node = Set::either(
             Set::strings()
-                ->madeOf(Set::strings()->chars()->ascii())
+                ->madeOf(
+                    Set::strings()
+                        ->chars()
+                        ->ascii()
+                        ->filter(static fn($char) => !\in_array(
+                            $char,
+                            ['>'],
+                            true,
+                        )),
+                )
                 ->map(Node::characterData(...)),
             Set::strings()
                 ->madeOf(
