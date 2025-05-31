@@ -338,12 +338,9 @@ class DocumentTest extends TestCase
             <?xml version="1.0" encoding="UTF-8"?>
             <!DOCTYPE html>
             <root>
-                <foo>
-                </foo>
-                <bar>
-                </bar>
-                <baz>
-                </baz>
+                <foo></foo>
+                <bar></bar>
+                <baz></baz>
             </root>
             CONTENT,
             $document->asContent()->toString(),

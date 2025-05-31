@@ -447,13 +447,168 @@ class ElementTest extends TestCase
         $this->assertSame(
             <<<CONTENT
             <foo bar="baz" baz="foo">
-                <bar>
-                </bar>
-                <baz>
-                </baz>
+                <bar></bar>
+                <baz></baz>
             </foo>
             CONTENT,
             $element->asContent()->toString(),
         );
+    }
+
+    public function testAsContentWritesOnSingleLineWhenContainingASingleNode()
+    {
+        $element = Element::of(
+            Name::of('foo'),
+            null,
+            Sequence::of(
+                Node::text('bar'),
+            ),
+        );
+
+        $this->assertSame(
+            '<foo>bar</foo>',
+            $element->asContent()->toString(),
+        );
+    }
+
+    public function testElementRendersTheSameWayAsXMLWriter(): BlackBox\Proof
+    {
+        $names = DataSet::strings()
+            ->madeOf(DataSet::strings()->chars()->lowercaseLetter())
+            ->atLeast(1);
+        // no processing instruction as it should be at the root of a document
+        $node = DataSet::either(
+            DataSet::strings()
+                ->madeOf(DataSet::strings()->chars()->ascii())
+                ->map(Node::characterData(...)),
+            DataSet::strings()
+                ->madeOf(
+                    DataSet::strings()
+                        ->chars()
+                        ->ascii()
+                        ->filter(static fn($char) => !\in_array(
+                            $char,
+                            ['&', '<', '>'],
+                            true,
+                        )),
+                )
+                ->map(Node::text(...)),
+            DataSet::strings()
+                ->madeOf(
+                    DataSet::strings()
+                        ->chars()
+                        ->ascii()
+                        ->filter(static fn($char) => !\in_array(
+                            $char,
+                            ['-'],
+                            true,
+                        )),
+                )
+                ->map(Node::comment(...)),
+            DataSet::of('gt', 'lt', 'amp', 'apos', 'quot')->map(Node::entityReference(...)),
+        );
+        $attributes = DataSet::sequence(
+            DataSet::either(
+                $names
+                    ->map(Attribute::of(...)),
+                DataSet::compose(
+                    Attribute::of(...),
+                    $names,
+                    $names,
+                ),
+            ),
+        )
+            ->between(0, 4)
+            ->map(static fn($attributes) => Set::of(...$attributes));
+        $leaf = DataSet::either(
+            DataSet::compose(
+                Element::selfClosing(...),
+                $names->map(Name::of(...)),
+                $attributes,
+            ),
+            DataSet::compose(
+                Element::of(...),
+                $names->map(Name::of(...)),
+                $attributes,
+            ),
+        );
+        $children = static function(int $recurse = 1) use (&$children, $leaf, $node, $names, $attributes) {
+            if ($recurse !== 1) {
+                return DataSet::of(Sequence::of());
+            }
+
+            return DataSet::sequence(
+                DataSet::either(
+                    DataSet::integers()
+                        ->between(0, 25) // 4% chance to recurse
+                        ->flatMap(static fn($recurse) => $children(
+                            $recurse->unwrap(),
+                        ))
+                        ->flatMap(static fn($children) => DataSet::compose(
+                            static fn($name, $attributes) => $children->map(
+                                static fn($children) => Element::of(
+                                    $name,
+                                    $attributes,
+                                    $children,
+                                ),
+                            ),
+                            $names->map(Name::of(...)),
+                            $attributes,
+                        )),
+                    $leaf,
+                    $node,
+                ),
+            )->map(static fn($values) => Sequence::of(...$values));
+        };
+        $element = DataSet::compose(
+            Element::of(...),
+            $names->map(Name::of(...)),
+            $attributes,
+            $children(),
+        );
+
+        return $this
+            ->forAll($element)
+            ->prove(function($element) {
+                $writer = new \XMLWriter;
+                $writer->openMemory();
+                $writer->setIndent(true);
+                $writer->setIndentString('    ');
+                self::render($writer, $element);
+
+                $this->assertSame(
+                    \trim($writer->outputMemory()),
+                    $element->asContent()->toString(),
+                );
+            });
+    }
+
+    private static function render(\XMLWriter $writer, $node): void
+    {
+        if ($node instanceof Node) {
+            $writer->writeRaw($node->toString());
+
+            return;
+        }
+
+        $writer->startElement($node->name()->toString());
+        $node->attributes()->values()->foreach(
+            static fn($attribute) => $writer->writeAttribute(
+                $attribute->name(),
+                $attribute->value(),
+            ),
+        );
+        $node->children()->foreach(
+            static fn($child) => self::render($writer, $child),
+        );
+        $end = \Closure::bind(
+            fn() => match ($this->selfClosing) {
+                true => $writer->endElement(),
+                false => $writer->fullEndElement(),
+            },
+            $node,
+            Element::class,
+        );
+        $end();
     }
 }

@@ -255,20 +255,23 @@ final class Element
 
         [$openingTag, $closingTag] = $this->tags();
 
-        return Content::ofLines(
+        return Content::ofChunks(
             $this
                 ->children
+                ->map(Element\Child::of(...))
+                ->prepend(Sequence::of(Element\Child::placeholder()))
+                ->aggregate(static fn($a, $b) => $a->followedBy($b))
                 ->flatMap(
-                    static fn($node) => $node->asContent()->lines(),
-                )
-                ->map(static fn($line) => $line->map(
-                    static fn($string) => $string->prepend('    '), // to correctly indent the file
-                ))
-                ->prepend(Sequence::of(Content\Line::of(Str::of($openingTag))))
-                ->add(Content\Line::of(Str::of($closingTag))),
+                    static fn($child) => $child
+                        ->render($openingTag, $closingTag)
+                        ->chunks(),
+                ),
         );
     }
 
+    /**
+     * @return array{string, string}
+     */
     private function tags(): array
     {
         $writer = new \XMLWriter;
