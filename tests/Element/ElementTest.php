@@ -450,6 +450,7 @@ class ElementTest extends TestCase
                 <bar></bar>
                 <baz></baz>
             </foo>
+
             CONTENT,
             $element->asContent()->toString(),
         );
@@ -466,7 +467,7 @@ class ElementTest extends TestCase
         );
 
         $this->assertSame(
-            '<foo>bar</foo>',
+            "<foo>bar</foo>\n",
             $element->asContent()->toString(),
         );
     }
@@ -577,7 +578,7 @@ class ElementTest extends TestCase
                 self::render($writer, $element);
 
                 $this->assertSame(
-                    \trim($writer->outputMemory()),
+                    $writer->outputMemory(),
                     $element->asContent()->toString(),
                 );
             });

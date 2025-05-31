@@ -342,6 +342,7 @@ class DocumentTest extends TestCase
                 <bar></bar>
                 <baz></baz>
             </root>
+
             CONTENT,
             $document->asContent()->toString(),
         );

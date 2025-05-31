@@ -12,6 +12,7 @@ use Innmind\Immutable\{
     Set,
     Str,
     Predicate\Instance,
+    Monoid\Concat,
 };
 
 /**
@@ -221,61 +222,34 @@ final class Element
 
     public function toString(): string
     {
-        if ($this->selfClosing) {
-            $writer = new \XMLWriter;
-            $writer->openMemory();
-            $writer->startElement($this->name->toString());
-            $_ = $this
-                ->attributes
-                ->values()
-                ->foreach(static fn($attribute) => $writer->writeAttribute(
-                    $attribute->name(),
-                    $attribute->value(),
-                ));
-            $writer->endElement();
+        $writer = new \XMLWriter;
+        $writer->openMemory();
 
-            return $writer->outputMemory();
-        }
-
-        [$openingTag, $closingTag] = $this->tags();
-
-        return \sprintf(
-            '%s%s%s',
-            $openingTag,
-            $this->content(),
-            $closingTag,
-        );
+        return $this
+            ->render($writer)
+            ->fold(new Concat)
+            ->toString();
     }
 
     public function asContent(): Content
     {
-        if ($this->selfClosing) {
-            return Content::ofString($this->toString());
-        }
-
-        [$openingTag, $closingTag] = $this->tags();
+        $writer = new \XMLWriter;
+        $writer->openMemory();
+        $writer->setIndent(true);
+        $writer->setIndentString('    ');
 
         return Content::ofChunks(
-            $this
-                ->children
-                ->map(Element\Child::of(...))
-                ->prepend(Sequence::of(Element\Child::placeholder()))
-                ->aggregate(static fn($a, $b) => $a->followedBy($b))
-                ->flatMap(
-                    static fn($child) => $child
-                        ->render($openingTag, $closingTag)
-                        ->chunks(),
-                ),
+            $this->render($writer),
         );
     }
 
     /**
-     * @return array{string, string}
+     * @return Sequence<Str>
      */
-    private function tags(): array
+    private function render(\XMLWriter $writer): Sequence
     {
-        $writer = new \XMLWriter;
-        $writer->openMemory();
+        $selfClosing = $this->selfClosing;
+
         $writer->startElement($this->name->toString());
         $_ = $this
             ->attributes
@@ -284,10 +258,33 @@ final class Element
                 $attribute->name(),
                 $attribute->value(),
             ));
-        $writer->writeRaw('');
-        $opening = $writer->outputMemory();
-        $writer->fullEndElement();
 
-        return [$opening, $writer->outputMemory()];
+        $opening = Sequence::of(Str::of($writer->outputMemory()));
+        $closing = Sequence::lazy(static function() use ($writer, $selfClosing) {
+            match ($selfClosing) {
+                true => $writer->endElement(),
+                false => $writer->fullEndElement(),
+            };
+
+            yield Str::of($writer->outputMemory());
+        });
+        $children = $this->children->flatMap(
+            static function($child) use ($writer) {
+                if ($child instanceof Node) {
+                    $writer->writeRaw('');
+
+                    return $child
+                        ->asContent()
+                        ->chunks()
+                        ->prepend(Sequence::of(Str::of($writer->outputMemory())));
+                }
+
+                return $child->render($writer);
+            },
+        );
+
+        return $children
+            ->prepend($opening)
+            ->append($closing);
     }
 }
