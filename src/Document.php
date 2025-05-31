@@ -148,7 +148,7 @@ final class Document
         $writer->setIndent(true);
         $writer->setIndentString('    ');
 
-        return Content::ofLines(
+        return Content::ofChunks(
             $this->render($writer),
         );
     }
@@ -181,7 +181,7 @@ final class Document
             ),
         );
         $this->type->match(
-            static fn($type) => $writer->writeRaw($type->toString()),
+            static fn($type) => $writer->writeRaw($type->toString()."\n"),
             static fn() => null,
         );
         $tag = Sequence::of(Str::of($writer->outputMemory()));
