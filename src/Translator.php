@@ -161,6 +161,9 @@ final class Translator
             ->flatMap(
                 fn($document) => Maybe::all(
                     self::buildVersion($document),
+                    Maybe::of(
+                        $document->encoding ?? $document->xmlEncoding ?? 'utf-8',
+                    )->flatMap(Encoding::of(...)),
                     $this->children(
                         Sequence::of(...\array_values(\iterator_to_array($document->childNodes)))
                             ->keep(
@@ -170,12 +173,10 @@ final class Translator
                             )
                             ->exclude(static fn($child) => $child->nodeType === \XML_DOCUMENT_TYPE_NODE),
                     ),
-                )->map(static fn(Version $version, Sequence $children) => Document::of(
+                )->map(static fn(Version $version, Encoding $encoding, Sequence $children) => Document::of(
                     $version,
                     Maybe::of($document->doctype)->flatMap(self::buildDoctype(...)),
-                    Maybe::of(
-                        $document->encoding ?? $document->xmlEncoding,
-                    )->flatMap(Encoding::maybe(...)),
+                    Maybe::just($encoding),
                     $children,
                 )),
             );

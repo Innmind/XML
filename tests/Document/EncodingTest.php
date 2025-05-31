@@ -3,48 +3,47 @@ declare(strict_types = 1);
 
 namespace Tests\Innmind\Xml\Document;
 
-use Innmind\Xml\{
-    Document\Encoding,
-    Exception\DomainException,
+use Innmind\Xml\Document\Encoding;
+use Innmind\BlackBox\{
+    PHPUnit\BlackBox,
+    PHPUnit\Framework\TestCase,
+    Set,
 };
-use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class EncodingTest extends TestCase
 {
+    use BlackBox;
+
     #[DataProvider('cases')]
     public function testInterface($string)
     {
-        $encoding = Encoding::of($string);
+        $encoding = Encoding::of($string)->match(
+            static fn($encoding) => $encoding,
+            static fn() => null,
+        );
 
+        $this->assertNotNull($encoding);
         $this->assertSame($string, $encoding->toString());
     }
 
-    #[DataProvider('invalid')]
-    public function testThrowWhenInvalidName($name)
+    public function testThrowWhenInvalidName(): BlackBox\Proof
     {
-        $this->expectException(DomainException::class);
-
-        Encoding::of($name);
+        return $this
+            ->forAll(Set::strings())
+            ->prove(function($random) {
+                $this->assertNull(Encoding::of($random)->match(
+                    static fn($encoding) => $encoding,
+                    static fn() => null,
+                ));
+            });
     }
 
     public static function cases(): array
     {
         return [
-            ['unicode-1-1'],
-            ['iso-8859-5'],
-            ['Shift_JIS'],
-            ['ISO_8859-9:1989'],
-            ['NF_Z_62-010_(1973)'],
-        ];
-    }
-
-    public static function invalid(): array
-    {
-        return [
-            ['@'],
-            ['bar+suffix'],
-            ['foo/bar;q=0.8, level=1'],
+            ['utf-8'],
+            ['us-ascii'],
         ];
     }
 }

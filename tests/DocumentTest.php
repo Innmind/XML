@@ -114,7 +114,7 @@ class DocumentTest extends TestCase
             Document::of(
                 Version::of(2, 1),
                 Maybe::nothing(),
-                Maybe::just(Encoding::of('utf-8')),
+                Encoding::of('utf-8'),
             )->toString(),
         );
         $this->assertSame(
@@ -122,7 +122,7 @@ class DocumentTest extends TestCase
             Document::of(
                 Version::of(2, 1),
                 Maybe::just(Type::of('html')),
-                Maybe::just(Encoding::of('utf-8')),
+                Encoding::of('utf-8'),
             )->toString(),
         );
         $this->assertSame(
@@ -130,7 +130,7 @@ class DocumentTest extends TestCase
             Document::of(
                 Version::of(2, 1),
                 Maybe::just(Type::of('html')),
-                Maybe::just(Encoding::of('utf-8')),
+                Encoding::of('utf-8'),
                 Sequence::of(Element::selfClosing(Name::of('foo'))),
             )->toString(),
         );
@@ -141,7 +141,7 @@ class DocumentTest extends TestCase
         $document = Document::of(
             Version::of(1),
             Maybe::just(Type::of('html')),
-            Maybe::just(Encoding::of('utf-8')),
+            Encoding::of('utf-8'),
             Sequence::of(
                 Element::of(Name::of('foo')),
                 Element::of(Name::of('bar')),
@@ -205,7 +205,7 @@ class DocumentTest extends TestCase
         $document = Document::of(
             Version::of(1),
             Maybe::just(Type::of('html')),
-            Maybe::just(Encoding::of('utf-8')),
+            Encoding::of('utf-8'),
             Sequence::of(
                 Element::of(Name::of('foo')),
                 Element::of(Name::of('bar')),
@@ -319,7 +319,7 @@ class DocumentTest extends TestCase
         $document = Document::of(
             Version::of(1),
             Maybe::just(Type::of('html')),
-            Maybe::just(Encoding::of('utf-8')),
+            Encoding::of('utf-8'),
             Sequence::of(
                 Element::of(
                     Name::of('root'),
