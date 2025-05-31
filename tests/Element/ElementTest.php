@@ -483,4 +483,33 @@ class ElementTest extends TestCase
         );
         $this->assertFalse($loaded);
     }
+
+    public function testAsContentWithNamespacedName()
+    {
+        $this->assertSame(
+            '<xades:IssuerName></xades:IssuerName>',
+            Element::of(Name::namespaced('xades', 'IssuerName'))
+                ->asContent(Format::inline)
+                ->toString(),
+        );
+    }
+
+    public function testAsContentWithNamespacedAttribute()
+    {
+        $this->assertSame(
+            '<xades:IssuerName xmlns:xades="http://uri.etsi.org/01903/v1.3.2#"></xades:IssuerName>',
+            Element::of(
+                Name::namespaced('xades', 'IssuerName'),
+                Set::of(
+                    Attribute::namespaced(
+                        'xmlns',
+                        'xades',
+                        'http://uri.etsi.org/01903/v1.3.2#',
+                    ),
+                ),
+            )
+                ->asContent(Format::inline)
+                ->toString(),
+        );
+    }
 }
