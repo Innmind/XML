@@ -6,6 +6,7 @@ namespace Tests\Innmind\Xml\Translator\NodeTranslator;
 use Innmind\Xml\{
     Translator,
     Element,
+    Format,
 };
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
@@ -26,6 +27,6 @@ XML
         );
 
         $this->assertInstanceOf(Element::class, $node);
-        $this->assertSame($xml, $node->toString());
+        $this->assertSame($xml, $node->asContent(Format::inline)->toString());
     }
 }

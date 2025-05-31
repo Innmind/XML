@@ -6,6 +6,7 @@
 
 - `Innmind\Xml\Element\Name`
 - Support for the new PHP `8.4` `\Dom\*` API
+- `Innmind\Xml\Format`
 
 ### Changed
 
@@ -40,6 +41,12 @@
 - `Innmind\Xml\AsContent`
 - `Innmind\Xml\Attribute::empty()`
 - `Innmind\Xml\Attribute::toString()`
+- `Innmind\Xml\Visitor\Text`
+- `Innmind\Xml\Document::toString()`, use `->asContent(Format::inline)->toString()` instead
+- `Innmind\Xml\Document::content()`
+- `Innmind\Xml\Element::toString()`, use `->asContent(Format::inline)->toString()` instead
+- `Innmind\Xml\Element::content()`
+- `Innmind\Xml\Node::toString()`, use `->asContent()->toString()` instead
 
 ### Fixed
 

@@ -31,18 +31,12 @@ final class EntityReference implements Implementation
     }
 
     #[\Override]
-    public function toString(): string
-    {
-        return "&{$this->data};";
-    }
-
-    #[\Override]
     public function render(\XMLWriter $writer): string
     {
         /** @psalm-suppress ImpureMethodCall */
         $writer->writeRaw('');
 
         /** @psalm-suppress ImpureMethodCall */
-        return $writer->outputMemory().$this->toString();
+        return $writer->outputMemory()."&{$this->data};";
     }
 }

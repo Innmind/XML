@@ -8,6 +8,7 @@ use Innmind\Xml\{
     Element,
     Node,
     Document,
+    Format,
 };
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -78,7 +79,7 @@ class TranslatorTest extends TestCase
         );
         $this->assertInstanceOf(Element::class, $foobar);
         $this->assertSame('foobar', $foobar->name()->toString());
-        $this->assertSame('<foobar/>', $foobar->toString());
+        $this->assertSame('<foobar/>', $foobar->asContent(Format::inline)->toString());
         $linebreak = $foo->children()->get(2)->match(
             static fn($node) => $node,
             static fn() => null,
@@ -129,7 +130,7 @@ class TranslatorTest extends TestCase
         );
         $this->assertInstanceOf(Node::class, $text);
         $this->assertSame("\n    hey!\n", $text->content());
-        $this->assertSame($xml, $node->toString());
+        $this->assertSame($xml, $node->asContent(Format::inline)->toString());
     }
 
     public static function documents(): iterable

@@ -28,7 +28,7 @@ class EntityReferenceTest extends TestCase
     {
         $this->assertSame(
             '&foo;',
-            Node::entityReference('foo')->toString(),
+            Node::entityReference('foo')->asContent()->toString(),
         );
     }
 }

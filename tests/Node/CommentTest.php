@@ -28,7 +28,7 @@ class CommentTest extends TestCase
     {
         $this->assertSame(
             '<!--foo-->',
-            Node::comment('foo')->toString(),
+            Node::comment('foo')->asContent()->toString(),
         );
     }
 }
