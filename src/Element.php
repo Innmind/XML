@@ -12,6 +12,7 @@ use Innmind\Immutable\{
     Set,
     Str,
     Predicate\Instance,
+    Monoid\Concat,
 };
 
 /**
@@ -221,70 +222,83 @@ final class Element
 
     public function toString(): string
     {
-        if ($this->selfClosing) {
-            $attributes = $this
-                ->attributes()
-                ->values()
-                ->map(
-                    static fn(Attribute $attribute): string => $attribute->toString(),
-                );
+        $writer = new \XMLWriter;
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->openMemory();
 
-            return \sprintf(
-                '<%s%s/>',
-                $this->name()->toString(),
-                !$this->attributes()->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
-            );
-        }
-
-        return \sprintf(
-            '%s%s%s',
-            $this->openingTag(),
-            $this->content(),
-            $this->closingTag(),
-        );
+        return $this
+            ->render($writer)
+            ->fold(new Concat)
+            ->toString();
     }
 
     public function asContent(): Content
     {
-        if ($this->selfClosing) {
-            return Content::ofString($this->toString());
-        }
+        $writer = new \XMLWriter;
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->openMemory();
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->setIndent(true);
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->setIndentString('    ');
 
-        return Content::ofLines(
-            $this
-                ->children
-                ->flatMap(
-                    static fn($node) => $node->asContent()->lines(),
-                )
-                ->map(static fn($line) => $line->map(
-                    static fn($string) => $string->prepend('    '), // to correctly indent the file
-                ))
-                ->prepend(Sequence::of(Content\Line::of(Str::of($this->openingTag()))))
-                ->add(Content\Line::of(Str::of($this->closingTag()))),
+        return Content::ofChunks(
+            $this->render($writer),
         );
     }
 
-    private function openingTag(): string
+    /**
+     * @return Sequence<Str>
+     */
+    private function render(\XMLWriter $writer): Sequence
     {
-        $attributes = $this
+        $selfClosing = $this->selfClosing;
+
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->startElement($this->name->toString());
+        /** @psalm-suppress ImpureMethodCall */
+        $_ = $this
             ->attributes
             ->values()
-            ->map(
-                static fn(Attribute $attribute): string => $attribute->toString(),
-            );
+            ->foreach(static fn($attribute) => $writer->writeAttribute(
+                $attribute->name(),
+                $attribute->value(),
+            ));
 
-        return \sprintf(
-            '<%s%s>',
-            $this->name()->toString(),
-            !$attributes->empty() ? ' '.Str::of(' ')->join($attributes)->toString() : '',
-        );
-    }
+        /** @psalm-suppress ImpureMethodCall */
+        $opening = Sequence::of(Str::of($writer->outputMemory()));
+        $closing = Sequence::lazy(static function() use ($writer, $selfClosing) {
+            /** @psalm-suppress ImpureMethodCall */
+            match ($selfClosing) {
+                true => $writer->endElement(),
+                false => $writer->fullEndElement(),
+            };
 
-    private function closingTag(): string
-    {
-        return \sprintf(
-            '</%s>',
-            $this->name()->toString(),
+            /** @psalm-suppress ImpureMethodCall */
+            yield Str::of($writer->outputMemory());
+        });
+        $children = $this->children->flatMap(
+            static function($child) use ($writer) {
+                if ($child instanceof Node) {
+                    $write = \Closure::bind(
+                        fn() => $this->render($writer),
+                        $child,
+                        Node::class,
+                    );
+
+                    /**
+                     * @psalm-suppress PossiblyNullFunctionCall
+                     * @var Sequence<Str>
+                     */
+                    return $write();
+                }
+
+                return $child->render($writer);
+            },
         );
+
+        return $children
+            ->prepend($opening)
+            ->append($closing);
     }
 }

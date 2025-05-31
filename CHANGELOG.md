@@ -38,10 +38,13 @@
 - `Innmind\Xml\Node::prependChild()`
 - `Innmind\Xml\Node::appendChild()`
 - `Innmind\Xml\AsContent`
+- `Innmind\Xml\Attribute::empty()`
+- `Innmind\Xml\Attribute::toString()`
 
 ### Fixed
 
 - PHP `8.4` deprecations
+- Documents/nodes/elements are now properly rendered as strings
 
 ## 7.7.0 - 2024-06-26
 

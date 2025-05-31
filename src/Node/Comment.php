@@ -33,6 +33,20 @@ final class Comment implements Implementation
     #[\Override]
     public function toString(): string
     {
-        return '<!--'.$this->value.'-->';
+        $writer = new \XMLWriter;
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->openMemory();
+
+        return $this->render($writer);
+    }
+
+    #[\Override]
+    public function render(\XMLWriter $writer): string
+    {
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->writeComment($this->value);
+
+        /** @psalm-suppress ImpureMethodCall */
+        return $writer->outputMemory();
     }
 }

@@ -143,30 +143,74 @@ final class Document
 
     public function asContent(): Content
     {
-        return Content::ofLines(
-            $this
-                ->children
-                ->flatMap(static fn($node) => $node->asContent()->lines())
-                ->prepend($this->type->match(
-                    static fn($type) => Sequence::of(Content\Line::of(Str::of($type->toString()))),
-                    static fn() => Sequence::of(),
-                ))
-                ->prepend(Sequence::of(Content\Line::of(Str::of($this->tag())))),
+        $writer = new \XMLWriter;
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->openMemory();
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->setIndent(true);
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->setIndentString('    ');
+
+        return Content::ofChunks(
+            $this->render($writer),
         );
     }
 
     private function tag(): string
     {
-        return \sprintf(
-            '<?xml version="%s"%s?>',
+        $writer = new \XMLWriter;
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->openMemory();
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->startDocument(
             $this->version->toString(),
-            $this
-                ->encoding
-                ->map(static fn($encoding) => ' encoding="'.$encoding->toString().'"')
-                ->match(
-                    static fn($encoding) => $encoding,
-                    static fn() => '',
-                ),
+            $this->encoding->match(
+                static fn($encoding) => $encoding->toString(),
+                static fn() => null,
+            ),
         );
+
+        /** @psalm-suppress ImpureMethodCall */
+        return \trim($writer->outputMemory(), "\n");
+    }
+
+    /**
+     * @return Sequence<Str>
+     */
+    private function render(\XMLWriter $writer): Sequence
+    {
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->startDocument(
+            $this->version->toString(),
+            $this->encoding->match(
+                static fn($encoding) => $encoding->toString(),
+                static fn() => null,
+            ),
+        );
+        /** @psalm-suppress ImpureMethodCall */
+        $this->type->match(
+            static fn($type) => $writer->writeRaw($type->toString()."\n"),
+            static fn() => null,
+        );
+        /** @psalm-suppress ImpureMethodCall */
+        $tag = Sequence::of(Str::of($writer->outputMemory()));
+
+        $children = $this->children->flatMap(
+            static function($child) use ($writer) {
+                $write = \Closure::bind(
+                    fn() => $this->render($writer),
+                    $child,
+                    $child::class,
+                );
+
+                /**
+                 * @psalm-suppress PossiblyNullFunctionCall
+                 * @var Sequence<Str>
+                 */
+                return $write();
+            },
+        );
+
+        return $children->prepend($tag);
     }
 }

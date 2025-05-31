@@ -13,6 +13,7 @@ use Innmind\Immutable\{
     Map,
     Set,
     Sequence,
+    Monoid\Concat,
 };
 use Innmind\BlackBox\{
     PHPUnit\BlackBox,
@@ -447,13 +448,54 @@ class ElementTest extends TestCase
         $this->assertSame(
             <<<CONTENT
             <foo bar="baz" baz="foo">
-                <bar>
-                </bar>
-                <baz>
-                </baz>
+                <bar></bar>
+                <baz></baz>
             </foo>
+
             CONTENT,
             $element->asContent()->toString(),
         );
+    }
+
+    public function testAsContentWritesOnSingleLineWhenContainingASingleNode()
+    {
+        $element = Element::of(
+            Name::of('foo'),
+            null,
+            Sequence::of(
+                Node::text('bar'),
+            ),
+        );
+
+        $this->assertSame(
+            "<foo>bar</foo>\n",
+            $element->asContent()->toString(),
+        );
+    }
+
+    public function testAsContentRenderingIsLazy()
+    {
+        $loaded = false;
+        $element = Element::of(
+            Name::of('foo'),
+            null,
+            Sequence::lazy(static function() use (&$loaded) {
+                yield Element::of(Name::of('bar'));
+                $loaded = true;
+                yield Element::of(Name::of('baz'));
+            }),
+        );
+
+        $this->assertSame(
+            '<foo>    <bar></bar>',
+            $element
+                ->asContent()
+                ->lines()
+                ->take(2)
+                ->map(static fn($line) => $line->str())
+                ->fold(new Concat)
+                ->toString(),
+        );
+        $this->assertFalse($loaded);
     }
 }

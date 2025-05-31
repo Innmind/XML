@@ -33,6 +33,20 @@ final class Text implements Implementation
     #[\Override]
     public function toString(): string
     {
-        return $this->data->content();
+        $writer = new \XMLWriter;
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->openMemory();
+
+        return $this->render($writer);
+    }
+
+    #[\Override]
+    public function render(\XMLWriter $writer): string
+    {
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->text($this->data->content());
+
+        /** @psalm-suppress ImpureMethodCall */
+        return $writer->outputMemory();
     }
 }

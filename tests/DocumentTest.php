@@ -110,7 +110,7 @@ class DocumentTest extends TestCase
             Document::of(Version::of(2, 1), Maybe::nothing(), Maybe::nothing())->toString(),
         );
         $this->assertSame(
-            '<?xml version="2.1" encoding="utf-8"?>'."\n",
+            '<?xml version="2.1" encoding="UTF-8"?>'."\n",
             Document::of(
                 Version::of(2, 1),
                 Maybe::nothing(),
@@ -118,7 +118,7 @@ class DocumentTest extends TestCase
             )->toString(),
         );
         $this->assertSame(
-            '<?xml version="2.1" encoding="utf-8"?>'."\n".'<!DOCTYPE html>'."\n",
+            '<?xml version="2.1" encoding="UTF-8"?>'."\n".'<!DOCTYPE html>'."\n",
             Document::of(
                 Version::of(2, 1),
                 Maybe::just(Type::of('html')),
@@ -126,7 +126,7 @@ class DocumentTest extends TestCase
             )->toString(),
         );
         $this->assertSame(
-            '<?xml version="2.1" encoding="utf-8"?>'."\n".'<!DOCTYPE html>'."\n".'<foo/>',
+            '<?xml version="2.1" encoding="UTF-8"?>'."\n".'<!DOCTYPE html>'."\n".'<foo/>',
             Document::of(
                 Version::of(2, 1),
                 Maybe::just(Type::of('html')),
@@ -335,16 +335,14 @@ class DocumentTest extends TestCase
 
         $this->assertSame(
             <<<CONTENT
-            <?xml version="1.0" encoding="utf-8"?>
+            <?xml version="1.0" encoding="UTF-8"?>
             <!DOCTYPE html>
             <root>
-                <foo>
-                </foo>
-                <bar>
-                </bar>
-                <baz>
-                </baz>
+                <foo></foo>
+                <bar></bar>
+                <baz></baz>
             </root>
+
             CONTENT,
             $document->asContent()->toString(),
         );

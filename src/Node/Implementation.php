@@ -11,4 +11,5 @@ interface Implementation
 {
     public function content(): string;
     public function toString(): string;
+    public function render(\XMLWriter $writer): string;
 }
