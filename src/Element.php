@@ -210,15 +210,6 @@ final class Element
         );
     }
 
-    public function content(): string
-    {
-        $children = $this->children->map(
-            static fn($node) => $node->toString(),
-        );
-
-        return Str::of('')->join($children)->toString();
-    }
-
     public function toString(): string
     {
         return $this->asContent(Format::inline)->toString();

@@ -44,6 +44,7 @@
 - `Innmind\Xml\Visitor\Text`
 - `Innmind\Xml\Document::toString()`, use `->asContent(Format::inline)->toString()` instead
 - `Innmind\Xml\Document::content()`
+- `Innmind\Xml\Element::content()`
 
 ### Fixed
 

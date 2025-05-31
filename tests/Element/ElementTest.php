@@ -307,28 +307,6 @@ class ElementTest extends TestCase
         );
     }
 
-    public function testContentWithoutChildren()
-    {
-        $this->assertSame(
-            '',
-            Element::of(Name::of('foo'))->content(),
-        );
-    }
-
-    public function testContentWithChildren()
-    {
-        $node = Element::of(
-            Name::of('foo'),
-            null,
-            Sequence::of(Element::of(Name::of('bar'))),
-        );
-
-        $this->assertSame(
-            '<bar></bar>',
-            $node->content(),
-        );
-    }
-
     public function testCast()
     {
         $this->assertSame(

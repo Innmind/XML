@@ -214,14 +214,6 @@ class SelfClosingElementTest extends TestCase
         );
     }
 
-    public function testContent()
-    {
-        $this->assertSame(
-            '',
-            Element::selfClosing(Name::of('foo'))->content(),
-        );
-    }
-
     public function testCast()
     {
         $this->assertSame(
