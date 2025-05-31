@@ -271,12 +271,13 @@ final class Element
         $children = $this->children->flatMap(
             static function($child) use ($writer) {
                 if ($child instanceof Node) {
-                    $writer->writeRaw('');
+                    $write = \Closure::bind(
+                        fn() => $this->render($writer),
+                        $child,
+                        Node::class,
+                    );
 
-                    return $child
-                        ->asContent()
-                        ->chunks()
-                        ->prepend(Sequence::of(Str::of($writer->outputMemory())));
+                    return $write();
                 }
 
                 return $child->render($writer);

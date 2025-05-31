@@ -39,6 +39,8 @@ final class EntityReference implements Implementation
     #[\Override]
     public function render(\XMLWriter $writer): string
     {
-        return $this->toString();
+        $writer->writeRaw('');
+
+        return $writer->outputMemory().$this->toString();
     }
 }
