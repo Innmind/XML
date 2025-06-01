@@ -149,6 +149,7 @@ class TranslatorTest extends TestCase
         $this->assertSame(
             $custom,
             $translate($document)
+                ->maybe()
                 ->flatMap(static fn($document) => $document->children()->first())
                 ->match(
                     static fn($element) => $element,
