@@ -5,6 +5,7 @@ namespace Innmind\Xml;
 
 use Innmind\Xml\{
     Element\Name,
+    Element\Custom,
     Document\Type,
     Document\Version,
     Document\Encoding,
@@ -20,14 +21,18 @@ use Innmind\Immutable\{
  */
 final class Translator
 {
+    /**
+     * @param pure-Closure(Element): Maybe<Custom> $custom
+     */
     private function __construct(
+        private \Closure $custom,
     ) {
     }
 
     /**
      * @psalm-suppress UndefinedClass Since the package still supports PHP 8.2
      *
-     * @return Maybe<Document|Node|Element>
+     * @return Maybe<Document|Node|Element|Custom>
      */
     public function __invoke(\DOMNode|\Dom\Node $node): Maybe
     {
@@ -38,10 +43,17 @@ final class Translator
 
     /**
      * @psalm-pure
+     *
+     * @param ?pure-callable(Element): Maybe<Custom> $custom
      */
-    public static function default(): self
+    public static function of(?callable $custom = null): self
     {
-        return new self();
+        /** @var Maybe<Custom> */
+        $nothing = Maybe::nothing();
+
+        return new self(\Closure::fromCallable(
+            $custom ?? static fn() => $nothing,
+        ));
     }
 
     /**
@@ -51,7 +63,7 @@ final class Translator
      * @psalm-suppress MixedMethodCall
      * @psalm-suppress MixedPropertyFetch
      *
-     * @return Maybe<Node|Element>
+     * @return Maybe<Node|Element|Custom>
      */
     private function child(\DOMNode|\Dom\Node $node): Maybe
     {
@@ -130,10 +142,15 @@ final class Translator
                             ),
                         ),
                 ),
-            )->map(match ($node->childNodes->length) {
-                0 => Element::selfClosing(...),
-                default => Element::of(...),
-            });
+            )
+                ->map(match ($node->childNodes->length) {
+                    0 => Element::selfClosing(...),
+                    default => Element::of(...),
+                })
+                ->map(fn($element) => ($this->custom)($element)->match(
+                    static fn($custom) => $custom,
+                    static fn() => $element,
+                ));
         }
 
         /** @var Maybe<Node|Element> */
@@ -260,11 +277,11 @@ final class Translator
      *
      * @param Sequence<\DOMNode|\Dom\Node> $children
      *
-     * @return Maybe<Sequence<Node|Element>>
+     * @return Maybe<Sequence<Node|Element|Custom>>
      */
     private function children(Sequence $children): Maybe
     {
-        /** @var Sequence<Node|Element> */
+        /** @var Sequence<Node|Element|Custom> */
         $translated = Sequence::of();
 
         /**

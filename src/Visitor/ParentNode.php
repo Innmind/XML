@@ -6,6 +6,7 @@ namespace Innmind\Xml\Visitor;
 use Innmind\Xml\{
     Node,
     Element,
+    Element\Custom,
     Document,
 };
 use Innmind\Immutable\Maybe;
@@ -15,27 +16,31 @@ use Innmind\Immutable\Maybe;
  */
 final class ParentNode
 {
-    private Node|Element $node;
-
-    private function __construct(Node|Element $node)
-    {
-        $this->node = $node;
+    private function __construct(
+        private Node|Element|Custom $node,
+    ) {
     }
 
     /**
-     * @return Maybe<Element>
+     * @return Maybe<Element|Custom>
      */
-    public function __invoke(Document|Node|Element $tree): Maybe
+    public function __invoke(Document|Node|Element|Custom $tree): Maybe
     {
-        /** @var Maybe<Element> */
+        /** @var Maybe<Element|Custom> */
         $parent = Maybe::nothing();
 
         if ($tree instanceof Node) {
             return $parent;
         }
 
-        /** @var Maybe<Element> */
-        return $tree->children()->reduce(
+        if ($tree instanceof Custom) {
+            $children = $tree->normalize()->children();
+        } else {
+            $children = $tree->children();
+        }
+
+        /** @var Maybe<Element|Custom> */
+        return $children->reduce(
             $parent,
             function(Maybe $parent, $child) use ($tree): Maybe {
                 if ($child === $this->node) {
@@ -50,7 +55,7 @@ final class ParentNode
     /**
      * @psalm-pure
      */
-    public static function of(Node|Element $node): self
+    public static function of(Node|Element|Custom $node): self
     {
         return new self($node);
     }

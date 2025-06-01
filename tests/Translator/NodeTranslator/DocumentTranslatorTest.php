@@ -22,7 +22,7 @@ class DocumentTranslatorTest extends TestCase
 XML
         );
 
-        $translate = Translator::default();
+        $translate = Translator::of();
         $node = $translate($document)->match(
             static fn($node) => $node,
             static fn() => null,

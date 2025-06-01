@@ -13,7 +13,7 @@ class EntityReferenceTranslatorTest extends TestCase
 {
     public function testTranslate()
     {
-        $translate = Translator::default();
+        $translate = Translator::of();
         $node = $translate(
             new \DOMEntityReference('gt'),
         )->match(

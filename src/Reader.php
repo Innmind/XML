@@ -3,6 +3,7 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml;
 
+use Innmind\Xml\Element\Custom;
 use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\Maybe;
 
@@ -15,11 +16,11 @@ final class Reader
 
     private function __construct()
     {
-        $this->translate = Translator::default();
+        $this->translate = Translator::of();
     }
 
     /**
-     * @return Maybe<Document|Node|Element>
+     * @return Maybe<Document|Node|Element|Custom>
      */
     public function __invoke(Content $content): Maybe
     {

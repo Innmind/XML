@@ -19,7 +19,7 @@ class CharacterDataTranslatorTest extends TestCase
 XML
         );
 
-        $translate = Translator::default();
+        $translate = Translator::of();
         $node = $translate(
             $document
                 ->childNodes

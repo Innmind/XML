@@ -6,6 +6,7 @@ namespace Innmind\Xml\Visitor;
 use Innmind\Xml\{
     Node,
     Element,
+    Element\Custom,
     Document,
 };
 use Innmind\Immutable\{
@@ -20,21 +21,22 @@ use Innmind\Immutable\{
  */
 final class PreviousSibling
 {
-    private Node|Element $node;
-
-    private function __construct(Node|Element $node)
-    {
-        $this->node = $node;
+    private function __construct(
+        private Node|Element|Custom $node,
+    ) {
     }
 
     /**
-     * @return Maybe<Node|Element>
+     * @return Maybe<Node|Element|Custom>
      */
-    public function __invoke(Document|Node|Element $tree): Maybe
+    public function __invoke(Document|Node|Element|Custom $tree): Maybe
     {
         return ParentNode::of($this->node)($tree)
             ->toSequence()
-            ->flatMap(static fn($parent) => $parent->children())
+            ->flatMap(static fn($parent) => match (true) {
+                $parent instanceof Custom => $parent->normalize()->children(),
+                default => $parent->children(),
+            })
             ->aggregate(static function($a, $b) {
                 if ($a instanceof Pair) {
                     return Sequence::of(new Pair(
@@ -50,7 +52,8 @@ final class PreviousSibling
             ->map(static fn($pair): mixed => $pair->key())
             ->keep(
                 Instance::of(Node::class)->or(
-                    Instance::of(Element::class),
+                    Instance::of(Element::class)
+                        ->or(Instance::of(Custom::class)),
                 ),
             );
     }
@@ -58,7 +61,7 @@ final class PreviousSibling
     /**
      * @psalm-pure
      */
-    public static function of(Node|Element $node): self
+    public static function of(Node|Element|Custom $node): self
     {
         return new self($node);
     }

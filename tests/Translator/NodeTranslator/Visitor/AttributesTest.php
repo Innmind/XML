@@ -14,7 +14,7 @@ class AttributesTest extends TestCase
         $document = new \DOMDocument;
         $document->loadXML('<foo/>');
 
-        $attributes = Translator::default()($document->childNodes->item(0))->match(
+        $attributes = Translator::of()($document->childNodes->item(0))->match(
             static fn($element) => $element->attributes()->toSet(),
             static fn() => null,
         );
@@ -28,7 +28,7 @@ class AttributesTest extends TestCase
         $document = new \DOMDocument;
         $document->loadXML('<hr bar="baz" foobar=""/>');
 
-        $attributes = Translator::default()($document->childNodes->item(0))->match(
+        $attributes = Translator::of()($document->childNodes->item(0))->match(
             static fn($element) => $element->attributes()->toSet(),
             static fn() => null,
         );
