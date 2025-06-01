@@ -113,6 +113,19 @@ class ElementTest extends TestCase
         $this->assertEquals($element, $element->removeAttribute('baz'));
     }
 
+    public function testThrowOnDuplicatedAttribute()
+    {
+        $this->assert()->throws(
+            static fn() => Element::of(
+                Name::of('foo'),
+                Sequence::of(
+                    Attribute::of('bar'),
+                    Attribute::of('bar'),
+                ),
+            ),
+        );
+    }
+
     public function testReplaceAttribute()
     {
         $node = Element::of(

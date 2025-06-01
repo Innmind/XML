@@ -8,6 +8,7 @@ use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\{
     Maybe,
     Sequence,
+    Set,
     Str,
 };
 
@@ -46,7 +47,7 @@ final class Element
 
         return new self(
             $name,
-            $attributes,
+            self::safeguard($attributes),
             $children,
             false,
         );
@@ -65,7 +66,7 @@ final class Element
 
         return new self(
             $name,
-            $attributes,
+            self::safeguard($attributes),
             Sequence::of(),
             true,
         );
@@ -275,5 +276,26 @@ final class Element
         return $children
             ->prepend($opening)
             ->append($closing);
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @param Sequence<Attribute> $attributes
+     *
+     * @return Sequence<Attribute>
+     */
+    private static function safeguard(Sequence $attributes): Sequence
+    {
+        return $attributes->safeguard(
+            Set::strings(),
+            static fn($names, $attribute) => match ($names->contains($attribute->name())) {
+                true => throw new \LogicException(\sprintf(
+                    'Duplicated attribute %s',
+                    $attribute->name(),
+                )),
+                false => ($names)($attribute->name()),
+            },
+        );
     }
 }
