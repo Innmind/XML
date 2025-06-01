@@ -9,11 +9,8 @@ namespace Innmind\Xml\Node;
  */
 final class Text implements Implementation
 {
-    private CharacterData $data;
-
-    private function __construct(string $data)
+    private function __construct(private string $data)
     {
-        $this->data = CharacterData::of($data);
     }
 
     /**
@@ -27,14 +24,14 @@ final class Text implements Implementation
     #[\Override]
     public function content(): string
     {
-        return $this->data->content();
+        return $this->data;
     }
 
     #[\Override]
     public function render(\XMLWriter $writer): string
     {
         /** @psalm-suppress ImpureMethodCall */
-        $writer->text($this->data->content());
+        $writer->text($this->data);
 
         /** @psalm-suppress ImpureMethodCall */
         return $writer->outputMemory();
