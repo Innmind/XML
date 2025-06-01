@@ -9,11 +9,8 @@ namespace Innmind\Xml\Node;
  */
 final class EntityReference implements Implementation
 {
-    private string $data;
-
-    private function __construct(string $data)
+    private function __construct(private string $data)
     {
-        $this->data = $data;
     }
 
     /**

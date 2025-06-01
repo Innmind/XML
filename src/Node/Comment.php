@@ -9,11 +9,8 @@ namespace Innmind\Xml\Node;
  */
 final class Comment implements Implementation
 {
-    private string $value;
-
-    private function __construct(string $value)
+    private function __construct(private string $value)
     {
-        $this->value = $value;
     }
 
     /**

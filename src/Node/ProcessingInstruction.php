@@ -10,13 +10,10 @@ namespace Innmind\Xml\Node;
  */
 final class ProcessingInstruction implements Implementation
 {
-    private string $kind;
-    private string $value;
-
-    private function __construct(string $kind, string $value)
-    {
-        $this->kind = $kind;
-        $this->value = $value;
+    private function __construct(
+        private string $kind,
+        private string $value,
+    ) {
     }
 
     /**
