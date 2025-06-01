@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace Innmind\Xml\Node\Document;
+namespace Innmind\Xml\Document;
 
 use Innmind\Xml\Exception\DomainException;
 use Innmind\Immutable\Maybe;
@@ -11,22 +11,14 @@ use Innmind\Immutable\Maybe;
  */
 final class Type
 {
-    /** @var non-empty-string */
-    private string $name;
-    private string $publicId;
-    private string $systemId;
-
     /**
      * @param non-empty-string $name
      */
     private function __construct(
-        string $name,
-        string $publicId,
-        string $systemId,
+        private string $name,
+        private string $publicId,
+        private string $systemId,
     ) {
-        $this->name = $name;
-        $this->publicId = $publicId;
-        $this->systemId = $systemId;
     }
 
     /**

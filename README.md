@@ -20,17 +20,19 @@ composer require innmind/xml
 
 ```php
 use Innmind\Xml\{
-    Reader\Reader,
+    Reader,
     Node,
+    Element,
+    Document,
 };
 use Innmind\Filesystem\File\Content;
-use Innmind\Immutable\Maybe;
+use Innmind\Immutable\Attempt;
 
 $read = Reader::of();
 
 $tree = $read(
-    Content\Lines::ofContent('<root><foo some="attribute"/></root>')
-); // Maybe<Node>
+    Content::ofString('<root><foo some="attribute"/></root>')
+); // Attempt<Node|Element|Document>
 ```
 
 ## Extract informations out of a node

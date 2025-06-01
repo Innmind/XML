@@ -3,7 +3,12 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Visitor;
 
-use Innmind\Xml\Node;
+use Innmind\Xml\{
+    Node,
+    Element,
+    Element\Custom,
+    Document,
+};
 use Innmind\Immutable\Maybe;
 
 /**
@@ -11,33 +16,31 @@ use Innmind\Immutable\Maybe;
  */
 final class NextSibling
 {
-    private Node $node;
-
-    private function __construct(Node $node)
-    {
-        $this->node = $node;
+    private function __construct(
+        private Node|Element|Custom $node,
+    ) {
     }
 
     /**
-     * @return Maybe<Node>
+     * @return Maybe<Node|Element|Custom>
      */
-    public function __invoke(Node $tree): Maybe
+    public function __invoke(Document|Node|Element|Custom $tree): Maybe
     {
-        $children = ParentNode::of($this->node)($tree)->map(
-            static fn($parent) => $parent->children(),
-        );
-
-        return $children
-            ->flatMap(fn($children) => $children->indexOf($this->node))
-            ->flatMap(static fn($position) => $children->flatMap(
-                static fn($children) => $children->get($position + 1),
-            ));
+        return ParentNode::of($this->node)($tree)
+            ->toSequence()
+            ->flatMap(static fn($parent) => match (true) {
+                $parent instanceof Custom => $parent->normalize()->children(),
+                default => $parent->children(),
+            })
+            ->dropWhile(fn($node) => $node !== $this->node)
+            ->drop(1)
+            ->first();
     }
 
     /**
      * @psalm-pure
      */
-    public static function of(Node $node): self
+    public static function of(Node|Element|Custom $node): self
     {
         return new self($node);
     }

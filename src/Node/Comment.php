@@ -3,19 +3,14 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml\Node;
 
-use Innmind\Xml\Node;
-use Innmind\Immutable\Sequence;
-
 /**
+ * @internal
  * @psalm-immutable
  */
-final class Comment implements Node
+final class Comment implements Implementation
 {
-    private string $value;
-
-    private function __construct(string $value)
+    private function __construct(private string $value)
     {
-        $this->value = $value;
     }
 
     /**
@@ -26,44 +21,19 @@ final class Comment implements Node
         return new self($value);
     }
 
-    public function children(): Sequence
-    {
-        return Sequence::of();
-    }
-
-    public function filterChild(callable $filter): self
-    {
-        return $this;
-    }
-
-    public function mapChild(callable $map): self
-    {
-        return $this;
-    }
-
-    /**
-     * This operation will do nothing
-     */
-    public function prependChild(Node $child): Node
-    {
-        return $this;
-    }
-
-    /**
-     * This operation will do nothing
-     */
-    public function appendChild(Node $child): Node
-    {
-        return $this;
-    }
-
+    #[\Override]
     public function content(): string
     {
         return $this->value;
     }
 
-    public function toString(): string
+    #[\Override]
+    public function render(\XMLWriter $writer): string
     {
-        return '<!--'.$this->value.'-->';
+        /** @psalm-suppress ImpureMethodCall */
+        $writer->writeComment($this->value);
+
+        /** @psalm-suppress ImpureMethodCall */
+        return $writer->outputMemory();
     }
 }

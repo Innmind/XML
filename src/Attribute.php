@@ -8,24 +8,17 @@ use Innmind\Immutable\Maybe;
 /**
  * @psalm-immutable
  */
-class Attribute
+final class Attribute
 {
-    /** @var non-empty-string */
-    private string $name;
-    private string $value;
-    private bool $renderEmptyValue;
-
     /**
+     * @param ?non-empty-string $namespace
      * @param non-empty-string $name
      */
     private function __construct(
-        string $name,
-        string $value = '',
-        bool $renderEmptyValue = false,
+        private ?string $namespace,
+        private string $name,
+        private string $value = '',
     ) {
-        $this->name = $name;
-        $this->value = $value;
-        $this->renderEmptyValue = $renderEmptyValue;
     }
 
     /**
@@ -35,7 +28,21 @@ class Attribute
      */
     public static function of(string $name, string $value = ''): self
     {
-        return new self($name, $value);
+        return new self(null, $name, $value);
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @param non-empty-string $namespace
+     * @param non-empty-string $name
+     */
+    public static function namespaced(
+        string $namespace,
+        string $name,
+        string $value = '',
+    ): self {
+        return new self($namespace, $name, $value);
     }
 
     /**
@@ -48,17 +55,7 @@ class Attribute
             return Maybe::nothing();
         }
 
-        return Maybe::just(new self($name, $value));
-    }
-
-    /**
-     * @psalm-pure
-     *
-     * @param non-empty-string $name
-     */
-    public static function empty(string $name): self
-    {
-        return new self($name, '', true);
+        return Maybe::just(new self(null, $name, $value));
     }
 
     /**
@@ -74,12 +71,19 @@ class Attribute
         return $this->value;
     }
 
-    public function toString(): string
+    private function render(\XMLWriter $writer): void
     {
-        return $this->name.(match ([$this->value, $this->renderEmptyValue]) {
-            ['', true] => '=""',
-            ['', false] => '',
-            default => \sprintf('="%s"', $this->value),
-        });
+        if (\is_null($this->namespace)) {
+            /** @psalm-suppress ImpureMethodCall */
+            $writer->writeAttribute($this->name, $this->value);
+        } else {
+            /** @psalm-suppress ImpureMethodCall */
+            $writer->writeAttributeNs(
+                $this->namespace,
+                $this->name,
+                null,
+                $this->value,
+            );
+        }
     }
 }

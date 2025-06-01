@@ -5,10 +5,10 @@ namespace Tests\Innmind\Xml\Visitor;
 
 use Innmind\Xml\{
     Visitor\PreviousSibling,
-    Reader\Reader,
+    Reader,
 };
 use Innmind\Filesystem\File\Content;
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class PreviousSiblingTest extends TestCase
 {

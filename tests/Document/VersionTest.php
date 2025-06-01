@@ -1,13 +1,13 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\Xml\Node\Document;
+namespace Tests\Innmind\Xml\Document;
 
 use Innmind\Xml\{
-    Node\Document\Version,
+    Document\Version,
     Exception\DomainException,
 };
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class VersionTest extends TestCase
 {

@@ -1,19 +1,18 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\Xml\Node\Document;
+namespace Tests\Innmind\Xml\Document;
 
 use Innmind\Xml\{
-    Node\Document\Type,
+    Document\Type,
     Exception\DomainException,
 };
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class TypeTest extends TestCase
 {
-    /**
-     * @dataProvider cases
-     */
+    #[DataProvider('cases')]
     public function testInterface($name, $public, $system, $string)
     {
         $type = Type::of($name, $public, $system);

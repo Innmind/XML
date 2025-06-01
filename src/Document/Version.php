@@ -1,7 +1,7 @@
 <?php
 declare(strict_types = 1);
 
-namespace Innmind\Xml\Node\Document;
+namespace Innmind\Xml\Document;
 
 use Innmind\Xml\Exception\DomainException;
 use Innmind\Immutable\Maybe;
@@ -11,26 +11,21 @@ use Innmind\Immutable\Maybe;
  */
 final class Version
 {
-    /** @var 0|positive-int */
-    private int $major;
-    /** @var 0|positive-int */
-    private int $minor;
-
     /**
-     * @param 0|positive-int $major
-     * @param 0|positive-int $minor
+     * @param int<0, max> $major
+     * @param int<0, max> $minor
      */
-    private function __construct(int $major, int $minor)
-    {
-        $this->major = $major;
-        $this->minor = $minor;
+    private function __construct(
+        private int $major,
+        private int $minor,
+    ) {
     }
 
     /**
      * @psalm-pure
      *
-     * @param 0|positive-int $major
-     * @param 0|positive-int $minor
+     * @param int<0, max> $major
+     * @param int<0, max> $minor
      *
      * @throws DomainException
      */
@@ -58,7 +53,7 @@ final class Version
     }
 
     /**
-     * @return 0|positive-int
+     * @return int<0, max>
      */
     public function major(): int
     {
@@ -66,7 +61,7 @@ final class Version
     }
 
     /**
-     * @return 0|positive-int
+     * @return int<0, max>
      */
     public function minor(): int
     {

@@ -16,8 +16,8 @@
     },
     "require": {
         "php": "~8.2",
-        "innmind/immutable": "~5.7",
-        "innmind/filesystem": "~7.0"
+        "innmind/immutable": "~5.15",
+        "innmind/filesystem": "~8.1"
     },
     "autoload": {
         "psr-4": {
@@ -30,9 +30,8 @@
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "~10.2",
-        "vimeo/psalm": "~5.12",
+        "innmind/static-analysis": "^1.2.1",
         "innmind/coding-standard": "~2.0",
-        "innmind/black-box": "~5.5"
+        "innmind/black-box": "^6.4.1"
     }
 }

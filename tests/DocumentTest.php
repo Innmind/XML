@@ -1,43 +1,31 @@
 <?php
 declare(strict_types = 1);
 
-namespace Tests\Innmind\Xml\Node;
+namespace Tests\Innmind\Xml;
 
 use Innmind\Xml\{
-    Node\Document,
-    Node\Document\Version,
-    Node\Document\Type,
-    Node\Document\Encoding,
+    Document,
+    Document\Version,
+    Document\Type,
+    Document\Encoding,
+    Element,
+    Element\Name,
     Node,
-    Element\Element,
-    Element\SelfClosingElement,
-    AsContent,
+    Format,
 };
 use Innmind\Immutable\{
     Sequence,
     Maybe,
 };
-use PHPUnit\Framework\TestCase;
 use Innmind\BlackBox\{
     PHPUnit\BlackBox,
+    PHPUnit\Framework\TestCase,
     Set,
 };
 
 class DocumentTest extends TestCase
 {
     use BlackBox;
-
-    public function testInterface()
-    {
-        $this->assertInstanceOf(
-            Node::class,
-            Document::of(Version::of(1), Maybe::nothing(), Maybe::nothing()),
-        );
-        $this->assertInstanceOf(
-            AsContent::class,
-            Document::of(Version::of(1), Maybe::nothing(), Maybe::nothing()),
-        );
-    }
 
     public function testVersion()
     {
@@ -95,57 +83,44 @@ class DocumentTest extends TestCase
         ));
     }
 
-    public function testContentWithoutChildren()
-    {
-        $this->assertSame(
-            '',
-            Document::of(Version::of(1), Maybe::nothing(), Maybe::nothing())->content(),
-        );
-    }
-
-    public function testContentWithChildren()
-    {
-        $this->assertSame(
-            '<foo></foo>',
-            Document::of(
-                Version::of(1),
-                Maybe::nothing(),
-                Maybe::nothing(),
-                Sequence::of(Element::of('foo')),
-            )->content(),
-        );
-    }
-
     public function testCast()
     {
         $this->assertSame(
             '<?xml version="2.1"?>'."\n",
-            Document::of(Version::of(2, 1), Maybe::nothing(), Maybe::nothing())->toString(),
+            Document::of(Version::of(2, 1), Maybe::nothing(), Maybe::nothing())
+                ->asContent(Format::inline)
+                ->toString(),
         );
         $this->assertSame(
-            '<?xml version="2.1" encoding="utf-8"?>'."\n",
+            '<?xml version="2.1" encoding="UTF-8"?>'."\n",
             Document::of(
                 Version::of(2, 1),
                 Maybe::nothing(),
-                Maybe::just(Encoding::of('utf-8')),
-            )->toString(),
+                Encoding::of('utf-8'),
+            )
+                ->asContent(Format::inline)
+                ->toString(),
         );
         $this->assertSame(
-            '<?xml version="2.1" encoding="utf-8"?>'."\n".'<!DOCTYPE html>'."\n",
+            '<?xml version="2.1" encoding="UTF-8"?>'."\n".'<!DOCTYPE html>'."\n",
             Document::of(
                 Version::of(2, 1),
                 Maybe::just(Type::of('html')),
-                Maybe::just(Encoding::of('utf-8')),
-            )->toString(),
+                Encoding::of('utf-8'),
+            )
+                ->asContent(Format::inline)
+                ->toString(),
         );
         $this->assertSame(
-            '<?xml version="2.1" encoding="utf-8"?>'."\n".'<!DOCTYPE html>'."\n".'<foo/>',
+            '<?xml version="2.1" encoding="UTF-8"?>'."\n".'<!DOCTYPE html>'."\n".'<foo/>',
             Document::of(
                 Version::of(2, 1),
                 Maybe::just(Type::of('html')),
-                Maybe::just(Encoding::of('utf-8')),
-                Sequence::of(SelfClosingElement::of('foo')),
-            )->toString(),
+                Encoding::of('utf-8'),
+                Sequence::of(Element::selfClosing(Name::of('foo'))),
+            )
+                ->asContent(Format::inline)
+                ->toString(),
         );
     }
 
@@ -154,16 +129,16 @@ class DocumentTest extends TestCase
         $document = Document::of(
             Version::of(1),
             Maybe::just(Type::of('html')),
-            Maybe::just(Encoding::of('utf-8')),
+            Encoding::of('utf-8'),
             Sequence::of(
-                Element::of('foo'),
-                Element::of('bar'),
-                Element::of('baz'),
+                Element::of(Name::of('foo')),
+                Element::of(Name::of('bar')),
+                Element::of(Name::of('baz')),
             ),
         );
 
         $document2 = $document->prependChild(
-            $node = $this->createMock(Node::class),
+            $node = Node::text(''),
         );
 
         $this->assertNotSame($document, $document2);
@@ -218,16 +193,16 @@ class DocumentTest extends TestCase
         $document = Document::of(
             Version::of(1),
             Maybe::just(Type::of('html')),
-            Maybe::just(Encoding::of('utf-8')),
+            Encoding::of('utf-8'),
             Sequence::of(
-                Element::of('foo'),
-                Element::of('bar'),
-                Element::of('baz'),
+                Element::of(Name::of('foo')),
+                Element::of(Name::of('bar')),
+                Element::of(Name::of('baz')),
             ),
         );
 
         $document2 = $document->appendChild(
-            $node = $this->createMock(Node::class),
+            $node = Node::text(''),
         );
 
         $this->assertNotSame($document, $document2);
@@ -259,20 +234,21 @@ class DocumentTest extends TestCase
         );
     }
 
-    public function testFilterChild()
+    public function testFilterChild(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
-                Set\Integers::between(0, 10),
-                Set\Integers::between(0, 10),
-                Set\Sequence::of(
-                    Set\Decorate::immutable(
-                        static fn($name) => Element::of($name),
-                        Set\Strings::madeOf(Set\Unicode::any())->between(1, 10),
-                    ),
+                Set::integers()->between(0, 10),
+                Set::integers()->between(0, 10),
+                Set::sequence(
+                    Set::strings()
+                        ->madeOf(Set::strings()->unicode()->char())
+                        ->between(1, 10)
+                        ->map(Name::of(...))
+                        ->map(Element::of(...)),
                 )->between(0, 10),
             )
-            ->then(function($major, $minor, $children) {
+            ->prove(function($major, $minor, $children) {
                 $element = Document::of(
                     Version::of($major, $minor),
                     Maybe::nothing(),
@@ -290,24 +266,26 @@ class DocumentTest extends TestCase
             });
     }
 
-    public function testMapChild()
+    public function testMapChild(): BlackBox\Proof
     {
-        $this
+        return $this
             ->forAll(
-                Set\Integers::between(0, 10),
-                Set\Integers::between(0, 10),
-                Set\Sequence::of(
-                    Set\Decorate::immutable(
-                        static fn($name) => Element::of($name),
-                        Set\Strings::madeOf(Set\Unicode::any())->between(1, 10),
-                    ),
+                Set::integers()->between(0, 10),
+                Set::integers()->between(0, 10),
+                Set::sequence(
+                    Set::strings()
+                        ->madeOf(Set::strings()->unicode()->char())
+                        ->between(1, 10)
+                        ->map(Name::of(...))
+                        ->map(Element::of(...)),
                 )->between(1, 10),
-                Set\Decorate::immutable(
-                    static fn($name) => Element::of($name),
-                    Set\Strings::madeOf(Set\Unicode::any())->between(1, 10),
-                ),
+                Set::strings()
+                    ->madeOf(Set::strings()->unicode()->char())
+                    ->between(1, 10)
+                    ->map(Name::of(...))
+                    ->map(Element::of(...)),
             )
-            ->then(function($major, $minor, $children, $replacement) {
+            ->prove(function($major, $minor, $children, $replacement) {
                 $element = Document::of(
                     Version::of($major, $minor),
                     Maybe::nothing(),
@@ -329,15 +307,15 @@ class DocumentTest extends TestCase
         $document = Document::of(
             Version::of(1),
             Maybe::just(Type::of('html')),
-            Maybe::just(Encoding::of('utf-8')),
+            Encoding::of('utf-8'),
             Sequence::of(
                 Element::of(
-                    'root',
+                    Name::of('root'),
                     null,
                     Sequence::of(
-                        Element::of('foo'),
-                        Element::of('bar'),
-                        Element::of('baz'),
+                        Element::of(Name::of('foo')),
+                        Element::of(Name::of('bar')),
+                        Element::of(Name::of('baz')),
                     ),
                 ),
             ),
@@ -345,16 +323,14 @@ class DocumentTest extends TestCase
 
         $this->assertSame(
             <<<CONTENT
-            <?xml version="1.0" encoding="utf-8"?>
+            <?xml version="1.0" encoding="UTF-8"?>
             <!DOCTYPE html>
             <root>
-                <foo>
-                </foo>
-                <bar>
-                </bar>
-                <baz>
-                </baz>
+                <foo></foo>
+                <bar></bar>
+                <baz></baz>
             </root>
+
             CONTENT,
             $document->asContent()->toString(),
         );

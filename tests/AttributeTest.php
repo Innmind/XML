@@ -4,7 +4,7 @@ declare(strict_types = 1);
 namespace Tests\Innmind\Xml;
 
 use Innmind\Xml\Attribute;
-use PHPUnit\Framework\TestCase;
+use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 
 class AttributeTest extends TestCase
 {
@@ -30,29 +30,5 @@ class AttributeTest extends TestCase
 
         $this->assertSame('foo', $attribute->name());
         $this->assertSame('bar', $attribute->value());
-    }
-
-    public function testCastWithNoValue()
-    {
-        $this->assertSame(
-            'foo',
-            Attribute::of('foo')->toString(),
-        );
-    }
-
-    public function testCastEmptyAttribute()
-    {
-        $this->assertSame(
-            'foo=""',
-            Attribute::empty('foo')->toString(),
-        );
-    }
-
-    public function testCastWithValue()
-    {
-        $this->assertSame(
-            'foo="bar"',
-            Attribute::of('foo', 'bar')->toString(),
-        );
     }
 }

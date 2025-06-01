@@ -1,5 +1,62 @@
 # Changelog
 
+## 8.0.0 - 2025-06-01
+
+### Added
+
+- `Innmind\Xml\Element\Name`
+- `Innmind\Xml\Element\Custom`
+- Support for the new PHP `8.4` `\Dom\*` API
+- `Innmind\Xml\Format`
+- `Innmind\Xml\Attribute::namespaced()`
+
+### Changed
+
+- Requires `innmind/filesystem:~8.1`
+- `Innmind\Xml\Element::name()` now returns a `Innmind\Xml\Element\Name`
+- `Innmind\Xml\Element\Element::of()` name argument now expects a `Name`
+- `Innmind\Xml\Element\SelfClosingElement::of()` name argument now expects a `Name`
+- `Innmind\Xml\Element` is now a final class
+- `Innmind\Xml\Element` no longer extends `Innmind\Xml\Node`
+- `Innmind\Xml\Node\Document` has been renamed `Innmind\Xml\Document`
+- `Innmind\Xml\Node\Document\Version` has been renamed `Innmind\Xml\Document\Version`
+- `Innmind\Xml\Node\Document\Type` has been renamed `Innmind\Xml\Document\Type`
+- `Innmind\Xml\Node\Document\Encoding` has been renamed `Innmind\Xml\Document\Encoding`
+- `Innmind\Xml\Node` is now a final class
+- `Innmind\Xml\Node\CharacterData` is now internal, use `Innmind\Xml\Node::characterData()` instead
+- `Innmind\Xml\Node\Comment` is now internal, use `Innmind\Xml\Node::comment()` instead
+- `Innmind\Xml\Node\EntityReference` is now internal, use `Innmind\Xml\Node::entityReference()` instead
+- `Innmind\Xml\Node\ProcessingInformation` is now internal, use `Innmind\Xml\Node::processingInformation()` instead
+- `Innmind\Xml\Node\Text` is now internal, use `Innmind\Xml\Node::text()` instead
+- `Innmind\Xml\Reader` is now a final class
+- `Innmind\Xml\Document\Encoding` is now an enum that only supports `utf-8` and `ascii`
+- Elements attributes are now expressed with a `Sequence` instead of a `Set`
+- `Innmind\Xml\Reader` now returns an `Innmind\Immutable\Attempt` to give access to why it failed to read the content
+
+### Removed
+
+- `Innmind\Xml\Element\Element` use `Innmind\Xml\Element` instead
+- `Innmind\Xml\Element\SelfClosingElement` use `Innmind\Xml\Element` instead
+- `Innmind\Xml\Node::children()`
+- `Innmind\Xml\Node::filterChild()`
+- `Innmind\Xml\Node::mapChild()`
+- `Innmind\Xml\Node::prependChild()`
+- `Innmind\Xml\Node::appendChild()`
+- `Innmind\Xml\AsContent`
+- `Innmind\Xml\Attribute::empty()`
+- `Innmind\Xml\Attribute::toString()`
+- `Innmind\Xml\Visitor\Text`
+- `Innmind\Xml\Document::toString()`, use `->asContent(Format::inline)->toString()` instead
+- `Innmind\Xml\Document::content()`
+- `Innmind\Xml\Element::toString()`, use `->asContent(Format::inline)->toString()` instead
+- `Innmind\Xml\Element::content()`
+- `Innmind\Xml\Node::toString()`, use `->asContent()->toString()` instead
+
+### Fixed
+
+- PHP `8.4` deprecations
+- Documents/nodes/elements are now properly rendered as strings
+
 ## 7.7.0 - 2024-06-26
 
 ### Changed
