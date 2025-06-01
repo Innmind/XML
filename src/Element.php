@@ -3,7 +3,10 @@ declare(strict_types = 1);
 
 namespace Innmind\Xml;
 
-use Innmind\Xml\Element\Name;
+use Innmind\Xml\Element\{
+    Name,
+    Custom,
+};
 use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\{
     Maybe,
@@ -19,7 +22,7 @@ final class Element
 {
     /**
      * @param Sequence<Attribute> $attributes
-     * @param Sequence<Node|self> $children
+     * @param Sequence<Node|self|Custom> $children
      */
     private function __construct(
         private Name $name,
@@ -33,7 +36,7 @@ final class Element
      * @psalm-pure
      *
      * @param Sequence<Attribute>|null $attributes
-     * @param Sequence<Node|self>|null $children
+     * @param Sequence<Node|self|Custom>|null $children
      */
     public static function of(
         Name $name,
@@ -42,7 +45,7 @@ final class Element
     ): self {
         /** @var Sequence<Attribute> */
         $attributes ??= Sequence::of();
-        /** @var Sequence<Node|self> */
+        /** @var Sequence<Node|self|Custom> */
         $children ??= Sequence::of();
 
         return new self(
@@ -126,7 +129,7 @@ final class Element
     }
 
     /**
-     * @return Sequence<Node|self>
+     * @return Sequence<Node|self|Custom>
      */
     public function children(): Sequence
     {
@@ -134,7 +137,7 @@ final class Element
     }
 
     /**
-     * @param callable(Node|self): bool $filter
+     * @param callable(Node|self|Custom): bool $filter
      */
     public function filterChild(callable $filter): self
     {
@@ -151,7 +154,7 @@ final class Element
     }
 
     /**
-     * @param callable(Node|self): Node $map
+     * @param callable(Node|self|Custom): (Node|self|Custom) $map
      */
     public function mapChild(callable $map): self
     {
@@ -167,7 +170,7 @@ final class Element
         );
     }
 
-    public function prependChild(Node|self $child): self
+    public function prependChild(Node|self|Custom $child): self
     {
         if ($this->selfClosing) {
             return $this;
@@ -181,7 +184,7 @@ final class Element
         );
     }
 
-    public function appendChild(Node|self $child): self
+    public function appendChild(Node|self|Custom $child): self
     {
         if ($this->selfClosing) {
             return $this;
@@ -267,6 +270,10 @@ final class Element
                      * @var Sequence<Str>
                      */
                     return $write();
+                }
+
+                if ($child instanceof Custom) {
+                    $child = $child->normalize();
                 }
 
                 return $child->render($writer);

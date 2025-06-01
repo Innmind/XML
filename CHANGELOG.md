@@ -5,6 +5,7 @@
 ### Added
 
 - `Innmind\Xml\Element\Name`
+- `Innmind\Xml\Element\Custom`
 - Support for the new PHP `8.4` `\Dom\*` API
 - `Innmind\Xml\Format`
 - `Innmind\Xml\Attribute::namespaced()`

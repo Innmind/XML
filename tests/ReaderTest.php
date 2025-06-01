@@ -7,6 +7,7 @@ use Innmind\Xml\{
     Reader,
     Document,
     Element,
+    Element\Custom,
     Node,
     Attribute,
     Format,
@@ -221,11 +222,25 @@ XML;
                 ),
             )->map(static fn($values) => Immutable\Sequence::of(...$values));
         };
-        $element = Set::compose(
+        $concreteElement = Set::compose(
             Element::of(...),
             $names->map(Element\Name::of(...)),
             $attributes,
             $children(),
+        );
+        $element = Set::either(
+            $concreteElement,
+            $concreteElement->map(static fn($element) => new class($element) implements Custom {
+                public function __construct(
+                    private $element,
+                ) {
+                }
+
+                public function normalize(): Element
+                {
+                    return $this->element;
+                }
+            }),
         );
         $document = Set::compose(
             Document::of(...),
@@ -248,7 +263,7 @@ XML;
         return $this
             ->forAll(Set::either(
                 $document,
-                $element,
+                $concreteElement,
                 // a node needs to be in a document
                 $node->map(
                     static fn($node) => Document::of(

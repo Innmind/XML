@@ -7,6 +7,7 @@ use Innmind\Xml\{
     Document\Type,
     Document\Version,
     Document\Encoding,
+    Element\Custom,
 };
 use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\{
@@ -161,6 +162,10 @@ final class Document
 
         $children = $this->children->flatMap(
             static function($child) use ($writer) {
+                if ($child instanceof Custom) {
+                    $child = $child->normalize();
+                }
+
                 $write = \Closure::bind(
                     fn() => $this->render($writer),
                     $child,
