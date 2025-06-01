@@ -174,7 +174,7 @@ XML;
             ),
         )
             ->between(0, 4)
-            ->map(static fn($attributes) => Immutable\Set::of(...$attributes));
+            ->map(static fn($attributes) => Immutable\Sequence::of(...$attributes));
         $leaf = Set::either(
             Set::compose(
                 Element::selfClosing(...),

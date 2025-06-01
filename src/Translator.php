@@ -12,7 +12,6 @@ use Innmind\Xml\{
 use Innmind\Immutable\{
     Maybe,
     Sequence,
-    Set,
     Predicate\Instance,
 };
 
@@ -221,12 +220,12 @@ final class Translator
      * @psalm-suppress TypeDoesNotContainType
      * @psalm-suppress MixedArgument
      *
-     * @return Maybe<Set<Attribute>>
+     * @return Maybe<Sequence<Attribute>>
      */
     private static function attributes(\DOMElement|\Dom\Element $element): Maybe
     {
-        /** @var Set<Attribute> */
-        $attributes = Set::of();
+        /** @var Sequence<Attribute> */
+        $attributes = Sequence::of();
         $attrs = [];
 
         if (
