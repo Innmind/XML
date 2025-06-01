@@ -5,7 +5,7 @@ namespace Innmind\Xml;
 
 use Innmind\Xml\Element\Custom;
 use Innmind\Filesystem\File\Content;
-use Innmind\Immutable\Maybe;
+use Innmind\Immutable\Attempt;
 
 /**
  * @psalm-immutable
@@ -20,30 +20,31 @@ final class Reader
     }
 
     /**
-     * @return Maybe<Document|Node|Element|Custom>
+     * @return Attempt<Document|Node|Element|Custom>
      */
-    public function __invoke(Content $content): Maybe
+    public function __invoke(Content $content): Attempt
     {
-        return Maybe::just($content->toString())
-            ->filter(static fn($content) => $content !== '')
-            ->flatMap(static function($content): Maybe {
-                $xml = new \DOMDocument;
-                /** @psalm-suppress ArgumentTypeCoercion */
-                $success = $xml->loadXML(
-                    $content,
-                    \LIBXML_ERR_ERROR | \LIBXML_NOWARNING | \LIBXML_NOERROR,
-                );
+        $content = $content->toString();
 
-                if (!$success) {
-                    /** @var Maybe<\DOMDocument> */
-                    return Maybe::nothing();
-                }
+        if ($content === '') {
+            return Attempt::error(new \RuntimeException('Empty content'));
+        }
 
-                $xml->normalizeDocument();
+        $xml = new \DOMDocument;
+        /** @psalm-suppress ImpureMethodCall */
+        $success = $xml->loadXML(
+            $content,
+            \LIBXML_ERR_ERROR | \LIBXML_NOWARNING | \LIBXML_NOERROR,
+        );
 
-                return Maybe::just($xml);
-            })
-            ->flatMap($this->translate);
+        if (!$success) {
+            return Attempt::error(new \RuntimeException('Failed to load xml content'));
+        }
+
+        /** @psalm-suppress ImpureMethodCall */
+        $xml->normalizeDocument();
+
+        return ($this->translate)($xml);
     }
 
     public static function of(): self

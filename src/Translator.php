@@ -11,6 +11,7 @@ use Innmind\Xml\{
     Document\Encoding,
 };
 use Innmind\Immutable\{
+    Attempt,
     Maybe,
     Sequence,
     Predicate\Instance,
@@ -32,13 +33,13 @@ final class Translator
     /**
      * @psalm-suppress UndefinedClass Since the package still supports PHP 8.2
      *
-     * @return Maybe<Document|Node|Element|Custom>
+     * @return Attempt<Document|Node|Element|Custom>
      */
-    public function __invoke(\DOMNode|\Dom\Node $node): Maybe
+    public function __invoke(\DOMNode|\Dom\Node $node): Attempt
     {
         return $this
             ->buildDocument($node)
-            ->otherwise(fn() => $this->child($node));
+            ->recover(fn() => $this->child($node));
     }
 
     /**
@@ -63,9 +64,9 @@ final class Translator
      * @psalm-suppress MixedMethodCall
      * @psalm-suppress MixedPropertyFetch
      *
-     * @return Maybe<Node|Element|Custom>
+     * @return Attempt<Node|Element|Custom>
      */
-    private function child(\DOMNode|\Dom\Node $node): Maybe
+    private function child(\DOMNode|\Dom\Node $node): Attempt
     {
         if (
             $node->nodeType === \XML_COMMENT_NODE &&
@@ -74,7 +75,7 @@ final class Translator
                 $node instanceof \Dom\Comment
             )
         ) {
-            return Maybe::just(Node::comment($node->data));
+            return Attempt::result(Node::comment($node->data));
         }
 
         if (
@@ -84,7 +85,7 @@ final class Translator
                 $node instanceof \Dom\Text
             )
         ) {
-            return Maybe::just(Node::text($node->data));
+            return Attempt::result(Node::text($node->data));
         }
 
         if (
@@ -94,7 +95,7 @@ final class Translator
                 $node instanceof \Dom\CharacterData
             )
         ) {
-            return Maybe::just(Node::characterData($node->data));
+            return Attempt::result(Node::characterData($node->data));
         }
 
         if (
@@ -104,7 +105,7 @@ final class Translator
                 $node instanceof \Dom\EntityReference
             )
         ) {
-            return Maybe::just(Node::entityReference($node->nodeName));
+            return Attempt::result(Node::entityReference($node->nodeName));
         }
 
         if (
@@ -114,7 +115,7 @@ final class Translator
                 $node instanceof \Dom\ProcessingInstruction
             )
         ) {
-            return Maybe::just(Node::processingInstruction(
+            return Attempt::result(Node::processingInstruction(
                 $node->nodeName,
                 $node->data,
             ));
@@ -131,30 +132,39 @@ final class Translator
              * @psalm-suppress ImpureFunctionCall
              * @psalm-suppress ImpureMethodCall
              */
-            return Maybe::all(
-                Name::maybe($node->nodeName),
-                self::attributes($node),
-                $this->children(
-                    Sequence::of(...\array_values(\iterator_to_array($node->childNodes)))
-                        ->keep(
-                            Instance::of(\DOMNode::class)->or(
-                                Instance::of(\Dom\Node::class),
-                            ),
-                        ),
-                ),
-            )
-                ->map(match ($node->childNodes->length) {
-                    0 => Element::selfClosing(...),
-                    default => Element::of(...),
-                })
+            return Name::maybe($node->nodeName)
+                ->attempt(static fn() => new \RuntimeException(\sprintf(
+                    'Invalid node name "%s"',
+                    $node->nodeName,
+                )))
+                ->flatMap(
+                    fn($name) => self::attributes($node)->flatMap(
+                        fn($attributes) => $this
+                            ->children(
+                                Sequence::of(...\array_values(\iterator_to_array($node->childNodes)))
+                                    ->keep(
+                                        Instance::of(\DOMNode::class)->or(
+                                            Instance::of(\Dom\Node::class),
+                                        ),
+                                    ),
+                            )
+                            ->map(static fn($children) => match ($node->childNodes->length) {
+                                0 => Element::selfClosing($name, $attributes),
+                                default => Element::of($name, $attributes, $children),
+                            }),
+                    ),
+                )
                 ->map(fn($element) => ($this->custom)($element)->match(
                     static fn($custom) => $custom,
                     static fn() => $element,
                 ));
         }
 
-        /** @var Maybe<Node|Element> */
-        return Maybe::nothing();
+        /** @var Attempt<Node|Element> */
+        return Attempt::error(new \RuntimeException(\sprintf(
+            'Unknown node type %s',
+            $node->nodeType,
+        )));
     }
 
     /**
@@ -163,9 +173,9 @@ final class Translator
      * @psalm-suppress MixedMethodCall
      * @psalm-suppress UndefinedPropertyFetch
      *
-     * @return Maybe<Document>
+     * @return Attempt<Document>
      */
-    private function buildDocument(\DOMNode|\Dom\Node $node): Maybe
+    private function buildDocument(\DOMNode|\Dom\Node $node): Attempt
     {
         /** @psalm-suppress MixedArgumentTypeCoercion */
         return Maybe::just($node)
@@ -174,27 +184,33 @@ final class Translator
                     Instance::of(\Dom\Document::class),
                 ),
             )
+            ->attempt(static fn() => new \RuntimeException('Not a document'))
             ->flatMap(
-                fn($document) => Maybe::all(
-                    self::buildVersion($document),
-                    Maybe::of(
-                        $document->encoding ?? $document->xmlEncoding ?? 'utf-8',
-                    )->flatMap(Encoding::of(...)),
-                    $this->children(
-                        Sequence::of(...\array_values(\iterator_to_array($document->childNodes)))
-                            ->keep(
-                                Instance::of(\DOMNode::class)->or(
-                                    Instance::of(\Dom\Node::class),
-                                ),
-                            )
-                            ->exclude(static fn($child) => $child->nodeType === \XML_DOCUMENT_TYPE_NODE),
+                fn($document) => self::buildVersion($document)
+                    ->attempt(static fn() => new \RuntimeException('Inavlid document version'))
+                    ->flatMap(
+                        fn($version) => Maybe::just($document->encoding ?? $document->xmlEncoding ?? 'utf-8')
+                            ->flatMap(Encoding::of(...))
+                            ->attempt(static fn() => new \RuntimeException('Non supported document encoding'))
+                            ->flatMap(
+                                fn($encoding) => $this
+                                    ->children(
+                                        Sequence::of(...\array_values(\iterator_to_array($document->childNodes)))
+                                            ->keep(
+                                                Instance::of(\DOMNode::class)->or(
+                                                    Instance::of(\Dom\Node::class),
+                                                ),
+                                            )
+                                            ->exclude(static fn($child) => $child->nodeType === \XML_DOCUMENT_TYPE_NODE),
+                                    )
+                                    ->map(static fn($children) => Document::of(
+                                        $version,
+                                        Maybe::of($document->doctype)->flatMap(self::buildDoctype(...)),
+                                        Maybe::just($encoding),
+                                        $children,
+                                    )),
+                            ),
                     ),
-                )->map(static fn(Version $version, Encoding $encoding, Sequence $children) => Document::of(
-                    $version,
-                    Maybe::of($document->doctype)->flatMap(self::buildDoctype(...)),
-                    Maybe::just($encoding),
-                    $children,
-                )),
             );
     }
 
@@ -237,9 +253,9 @@ final class Translator
      * @psalm-suppress TypeDoesNotContainType
      * @psalm-suppress MixedArgument
      *
-     * @return Maybe<Sequence<Attribute>>
+     * @return Attempt<Sequence<Attribute>>
      */
-    private static function attributes(\DOMElement|\Dom\Element $element): Maybe
+    private static function attributes(\DOMElement|\Dom\Element $element): Attempt
     {
         /** @var Sequence<Attribute> */
         $attributes = Sequence::of();
@@ -264,11 +280,17 @@ final class Translator
                 ),
             )
             ->sink($attributes)
-            ->maybe(
+            ->attempt(
                 static fn($attributes, $attribute) => Attribute::maybe(
                     $attribute->name,
                     $attribute->value,
-                )->map($attributes),
+                )
+                    ->attempt(static fn() => new \RuntimeException(\sprintf(
+                        'Invalid attribute "%s" "%s"',
+                        $attribute->name,
+                        $attribute->value,
+                    )))
+                    ->map($attributes),
             );
     }
 
@@ -277,9 +299,9 @@ final class Translator
      *
      * @param Sequence<\DOMNode|\Dom\Node> $children
      *
-     * @return Maybe<Sequence<Node|Element|Custom>>
+     * @return Attempt<Sequence<Node|Element|Custom>>
      */
-    private function children(Sequence $children): Maybe
+    private function children(Sequence $children): Attempt
     {
         /** @var Sequence<Node|Element|Custom> */
         $translated = Sequence::of();
@@ -290,7 +312,7 @@ final class Translator
          */
         return $children
             ->sink($translated)
-            ->maybe(
+            ->attempt(
                 fn($translated, $child) => $this
                     ->child($child)
                     ->map($translated),

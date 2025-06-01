@@ -31,6 +31,7 @@
 - `Innmind\Xml\Reader` is now a final class
 - `Innmind\Xml\Document\Encoding` is now an enum that only supports `utf-8` and `ascii`
 - Elements attributes are now expressed with a `Sequence` instead of a `Set`
+- `Innmind\Xml\Reader` now returns an `Innmind\Immutable\Attempt` to give access to why it failed to read the content
 
 ### Removed
 

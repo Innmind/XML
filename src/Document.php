@@ -24,7 +24,7 @@ final class Document
     /**
      * @param Maybe<Type> $type
      * @param Maybe<Encoding> $encoding
-     * @param Sequence<Node|Element> $children
+     * @param Sequence<Node|Element|Custom> $children
      */
     private function __construct(
         private Version $version,
@@ -39,7 +39,7 @@ final class Document
      *
      * @param Maybe<Type> $type
      * @param Maybe<Encoding> $encoding
-     * @param Sequence<Node|Element> $children
+     * @param Sequence<Node|Element|Custom> $children
      */
     public static function of(
         Version $version,
@@ -64,7 +64,7 @@ final class Document
     }
 
     /**
-     * @return Sequence<Node|Element>
+     * @return Sequence<Node|Element|Custom>
      */
     public function children(): Sequence
     {
@@ -72,7 +72,7 @@ final class Document
     }
 
     /**
-     * @param callable(Node|Element): bool $filter
+     * @param callable(Node|Element|Custom): bool $filter
      */
     public function filterChild(callable $filter): self
     {
@@ -85,7 +85,7 @@ final class Document
     }
 
     /**
-     * @param callable(Node|Element): (Node|Element) $map
+     * @param callable(Node|Element|Custom): (Node|Element|Custom) $map
      */
     public function mapChild(callable $map): self
     {
@@ -97,7 +97,7 @@ final class Document
         );
     }
 
-    public function prependChild(Node|Element $child): self
+    public function prependChild(Node|Element|Custom $child): self
     {
         $document = clone $this;
         $document->children = $this->children->prepend(Sequence::of($child));
@@ -105,7 +105,7 @@ final class Document
         return $document;
     }
 
-    public function appendChild(Node|Element $child): self
+    public function appendChild(Node|Element|Custom $child): self
     {
         $document = clone $this;
         $document->children = ($this->children)($child);
