@@ -6,12 +6,10 @@ namespace Innmind\Xml;
 use Innmind\Xml\Element\Name;
 use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\{
-    Map,
     Maybe,
     Sequence,
     Set,
     Str,
-    Predicate\Instance,
 };
 
 /**
@@ -20,12 +18,12 @@ use Innmind\Immutable\{
 final class Element
 {
     /**
-     * @param Map<non-empty-string, Attribute> $attributes
+     * @param Sequence<Attribute> $attributes
      * @param Sequence<Node|self> $children
      */
     private function __construct(
         private Name $name,
-        private Map $attributes,
+        private Sequence $attributes,
         private Sequence $children,
         private bool $selfClosing,
     ) {
@@ -34,28 +32,22 @@ final class Element
     /**
      * @psalm-pure
      *
-     * @param Set<Attribute>|null $attributes
+     * @param Sequence<Attribute>|null $attributes
      * @param Sequence<Node|self>|null $children
      */
     public static function of(
         Name $name,
-        ?Set $attributes = null,
+        ?Sequence $attributes = null,
         ?Sequence $children = null,
     ): self {
-        $attributes ??= Set::of()->keep(Instance::of(Attribute::class));
+        /** @var Sequence<Attribute> */
+        $attributes ??= Sequence::of();
         /** @var Sequence<Node|self> */
         $children ??= Sequence::of();
 
         return new self(
             $name,
-            Map::of(
-                ...$attributes
-                    ->map(static fn($attribute) => [
-                        $attribute->name(),
-                        $attribute,
-                    ])
-                    ->toList(),
-            ),
+            self::safeguard($attributes),
             $children,
             false,
         );
@@ -64,24 +56,17 @@ final class Element
     /**
      * @psalm-pure
      *
-     * @param Set<Attribute>|null $attributes
+     * @param Sequence<Attribute>|null $attributes
      */
     public static function selfClosing(
         Name $name,
-        ?Set $attributes = null,
+        ?Sequence $attributes = null,
     ): self {
-        $attributes ??= Set::of()->keep(Instance::of(Attribute::class));
+        $attributes ??= Sequence::of();
 
         return new self(
             $name,
-            Map::of(
-                ...$attributes
-                    ->map(static fn($attribute) => [
-                        $attribute->name(),
-                        $attribute,
-                    ])
-                    ->toList(),
-            ),
+            self::safeguard($attributes),
             Sequence::of(),
             true,
         );
@@ -93,9 +78,9 @@ final class Element
     }
 
     /**
-     * @return Map<non-empty-string, Attribute>
+     * @return Sequence<Attribute>
      */
-    public function attributes(): Map
+    public function attributes(): Sequence
     {
         return $this->attributes;
     }
@@ -107,7 +92,9 @@ final class Element
      */
     public function attribute(string $name): Maybe
     {
-        return $this->attributes->get($name);
+        return $this->attributes->find(
+            static fn($attribute) => $attribute->name() === $name,
+        );
     }
 
     /**
@@ -115,13 +102,11 @@ final class Element
      */
     public function removeAttribute(string $name): self
     {
-        if (!$this->attributes->contains($name)) {
-            return $this;
-        }
-
         return new self(
             $this->name,
-            $this->attributes->remove($name),
+            $this->attributes->exclude(
+                static fn($attribute) => $attribute->name() === $name,
+            ),
             $this->children,
             $this->selfClosing,
         );
@@ -131,10 +116,10 @@ final class Element
     {
         return new self(
             $this->name,
-            ($this->attributes)(
-                $attribute->name(),
-                $attribute,
-            ),
+            $this
+                ->attributes
+                ->exclude(static fn($existing) => $existing->name() === $attribute->name())
+                ->add($attribute),
             $this->children,
             $this->selfClosing,
         );
@@ -248,14 +233,13 @@ final class Element
          * @psalm-suppress ImpureFunctionCall
          * @psalm-suppress PossiblyNullFunctionCall
          */
-        $_ = $this
-            ->attributes
-            ->values()
-            ->foreach(static fn($attribute): mixed => (\Closure::bind(
+        $_ = $this->attributes->foreach(
+            static fn($attribute): mixed => (\Closure::bind(
                 fn() => $this->render($writer),
                 $attribute,
                 $attribute::class,
-            ))());
+            ))(),
+        );
 
         /** @psalm-suppress ImpureMethodCall */
         $opening = Sequence::of(Str::of($writer->outputMemory()));
@@ -292,5 +276,26 @@ final class Element
         return $children
             ->prepend($opening)
             ->append($closing);
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * @param Sequence<Attribute> $attributes
+     *
+     * @return Sequence<Attribute>
+     */
+    private static function safeguard(Sequence $attributes): Sequence
+    {
+        return $attributes->safeguard(
+            Set::strings(),
+            static fn($names, $attribute) => match ($names->contains($attribute->name())) {
+                true => throw new \LogicException(\sprintf(
+                    'Duplicated attribute %s',
+                    $attribute->name(),
+                )),
+                false => ($names)($attribute->name()),
+            },
+        );
     }
 }

@@ -174,7 +174,13 @@ XML;
             ),
         )
             ->between(0, 4)
-            ->map(static fn($attributes) => Immutable\Set::of(...$attributes));
+            ->map(static fn($attributes) => Immutable\Sequence::of(...$attributes))
+            ->filter( // exclude duplicates
+                static fn($attributes) => $attributes
+                    ->map(static fn($attribute) => $attribute->name())
+                    ->distinct()
+                    ->size() === $attributes->size(),
+            );
         $leaf = Set::either(
             Set::compose(
                 Element::selfClosing(...),
