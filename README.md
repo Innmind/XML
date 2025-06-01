@@ -22,15 +22,17 @@ composer require innmind/xml
 use Innmind\Xml\{
     Reader,
     Node,
+    Element,
+    Document,
 };
 use Innmind\Filesystem\File\Content;
-use Innmind\Immutable\Maybe;
+use Innmind\Immutable\Attempt;
 
 $read = Reader::of();
 
 $tree = $read(
     Content::ofString('<root><foo some="attribute"/></root>')
-); // Maybe<Node>
+); // Attempt<Node|Element|Document>
 ```
 
 ## Extract informations out of a node
