@@ -38,14 +38,6 @@ class ReaderTest extends TestCase
         $this->read = Reader::of();
     }
 
-    public function testUseDefaultTranslatorWhenNoneProvided()
-    {
-        $this->assertEquals(
-            $this->read,
-            Reader::of(),
-        );
-    }
-
     public function testRead()
     {
         $xml = <<<XML

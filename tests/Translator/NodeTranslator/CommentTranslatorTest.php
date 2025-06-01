@@ -19,7 +19,7 @@ class CommentTranslatorTest extends TestCase
 XML
         );
 
-        $translate = Translator::default();
+        $translate = Translator::of();
         $node = $translate(
             $document
                 ->childNodes

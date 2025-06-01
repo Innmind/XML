@@ -19,7 +19,7 @@ class TextTranslatorTest extends TestCase
 XML
         );
 
-        $translate = Translator::default();
+        $translate = Translator::of();
         $node = $translate(
             $document
                 ->childNodes

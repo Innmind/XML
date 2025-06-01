@@ -20,7 +20,7 @@ class ElementTranslatorTest extends TestCase
 XML
         );
 
-        $translate = Translator::default();
+        $translate = Translator::of();
         $node = $translate($document->childNodes->item(0))->match(
             static fn($node) => $node,
             static fn() => null,

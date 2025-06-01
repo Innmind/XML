@@ -14,7 +14,7 @@ class ChildrenTest extends TestCase
         $document = new \DOMDocument;
         $document->loadXML('<root></root>');
 
-        $children = Translator::default()(
+        $children = Translator::of()(
             $document->childNodes->item(0),
         )->match(
             static fn($element) => $element->children(),
@@ -30,7 +30,7 @@ class ChildrenTest extends TestCase
         $document = new \DOMDocument;
         $document->loadXML('<root><foo/><bar/></root>');
 
-        $children = Translator::default()(
+        $children = Translator::of()(
             $document->childNodes->item(0),
         )->match(
             static fn($element) => $element->children(),

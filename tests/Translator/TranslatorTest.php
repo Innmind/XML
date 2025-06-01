@@ -6,10 +6,12 @@ namespace Tests\Innmind\Xml\Translator;
 use Innmind\Xml\{
     Translator,
     Element,
+    Element\Custom,
     Node,
     Document,
     Format,
 };
+use Innmind\Immutable\Maybe;
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -19,7 +21,7 @@ class TranslatorTest extends TestCase
 
     public function setUp(): void
     {
-        $this->translate = Translator::default();
+        $this->translate = Translator::of();
     }
 
     #[DataProvider('documents')]
@@ -131,6 +133,28 @@ class TranslatorTest extends TestCase
         $this->assertInstanceOf(Node::class, $text);
         $this->assertSame("\n    hey!\n", $text->content());
         $this->assertSame($xml, $node->asContent(Format::inline)->toString());
+    }
+
+    public function testAllowToTranslateCustomElements()
+    {
+        $custom = new class implements Custom {
+            public function normalize(): Element
+            {
+            }
+        };
+        $translate = Translator::of(static fn() => Maybe::just($custom));
+        $document = new \DOMDocument;
+        $document->loadXML('<foo/>');
+
+        $this->assertSame(
+            $custom,
+            $translate($document)
+                ->flatMap(static fn($document) => $document->children()->first())
+                ->match(
+                    static fn($element) => $element,
+                    static fn() => null,
+                ),
+        );
     }
 
     public static function documents(): iterable
