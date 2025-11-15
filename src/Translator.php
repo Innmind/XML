@@ -56,9 +56,7 @@ final class Translator
     }
 
     /**
-     * @psalm-suppress TypeDoesNotContainType
      * @psalm-suppress MixedArgument
-     * @psalm-suppress MixedMethodCall
      * @psalm-suppress MixedPropertyFetch
      *
      * @return Attempt<Node|Element|Custom>
@@ -144,14 +142,11 @@ final class Translator
 
     /**
      * @psalm-suppress MixedArgument
-     * @psalm-suppress MixedMethodCall
-     * @psalm-suppress UndefinedPropertyFetch
      *
      * @return Attempt<Document>
      */
     private function buildDocument(\Dom\Node $node): Attempt
     {
-        /** @psalm-suppress MixedArgumentTypeCoercion */
         return Maybe::just($node)
             ->keep(Instance::of(\Dom\Document::class))
             ->attempt(static fn() => new \RuntimeException('Not a document'))
@@ -213,7 +208,6 @@ final class Translator
     }
 
     /**
-     * @psalm-suppress TypeDoesNotContainType
      * @psalm-suppress MixedArgument
      *
      * @return Attempt<Sequence<Attribute>>
@@ -250,8 +244,6 @@ final class Translator
     }
 
     /**
-     * @psalm-suppress UndefinedDocblockClass Since the package still supports PHP 8.2
-     *
      * @param Sequence<\Dom\Node> $children
      *
      * @return Attempt<Sequence<Node|Element|Custom>>
