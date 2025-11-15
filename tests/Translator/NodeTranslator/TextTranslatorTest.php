@@ -13,8 +13,7 @@ class TextTranslatorTest extends TestCase
 {
     public function testTranslate()
     {
-        $document = new \DOMDocument;
-        $document->loadXML($xml = <<<XML
+        $document = \Dom\XMLDocument::createFromString($xml = <<<XML
 <div>foo</div>
 XML
         );

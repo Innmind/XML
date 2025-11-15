@@ -11,8 +11,7 @@ class AttributesTest extends TestCase
 {
     public function testNoAttributes()
     {
-        $document = new \DOMDocument;
-        $document->loadXML('<foo/>');
+        $document = \Dom\XMLDocument::createFromString('<foo/>');
 
         $attributes = Translator::of()($document->childNodes->item(0))->match(
             static fn($element) => $element->attributes()->toSet(),
@@ -25,8 +24,7 @@ class AttributesTest extends TestCase
 
     public function testAttributes()
     {
-        $document = new \DOMDocument;
-        $document->loadXML('<hr bar="baz" foobar=""/>');
+        $document = \Dom\XMLDocument::createFromString('<hr bar="baz" foobar=""/>');
 
         $attributes = Translator::of()($document->childNodes->item(0))->match(
             static fn($element) => $element->attributes()->toSet(),

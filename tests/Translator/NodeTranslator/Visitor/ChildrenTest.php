@@ -11,8 +11,7 @@ class ChildrenTest extends TestCase
 {
     public function testNoChildren()
     {
-        $document = new \DOMDocument;
-        $document->loadXML('<root></root>');
+        $document = \Dom\XMLDocument::createFromString('<root></root>');
 
         $children = Translator::of()(
             $document->childNodes->item(0),
@@ -27,8 +26,7 @@ class ChildrenTest extends TestCase
 
     public function testChildren()
     {
-        $document = new \DOMDocument;
-        $document->loadXML('<root><foo/><bar/></root>');
+        $document = \Dom\XMLDocument::createFromString('<root><foo/><bar/></root>');
 
         $children = Translator::of()(
             $document->childNodes->item(0),

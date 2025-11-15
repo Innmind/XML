@@ -13,8 +13,7 @@ class CharacterDataTranslatorTest extends TestCase
 {
     public function testTranslate()
     {
-        $document = new \DOMDocument;
-        $document->loadXML($xml = <<<XML
+        $document = \Dom\XMLDocument::createFromString($xml = <<<XML
 <div><![CDATA[foo]]></div>
 XML
         );
