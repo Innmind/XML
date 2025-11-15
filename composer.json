@@ -16,8 +16,14 @@
     },
     "require": {
         "php": "~8.4",
-        "innmind/immutable": "~5.15",
-        "innmind/filesystem": "~8.1"
+        "innmind/immutable": "dev-next",
+        "innmind/filesystem": "dev-next",
+        "innmind/media-type": "dev-next",
+        "innmind/io": "dev-next",
+        "innmind/url": "dev-next",
+        "innmind/validation": "dev-next",
+        "innmind/ip": "dev-next",
+        "innmind/time-continuum": "dev-next"
     },
     "autoload": {
         "psr-4": {

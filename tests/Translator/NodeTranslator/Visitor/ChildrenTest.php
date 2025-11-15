@@ -21,7 +21,7 @@ class ChildrenTest extends TestCase
         );
 
         $this->assertInstanceOf(Sequence::class, $children);
-        $this->assertCount(0, $children);
+        $this->assertSame(0, $children->size());
     }
 
     public function testChildren()
@@ -36,6 +36,6 @@ class ChildrenTest extends TestCase
         );
 
         $this->assertInstanceOf(Sequence::class, $children);
-        $this->assertCount(2, $children);
+        $this->assertSame(2, $children->size());
     }
 }

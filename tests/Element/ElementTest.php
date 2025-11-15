@@ -76,8 +76,8 @@ class ElementTest extends TestCase
         $this->assertSame($node->name(), $node2->name());
         $this->assertSame($node->children(), $node2->children());
         $this->assertNotSame($node->attributes(), $node2->attributes());
-        $this->assertCount(2, $node->attributes());
-        $this->assertCount(1, $node2->attributes());
+        $this->assertSame(2, $node->attributes()->size());
+        $this->assertSame(1, $node2->attributes()->size());
         $this->assertTrue($node->attribute('foo')->match(
             static fn() => true,
             static fn() => false,
@@ -145,8 +145,8 @@ class ElementTest extends TestCase
         $this->assertSame($node->name(), $node2->name());
         $this->assertSame($node->children(), $node2->children());
         $this->assertNotSame($node->attributes(), $node2->attributes());
-        $this->assertCount(2, $node->attributes());
-        $this->assertCount(2, $node2->attributes());
+        $this->assertSame(2, $node->attributes()->size());
+        $this->assertSame(2, $node2->attributes()->size());
         $this->assertTrue($node->attribute('foo')->match(
             static fn() => true,
             static fn() => false,
@@ -195,8 +195,8 @@ class ElementTest extends TestCase
         $this->assertSame($node->name(), $node2->name());
         $this->assertSame($node->children(), $node2->children());
         $this->assertNotSame($node->attributes(), $node2->attributes());
-        $this->assertCount(2, $node->attributes());
-        $this->assertCount(3, $node2->attributes());
+        $this->assertSame(2, $node->attributes()->size());
+        $this->assertSame(3, $node2->attributes()->size());
         $this->assertTrue($node->attribute('foo')->match(
             static fn() => true,
             static fn() => false,
@@ -270,8 +270,8 @@ class ElementTest extends TestCase
         $this->assertSame($element->name(), $element2->name());
         $this->assertSame($element->attributes(), $element2->attributes());
         $this->assertNotSame($element->children(), $element2->children());
-        $this->assertCount(3, $element->children());
-        $this->assertCount(4, $element2->children());
+        $this->assertSame(3, $element->children()->size());
+        $this->assertSame(4, $element2->children()->size());
         $this->assertSame(
             $node,
             $element2->children()->get(0)->match(
@@ -332,8 +332,8 @@ class ElementTest extends TestCase
         $this->assertSame($element->name(), $element2->name());
         $this->assertSame($element->attributes(), $element2->attributes());
         $this->assertNotSame($element->children(), $element2->children());
-        $this->assertCount(3, $element->children());
-        $this->assertCount(4, $element2->children());
+        $this->assertSame(3, $element->children()->size());
+        $this->assertSame(4, $element2->children()->size());
         $this->assertEquals(
             $element->children()->get(0),
             $element2->children()->get(0),

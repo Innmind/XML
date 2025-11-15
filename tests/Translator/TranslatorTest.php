@@ -69,19 +69,19 @@ class TranslatorTest extends TestCase
                 static fn() => null,
             ),
         );
-        $this->assertCount(1, $node->children());
+        $this->assertSame(1, $node->children()->size());
         $foo = $node->children()->get(0)->match(
             static fn($node) => $node,
             static fn() => null,
         );
         $this->assertInstanceOf(Element::class, $foo);
         $this->assertSame('foo', $foo->name()->toString());
-        $this->assertCount(1, $foo->attributes());
+        $this->assertSame(1, $foo->attributes()->size());
         $this->assertSame('baz', $foo->attribute('bar')->match(
             static fn($attribute) => $attribute->value(),
             static fn() => null,
         ));
-        $this->assertCount(7, $foo->children());
+        $this->assertSame(7, $foo->children()->size());
         $linebreak = $foo->children()->get(0)->match(
             static fn($node) => $node,
             static fn() => null,
@@ -108,7 +108,7 @@ class TranslatorTest extends TestCase
         $this->assertInstanceOf(Element::class, $div);
         $this->assertSame('div', $div->name()->toString());
         $this->assertTrue($div->attributes()->empty());
-        $this->assertCount(3, $div->children());
+        $this->assertSame(3, $div->children()->size());
         $linebreak = $div->children()->get(0)->match(
             static fn($node) => $node,
             static fn() => null,

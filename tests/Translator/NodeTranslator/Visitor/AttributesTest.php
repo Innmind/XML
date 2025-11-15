@@ -19,7 +19,7 @@ class AttributesTest extends TestCase
         );
 
         $this->assertInstanceOf(Set::class, $attributes);
-        $this->assertCount(0, $attributes);
+        $this->assertSame(0, $attributes->size());
     }
 
     public function testAttributes()
@@ -32,7 +32,7 @@ class AttributesTest extends TestCase
         );
 
         $this->assertInstanceOf(Set::class, $attributes);
-        $this->assertCount(2, $attributes);
+        $this->assertSame(2, $attributes->size());
         $attributes = $attributes->toList();
         $this->assertSame('bar', $attributes[0]->name());
         $this->assertSame('baz', $attributes[0]->value());
