@@ -105,14 +105,18 @@ final class Translator
             $node->nodeType === \XML_ELEMENT_NODE &&
             $node instanceof \Dom\Element
         ) {
+            // Prefer the local name over the node name to avoid using upper
+            // case naming when translating html documents (see innmind/html)
+            $name = (string) ($node->localName ?? $node->nodeName);
+
             /**
              * @psalm-suppress ImpureFunctionCall
              * @psalm-suppress ImpureMethodCall
              */
-            return Name::maybe($node->nodeName)
+            return Name::maybe($name)
                 ->attempt(static fn() => new \RuntimeException(\sprintf(
                     'Invalid node name "%s"',
-                    $node->nodeName,
+                    $name,
                 )))
                 ->flatMap(
                     fn($name) => self::attributes($node)->flatMap(
