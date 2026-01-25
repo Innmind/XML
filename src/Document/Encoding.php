@@ -18,6 +18,7 @@ enum Encoding
      *
      * @return Maybe<self>
      */
+    #[\NoDiscard]
     public static function of(string $value): Maybe
     {
         return Maybe::of(match ($value) {
@@ -30,6 +31,7 @@ enum Encoding
     /**
      * @return non-empty-string
      */
+    #[\NoDiscard]
     public function toString(): string
     {
         // @see https://www.iana.org/assignments/character-sets/character-sets.xml

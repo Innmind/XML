@@ -13,7 +13,6 @@ use Innmind\Xml\{
 };
 use Innmind\Immutable\Maybe;
 use Innmind\BlackBox\PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
 
 class TranslatorTest extends TestCase
 {
@@ -24,9 +23,23 @@ class TranslatorTest extends TestCase
         $this->translate = Translator::of();
     }
 
-    #[DataProvider('documents')]
-    public function testTranslate($document, $xml)
+    public function testTranslate()
     {
+        $xml = <<<XML
+        <?xml version="1.0" encoding="UTF-8"?>
+        <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+        <foo bar="baz">
+            <foobar/>
+            <div>
+                <![CDATA[whatever]]>
+            </div>
+            <!--foobaz-->
+            hey!
+        </foo>
+        XML;
+
+        $document = \Dom\XMLDocument::createFromString($xml);
+
         $node = ($this->translate)($document)->match(
             static fn($node) => $node,
             static fn() => null,
@@ -56,19 +69,19 @@ class TranslatorTest extends TestCase
                 static fn() => null,
             ),
         );
-        $this->assertCount(1, $node->children());
+        $this->assertSame(1, $node->children()->size());
         $foo = $node->children()->get(0)->match(
             static fn($node) => $node,
             static fn() => null,
         );
         $this->assertInstanceOf(Element::class, $foo);
         $this->assertSame('foo', $foo->name()->toString());
-        $this->assertCount(1, $foo->attributes());
+        $this->assertSame(1, $foo->attributes()->size());
         $this->assertSame('baz', $foo->attribute('bar')->match(
             static fn($attribute) => $attribute->value(),
             static fn() => null,
         ));
-        $this->assertCount(7, $foo->children());
+        $this->assertSame(7, $foo->children()->size());
         $linebreak = $foo->children()->get(0)->match(
             static fn($node) => $node,
             static fn() => null,
@@ -95,7 +108,7 @@ class TranslatorTest extends TestCase
         $this->assertInstanceOf(Element::class, $div);
         $this->assertSame('div', $div->name()->toString());
         $this->assertTrue($div->attributes()->empty());
-        $this->assertCount(3, $div->children());
+        $this->assertSame(3, $div->children()->size());
         $linebreak = $div->children()->get(0)->match(
             static fn($node) => $node,
             static fn() => null,
@@ -143,8 +156,7 @@ class TranslatorTest extends TestCase
             }
         };
         $translate = Translator::of(static fn() => Maybe::just($custom));
-        $document = new \DOMDocument;
-        $document->loadXML('<foo/>');
+        $document = \Dom\XMLDocument::createFromString('<foo/>');
 
         $this->assertSame(
             $custom,
@@ -156,33 +168,5 @@ class TranslatorTest extends TestCase
                     static fn() => null,
                 ),
         );
-    }
-
-    public static function documents(): iterable
-    {
-        $xml = <<<XML
-        <?xml version="1.0" encoding="UTF-8"?>
-        <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-        <foo bar="baz">
-            <foobar/>
-            <div>
-                <![CDATA[whatever]]>
-            </div>
-            <!--foobaz-->
-            hey!
-        </foo>
-        XML;
-
-        $document = new \DOMDocument;
-        $document->loadXML($xml);
-
-        yield '\DOMDocument' => [$document, $xml];
-
-        if (\PHP_VERSION_ID >= 80400) {
-            yield '\Dom\Document' => [
-                \Dom\XMLDocument::createFromString($xml),
-                $xml,
-            ];
-        }
     }
 }

@@ -14,8 +14,7 @@ class DocumentTranslatorTest extends TestCase
 {
     public function testTranslate()
     {
-        $document = new \DOMDocument;
-        $document->loadXML($xml = <<<XML
+        $document = \Dom\XMLDocument::createFromString($xml = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE html>
 <foo/>

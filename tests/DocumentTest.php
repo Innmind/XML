@@ -147,8 +147,8 @@ class DocumentTest extends TestCase
         $this->assertSame($document->type(), $document2->type());
         $this->assertSame($document->encoding(), $document2->encoding());
         $this->assertNotSame($document->children(), $document2->children());
-        $this->assertCount(3, $document->children());
-        $this->assertCount(4, $document2->children());
+        $this->assertSame(3, $document->children()->size());
+        $this->assertSame(4, $document2->children()->size());
         $this->assertSame(
             $node,
             $document2->children()->get(0)->match(
@@ -211,8 +211,8 @@ class DocumentTest extends TestCase
         $this->assertSame($document->type(), $document2->type());
         $this->assertSame($document->encoding(), $document2->encoding());
         $this->assertNotSame($document->children(), $document2->children());
-        $this->assertCount(3, $document->children());
-        $this->assertCount(4, $document2->children());
+        $this->assertSame(3, $document->children()->size());
+        $this->assertSame(4, $document2->children()->size());
         $this->assertEquals(
             $document->children()->get(0),
             $document2->children()->get(0),

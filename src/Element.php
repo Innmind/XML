@@ -38,6 +38,7 @@ final class Element
      * @param Sequence<Attribute>|null $attributes
      * @param Sequence<Node|self|Custom>|null $children
      */
+    #[\NoDiscard]
     public static function of(
         Name $name,
         ?Sequence $attributes = null,
@@ -61,6 +62,7 @@ final class Element
      *
      * @param Sequence<Attribute>|null $attributes
      */
+    #[\NoDiscard]
     public static function selfClosing(
         Name $name,
         ?Sequence $attributes = null,
@@ -75,6 +77,7 @@ final class Element
         );
     }
 
+    #[\NoDiscard]
     public function name(): Name
     {
         return $this->name;
@@ -83,6 +86,7 @@ final class Element
     /**
      * @return Sequence<Attribute>
      */
+    #[\NoDiscard]
     public function attributes(): Sequence
     {
         return $this->attributes;
@@ -93,6 +97,7 @@ final class Element
      *
      * @return Maybe<Attribute>
      */
+    #[\NoDiscard]
     public function attribute(string $name): Maybe
     {
         return $this->attributes->find(
@@ -103,6 +108,7 @@ final class Element
     /**
      * @param non-empty-string $name
      */
+    #[\NoDiscard]
     public function removeAttribute(string $name): self
     {
         return new self(
@@ -115,6 +121,7 @@ final class Element
         );
     }
 
+    #[\NoDiscard]
     public function addAttribute(Attribute $attribute): self
     {
         return new self(
@@ -131,6 +138,7 @@ final class Element
     /**
      * @return Sequence<Node|self|Custom>
      */
+    #[\NoDiscard]
     public function children(): Sequence
     {
         return $this->children;
@@ -139,6 +147,7 @@ final class Element
     /**
      * @param callable(Node|self|Custom): bool $filter
      */
+    #[\NoDiscard]
     public function filterChild(callable $filter): self
     {
         if ($this->selfClosing) {
@@ -156,6 +165,7 @@ final class Element
     /**
      * @param callable(Node|self|Custom): (Node|self|Custom) $map
      */
+    #[\NoDiscard]
     public function mapChild(callable $map): self
     {
         if ($this->selfClosing) {
@@ -170,6 +180,7 @@ final class Element
         );
     }
 
+    #[\NoDiscard]
     public function prependChild(Node|self|Custom $child): self
     {
         if ($this->selfClosing) {
@@ -184,6 +195,7 @@ final class Element
         );
     }
 
+    #[\NoDiscard]
     public function appendChild(Node|self|Custom $child): self
     {
         if ($this->selfClosing) {
@@ -198,6 +210,7 @@ final class Element
         );
     }
 
+    #[\NoDiscard]
     public function asContent(Format $format = Format::pretty): Content
     {
         $writer = new \XMLWriter;

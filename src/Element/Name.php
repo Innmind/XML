@@ -25,6 +25,7 @@ final class Name
      *
      * @param non-empty-string $value
      */
+    #[\NoDiscard]
     public static function of(string $value): self
     {
         return new self(null, $value);
@@ -36,6 +37,7 @@ final class Name
      * @param non-empty-string $namespace
      * @param non-empty-string $value
      */
+    #[\NoDiscard]
     public static function namespaced(string $namespace, string $value): self
     {
         return new self($namespace, $value);
@@ -46,6 +48,7 @@ final class Name
      *
      * @return Maybe<self>
      */
+    #[\NoDiscard]
     public static function maybe(string $value): Maybe
     {
         /** @var Maybe<self> */
@@ -58,6 +61,7 @@ final class Name
     /**
      * @return non-empty-string
      */
+    #[\NoDiscard]
     public function toString(): string
     {
         if ($this->namespace !== null) {

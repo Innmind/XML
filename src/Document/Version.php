@@ -29,6 +29,7 @@ final class Version
      *
      * @throws DomainException
      */
+    #[\NoDiscard]
     public static function of(int $major, int $minor = 0): self
     {
         return self::maybe($major, $minor)->match(
@@ -42,6 +43,7 @@ final class Version
      *
      * @return Maybe<self>
      */
+    #[\NoDiscard]
     public static function maybe(int $major, int $minor = 0): Maybe
     {
         $major = Maybe::just($major)->filter(static fn($int) => $int >= 0);
@@ -55,6 +57,7 @@ final class Version
     /**
      * @return int<0, max>
      */
+    #[\NoDiscard]
     public function major(): int
     {
         return $this->major;
@@ -63,11 +66,13 @@ final class Version
     /**
      * @return int<0, max>
      */
+    #[\NoDiscard]
     public function minor(): int
     {
         return $this->minor;
     }
 
+    #[\NoDiscard]
     public function toString(): string
     {
         return $this->major.'.'.$this->minor;

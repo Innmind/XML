@@ -11,8 +11,7 @@ class ChildrenTest extends TestCase
 {
     public function testNoChildren()
     {
-        $document = new \DOMDocument;
-        $document->loadXML('<root></root>');
+        $document = \Dom\XMLDocument::createFromString('<root></root>');
 
         $children = Translator::of()(
             $document->childNodes->item(0),
@@ -22,13 +21,12 @@ class ChildrenTest extends TestCase
         );
 
         $this->assertInstanceOf(Sequence::class, $children);
-        $this->assertCount(0, $children);
+        $this->assertSame(0, $children->size());
     }
 
     public function testChildren()
     {
-        $document = new \DOMDocument;
-        $document->loadXML('<root><foo/><bar/></root>');
+        $document = \Dom\XMLDocument::createFromString('<root><foo/><bar/></root>');
 
         $children = Translator::of()(
             $document->childNodes->item(0),
@@ -38,6 +36,6 @@ class ChildrenTest extends TestCase
         );
 
         $this->assertInstanceOf(Sequence::class, $children);
-        $this->assertCount(2, $children);
+        $this->assertSame(2, $children->size());
     }
 }

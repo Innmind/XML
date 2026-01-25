@@ -29,6 +29,7 @@ final class PreviousSibling
     /**
      * @return Maybe<Node|Element|Custom>
      */
+    #[\NoDiscard]
     public function __invoke(Document|Node|Element|Custom $tree): Maybe
     {
         return ParentNode::of($this->node)($tree)
@@ -61,6 +62,7 @@ final class PreviousSibling
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function of(Node|Element|Custom $node): self
     {
         return new self($node);
