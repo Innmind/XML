@@ -65,8 +65,8 @@ class SelfClosingElementTest extends TestCase
         $this->assertSame($node->name(), $node2->name());
         $this->assertTrue($node2->children()->empty());
         $this->assertNotSame($node->attributes(), $node2->attributes());
-        $this->assertCount(2, $node->attributes());
-        $this->assertCount(1, $node2->attributes());
+        $this->assertSame(2, $node->attributes()->size());
+        $this->assertSame(1, $node2->attributes()->size());
         $this->assertTrue($node->attribute('foo')->match(
             static fn() => true,
             static fn() => false,
@@ -121,8 +121,8 @@ class SelfClosingElementTest extends TestCase
         $this->assertSame($node->name(), $node2->name());
         $this->assertTrue($node2->children()->empty());
         $this->assertNotSame($node->attributes(), $node2->attributes());
-        $this->assertCount(2, $node->attributes());
-        $this->assertCount(2, $node2->attributes());
+        $this->assertSame(2, $node->attributes()->size());
+        $this->assertSame(2, $node2->attributes()->size());
         $this->assertTrue($node->attribute('foo')->match(
             static fn() => true,
             static fn() => false,
@@ -171,8 +171,8 @@ class SelfClosingElementTest extends TestCase
         $this->assertSame($node->name(), $node2->name());
         $this->assertTrue($node2->children()->empty());
         $this->assertNotSame($node->attributes(), $node2->attributes());
-        $this->assertCount(2, $node->attributes());
-        $this->assertCount(3, $node2->attributes());
+        $this->assertSame(2, $node->attributes()->size());
+        $this->assertSame(3, $node2->attributes()->size());
         $this->assertTrue($node->attribute('foo')->match(
             static fn() => true,
             static fn() => false,

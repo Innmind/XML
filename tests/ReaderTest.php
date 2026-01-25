@@ -13,7 +13,7 @@ use Innmind\Xml\{
     Format,
 };
 use Innmind\Filesystem\{
-    Adapter\Filesystem,
+    Adapter,
     File,
     File\Content,
     Name,
@@ -82,7 +82,8 @@ XML;
 
     public function testProcessingInstructionsAreReadCorrectly()
     {
-        $content = Filesystem::mount(Path::of('fixtures/'))
+        $content = Adapter::mount(Path::of('fixtures/'))
+            ->unwrap()
             ->get(Name::of('theatlantic.xml'))
             ->keep(Instance::of(File::class))
             ->match(
@@ -96,7 +97,7 @@ XML;
         );
 
         $this->assertInstanceOf(Document::class, $node);
-        $this->assertCount(2, $node->children());
+        $this->assertSame(2, $node->children()->size());
         $stylesheet = $node->children()->first()->match(
             static fn($stylesheet) => $stylesheet,
             static fn() => null,

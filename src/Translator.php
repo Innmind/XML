@@ -31,11 +31,9 @@ final class Translator
     }
 
     /**
-     * @psalm-suppress UndefinedClass Since the package still supports PHP 8.2
-     *
      * @return Attempt<Document|Node|Element|Custom>
      */
-    public function __invoke(\DOMNode|\Dom\Node $node): Attempt
+    public function __invoke(\Dom\Node $node): Attempt
     {
         return $this
             ->buildDocument($node)
@@ -58,62 +56,44 @@ final class Translator
     }
 
     /**
-     * @psalm-suppress UndefinedClass Since the package still supports PHP 8.2
-     * @psalm-suppress TypeDoesNotContainType
      * @psalm-suppress MixedArgument
-     * @psalm-suppress MixedMethodCall
      * @psalm-suppress MixedPropertyFetch
      *
      * @return Attempt<Node|Element|Custom>
      */
-    private function child(\DOMNode|\Dom\Node $node): Attempt
+    private function child(\Dom\Node $node): Attempt
     {
         if (
             $node->nodeType === \XML_COMMENT_NODE &&
-            (
-                $node instanceof \DOMComment ||
-                $node instanceof \Dom\Comment
-            )
+            $node instanceof \Dom\Comment
         ) {
             return Attempt::result(Node::comment($node->data));
         }
 
         if (
             $node->nodeType === \XML_TEXT_NODE &&
-            (
-                $node instanceof \DOMText ||
-                $node instanceof \Dom\Text
-            )
+            $node instanceof \Dom\Text
         ) {
             return Attempt::result(Node::text($node->data));
         }
 
         if (
             $node->nodeType === \XML_CDATA_SECTION_NODE &&
-            (
-                $node instanceof \DOMCharacterData ||
-                $node instanceof \Dom\CharacterData
-            )
+            $node instanceof \Dom\CharacterData
         ) {
             return Attempt::result(Node::characterData($node->data));
         }
 
         if (
             $node->nodeType === \XML_ENTITY_REF_NODE &&
-            (
-                $node instanceof \DOMEntityReference ||
-                $node instanceof \Dom\EntityReference
-            )
+            $node instanceof \Dom\EntityReference
         ) {
             return Attempt::result(Node::entityReference($node->nodeName));
         }
 
         if (
             $node->nodeType === \XML_PI_NODE &&
-            (
-                $node instanceof \DOMProcessingInstruction ||
-                $node instanceof \Dom\ProcessingInstruction
-            )
+            $node instanceof \Dom\ProcessingInstruction
         ) {
             return Attempt::result(Node::processingInstruction(
                 $node->nodeName,
@@ -123,30 +103,27 @@ final class Translator
 
         if (
             $node->nodeType === \XML_ELEMENT_NODE &&
-            (
-                $node instanceof \DOMElement ||
-                $node instanceof \Dom\Element
-            )
+            $node instanceof \Dom\Element
         ) {
+            // Prefer the local name over the node name to avoid using upper
+            // case naming when translating html documents (see innmind/html)
+            $name = (string) ($node->localName ?? $node->nodeName);
+
             /**
              * @psalm-suppress ImpureFunctionCall
              * @psalm-suppress ImpureMethodCall
              */
-            return Name::maybe($node->nodeName)
+            return Name::maybe($name)
                 ->attempt(static fn() => new \RuntimeException(\sprintf(
                     'Invalid node name "%s"',
-                    $node->nodeName,
+                    $name,
                 )))
                 ->flatMap(
                     fn($name) => self::attributes($node)->flatMap(
                         fn($attributes) => $this
                             ->children(
                                 Sequence::of(...\array_values(\iterator_to_array($node->childNodes)))
-                                    ->keep(
-                                        Instance::of(\DOMNode::class)->or(
-                                            Instance::of(\Dom\Node::class),
-                                        ),
-                                    ),
+                                    ->keep(Instance::of(\Dom\Node::class)),
                             )
                             ->map(static fn($children) => match ($node->childNodes->length) {
                                 0 => Element::selfClosing($name, $attributes),
@@ -168,22 +145,14 @@ final class Translator
     }
 
     /**
-     * @psalm-suppress UndefinedClass Since the package still supports PHP 8.2
      * @psalm-suppress MixedArgument
-     * @psalm-suppress MixedMethodCall
-     * @psalm-suppress UndefinedPropertyFetch
      *
      * @return Attempt<Document>
      */
-    private function buildDocument(\DOMNode|\Dom\Node $node): Attempt
+    private function buildDocument(\Dom\Node $node): Attempt
     {
-        /** @psalm-suppress MixedArgumentTypeCoercion */
         return Maybe::just($node)
-            ->keep(
-                Instance::of(\DOMDocument::class)->or(
-                    Instance::of(\Dom\Document::class),
-                ),
-            )
+            ->keep(Instance::of(\Dom\Document::class))
             ->attempt(static fn() => new \RuntimeException('Not a document'))
             ->flatMap(
                 fn($document) => self::buildVersion($document)
@@ -196,11 +165,7 @@ final class Translator
                                 fn($encoding) => $this
                                     ->children(
                                         Sequence::of(...\array_values(\iterator_to_array($document->childNodes)))
-                                            ->keep(
-                                                Instance::of(\DOMNode::class)->or(
-                                                    Instance::of(\Dom\Node::class),
-                                                ),
-                                            )
+                                            ->keep(Instance::of(\Dom\Node::class))
                                             ->exclude(static fn($child) => $child->nodeType === \XML_DOCUMENT_TYPE_NODE),
                                     )
                                     ->map(static fn($children) => Document::of(
@@ -217,13 +182,12 @@ final class Translator
     /**
      * @psalm-pure
      * @psalm-suppress ImpurePropertyFetch
-     * @psalm-suppress UndefinedClass Since the package still supports PHP 8.2
      *
      * @return Maybe<Version>
      */
-    private static function buildVersion(\DOMDocument|\Dom\Document $document): Maybe
+    private static function buildVersion(\Dom\Document $document): Maybe
     {
-        [$major, $minor] = \explode('.', $document->xmlVersion ?? '');
+        [$major, $minor] = \explode('.', (string) ($document->xmlVersion ?? ''));
 
         return Version::maybe(
             (int) $major,
@@ -234,11 +198,10 @@ final class Translator
     /**
      * @psalm-pure
      * @psalm-suppress ImpurePropertyFetch
-     * @psalm-suppress UndefinedClass Since the package still supports PHP 8.2
      *
      * @return Maybe<Type>
      */
-    private static function buildDoctype(\DOMDocumentType|\Dom\DocumentType $type): Maybe
+    private static function buildDoctype(\Dom\DocumentType $type): Maybe
     {
         /** @psalm-suppress MixedArgument */
         return Type::maybe(
@@ -249,36 +212,26 @@ final class Translator
     }
 
     /**
-     * @psalm-suppress UndefinedClass Since the package still supports PHP 8.2
-     * @psalm-suppress TypeDoesNotContainType
      * @psalm-suppress MixedArgument
      *
      * @return Attempt<Sequence<Attribute>>
      */
-    private static function attributes(\DOMElement|\Dom\Element $element): Attempt
+    private static function attributes(\Dom\Element $element): Attempt
     {
         /** @var Sequence<Attribute> */
         $attributes = Sequence::of();
         $attrs = [];
 
-        if (
-            $element->attributes instanceof \DOMNamedNodeMap ||
-            $element->attributes instanceof \Dom\NamedNodeMap
-        ) {
+        if ($element->attributes instanceof \Dom\NamedNodeMap) {
             /**
              * @psalm-suppress ImpureFunctionCall
              * @psalm-suppress ImpureMethodCall
-             * @psalm-suppress PossiblyInvalidArgument Due to \Dom\NamedNodeMap for PHP 8.2
              */
             $attrs = \iterator_to_array($element->attributes);
         }
 
         return Sequence::of(...\array_values($attrs))
-            ->keep(
-                Instance::of(\DOMAttr::class)->or(
-                    Instance::of(\Dom\Attr::class),
-                ),
-            )
+            ->keep(Instance::of(\Dom\Attr::class))
             ->sink($attributes)
             ->attempt(
                 static fn($attributes, $attribute) => Attribute::maybe(
@@ -295,9 +248,7 @@ final class Translator
     }
 
     /**
-     * @psalm-suppress UndefinedDocblockClass Since the package still supports PHP 8.2
-     *
-     * @param Sequence<\DOMNode|\Dom\Node> $children
+     * @param Sequence<\Dom\Node> $children
      *
      * @return Attempt<Sequence<Node|Element|Custom>>
      */

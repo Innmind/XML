@@ -14,8 +14,7 @@ class ElementTranslatorTest extends TestCase
 {
     public function testTranslate()
     {
-        $document = new \DOMDocument;
-        $document->loadXML($xml = <<<XML
+        $document = \Dom\XMLDocument::createFromString($xml = <<<XML
 <bar><foo/></bar>
 XML
         );

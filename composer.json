@@ -15,9 +15,9 @@
         "issues": "http://github.com/Innmind/XML/issues"
     },
     "require": {
-        "php": "~8.2",
-        "innmind/immutable": "~5.15",
-        "innmind/filesystem": "~8.1"
+        "php": "~8.4",
+        "innmind/immutable": "~6.0",
+        "innmind/filesystem": "~9.0"
     },
     "autoload": {
         "psr-4": {
@@ -30,7 +30,7 @@
         }
     },
     "require-dev": {
-        "innmind/static-analysis": "^1.2.1",
+        "innmind/static-analysis": "~1.3",
         "innmind/coding-standard": "~2.0",
         "innmind/black-box": "^6.4.1"
     }

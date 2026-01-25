@@ -30,19 +30,14 @@ final class Reader
             return Attempt::error(new \RuntimeException('Empty content'));
         }
 
-        $xml = new \DOMDocument;
-        /** @psalm-suppress ImpureMethodCall */
-        $success = $xml->loadXML(
-            $content,
-            \LIBXML_ERR_ERROR | \LIBXML_NOWARNING | \LIBXML_NOERROR,
-        );
-
-        if (!$success) {
-            return Attempt::error(new \RuntimeException('Failed to load xml content'));
+        try {
+            $xml = \Dom\XMLDocument::createFromString(
+                $content,
+                \LIBXML_ERR_ERROR | \LIBXML_NOWARNING | \LIBXML_NOERROR,
+            );
+        } catch (\Throwable $e) {
+            return Attempt::error($e);
         }
-
-        /** @psalm-suppress ImpureMethodCall */
-        $xml->normalizeDocument();
 
         return ($this->translate)($xml);
     }

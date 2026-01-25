@@ -11,8 +11,7 @@ class AttributesTest extends TestCase
 {
     public function testNoAttributes()
     {
-        $document = new \DOMDocument;
-        $document->loadXML('<foo/>');
+        $document = \Dom\XMLDocument::createFromString('<foo/>');
 
         $attributes = Translator::of()($document->childNodes->item(0))->match(
             static fn($element) => $element->attributes()->toSet(),
@@ -20,13 +19,12 @@ class AttributesTest extends TestCase
         );
 
         $this->assertInstanceOf(Set::class, $attributes);
-        $this->assertCount(0, $attributes);
+        $this->assertSame(0, $attributes->size());
     }
 
     public function testAttributes()
     {
-        $document = new \DOMDocument;
-        $document->loadXML('<hr bar="baz" foobar=""/>');
+        $document = \Dom\XMLDocument::createFromString('<hr bar="baz" foobar=""/>');
 
         $attributes = Translator::of()($document->childNodes->item(0))->match(
             static fn($element) => $element->attributes()->toSet(),
@@ -34,7 +32,7 @@ class AttributesTest extends TestCase
         );
 
         $this->assertInstanceOf(Set::class, $attributes);
-        $this->assertCount(2, $attributes);
+        $this->assertSame(2, $attributes->size());
         $attributes = $attributes->toList();
         $this->assertSame('bar', $attributes[0]->name());
         $this->assertSame('baz', $attributes[0]->value());
