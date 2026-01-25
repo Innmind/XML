@@ -27,7 +27,7 @@ class TypeTest extends TestCase
     {
         $this->expectException(DomainException::class);
 
-        Type::of('');
+        $_ = Type::of('');
     }
 
     public static function cases(): array

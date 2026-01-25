@@ -22,6 +22,7 @@ final class Reader
     /**
      * @return Attempt<Document|Node|Element|Custom>
      */
+    #[\NoDiscard]
     public function __invoke(Content $content): Attempt
     {
         $content = $content->toString();
@@ -42,6 +43,7 @@ final class Reader
         return ($this->translate)($xml);
     }
 
+    #[\NoDiscard]
     public static function of(): self
     {
         return new self();

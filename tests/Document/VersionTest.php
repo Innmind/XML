@@ -26,13 +26,13 @@ class VersionTest extends TestCase
     {
         $this->expectException(DomainException::class);
 
-        Version::of(-1);
+        $_ = Version::of(-1);
     }
 
     public function testThrowWhenMinorTooLow()
     {
         $this->expectException(DomainException::class);
 
-        Version::of(1, -1);
+        $_ = Version::of(1, -1);
     }
 }

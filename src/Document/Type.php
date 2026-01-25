@@ -28,6 +28,7 @@ final class Type
      *
      * @throws DomainException If the name is empty
      */
+    #[\NoDiscard]
     public static function of(
         string $name,
         string $publicId = '',
@@ -44,6 +45,7 @@ final class Type
      *
      * @return Maybe<self>
      */
+    #[\NoDiscard]
     public static function maybe(
         string $name,
         string $publicId = '',
@@ -60,21 +62,25 @@ final class Type
     /**
      * @return non-empty-string
      */
+    #[\NoDiscard]
     public function name(): string
     {
         return $this->name;
     }
 
+    #[\NoDiscard]
     public function publicId(): string
     {
         return $this->publicId;
     }
 
+    #[\NoDiscard]
     public function systemId(): string
     {
         return $this->systemId;
     }
 
+    #[\NoDiscard]
     public function toString(): string
     {
         return \sprintf(

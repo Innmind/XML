@@ -41,6 +41,7 @@ final class Document
      * @param Maybe<Encoding> $encoding
      * @param Sequence<Node|Element|Custom> $children
      */
+    #[\NoDiscard]
     public static function of(
         Version $version,
         Maybe $type,
@@ -50,6 +51,7 @@ final class Document
         return new self($version, $type, $encoding, $children ?? Sequence::of());
     }
 
+    #[\NoDiscard]
     public function version(): Version
     {
         return $this->version;
@@ -58,6 +60,7 @@ final class Document
     /**
      * @return Maybe<Type>
      */
+    #[\NoDiscard]
     public function type(): Maybe
     {
         return $this->type;
@@ -66,6 +69,7 @@ final class Document
     /**
      * @return Sequence<Node|Element|Custom>
      */
+    #[\NoDiscard]
     public function children(): Sequence
     {
         return $this->children;
@@ -74,6 +78,7 @@ final class Document
     /**
      * @param callable(Node|Element|Custom): bool $filter
      */
+    #[\NoDiscard]
     public function filterChild(callable $filter): self
     {
         return new self(
@@ -87,6 +92,7 @@ final class Document
     /**
      * @param callable(Node|Element|Custom): (Node|Element|Custom) $map
      */
+    #[\NoDiscard]
     public function mapChild(callable $map): self
     {
         return new self(
@@ -97,6 +103,7 @@ final class Document
         );
     }
 
+    #[\NoDiscard]
     public function prependChild(Node|Element|Custom $child): self
     {
         $document = clone $this;
@@ -105,6 +112,7 @@ final class Document
         return $document;
     }
 
+    #[\NoDiscard]
     public function appendChild(Node|Element|Custom $child): self
     {
         $document = clone $this;
@@ -116,11 +124,13 @@ final class Document
     /**
      * @return Maybe<Encoding>
      */
+    #[\NoDiscard]
     public function encoding(): Maybe
     {
         return $this->encoding;
     }
 
+    #[\NoDiscard]
     public function asContent(Format $format = Format::pretty): Content
     {
         $writer = new \XMLWriter;

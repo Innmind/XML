@@ -10,5 +10,6 @@ use Innmind\Xml\Element;
  */
 interface Custom
 {
+    #[\NoDiscard]
     public function normalize(): Element;
 }
