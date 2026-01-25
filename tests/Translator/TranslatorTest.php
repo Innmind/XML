@@ -38,7 +38,7 @@ class TranslatorTest extends TestCase
         </foo>
         XML;
 
-        $document =\Dom\XMLDocument::createFromString($xml);
+        $document = \Dom\XMLDocument::createFromString($xml);
 
         $node = ($this->translate)($document)->match(
             static fn($node) => $node,
