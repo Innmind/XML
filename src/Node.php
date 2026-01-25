@@ -30,6 +30,7 @@ final class Node
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function characterData(string $data): self
     {
         return new self(CharacterData::of($data));
@@ -38,6 +39,7 @@ final class Node
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function text(string $data): self
     {
         return new self(Text::of($data));
@@ -46,6 +48,7 @@ final class Node
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function comment(string $data): self
     {
         return new self(Comment::of($data));
@@ -54,6 +57,7 @@ final class Node
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function entityReference(string $data): self
     {
         return new self(EntityReference::of($data));
@@ -62,16 +66,19 @@ final class Node
     /**
      * @psalm-pure
      */
+    #[\NoDiscard]
     public static function processingInstruction(string $kind, string $value): self
     {
         return new self(ProcessingInstruction::of($kind, $value));
     }
 
+    #[\NoDiscard]
     public function content(): string
     {
         return $this->implementation->content();
     }
 
+    #[\NoDiscard]
     public function asContent(): Content
     {
         $writer = new \XMLWriter;

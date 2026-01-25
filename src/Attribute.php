@@ -26,6 +26,7 @@ final class Attribute
      *
      * @param non-empty-string $name
      */
+    #[\NoDiscard]
     public static function of(string $name, string $value = ''): self
     {
         return new self(null, $name, $value);
@@ -37,6 +38,7 @@ final class Attribute
      * @param non-empty-string $namespace
      * @param non-empty-string $name
      */
+    #[\NoDiscard]
     public static function namespaced(
         string $namespace,
         string $name,
@@ -48,6 +50,7 @@ final class Attribute
     /**
      * @return Maybe<self>
      */
+    #[\NoDiscard]
     public static function maybe(string $name, string $value = ''): Maybe
     {
         if ($name === '') {
@@ -61,11 +64,13 @@ final class Attribute
     /**
      * @return non-empty-string
      */
+    #[\NoDiscard]
     public function name(): string
     {
         return $this->name;
     }
 
+    #[\NoDiscard]
     public function value(): string
     {
         return $this->value;

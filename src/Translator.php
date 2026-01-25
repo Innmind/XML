@@ -33,6 +33,7 @@ final class Translator
     /**
      * @return Attempt<Document|Node|Element|Custom>
      */
+    #[\NoDiscard]
     public function __invoke(\Dom\Node $node): Attempt
     {
         return $this
@@ -45,6 +46,7 @@ final class Translator
      *
      * @param ?pure-callable(Element): Maybe<Custom> $custom
      */
+    #[\NoDiscard]
     public static function of(?callable $custom = null): self
     {
         /** @var Maybe<Custom> */
