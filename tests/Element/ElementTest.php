@@ -525,7 +525,7 @@ class ElementTest extends TestCase
                 ->lines()
                 ->take(2)
                 ->map(static fn($line) => $line->str())
-                ->fold(new Concat)
+                ->fold(Concat::monoid)
                 ->toString(),
         );
         $this->assertFalse($loaded);

@@ -153,7 +153,7 @@ final class Document
             ),
         );
         /** @psalm-suppress ImpureMethodCall */
-        $this->type->match(
+        $_ = $this->type->match(
             static fn($type) => $writer->writeRaw($type->toString()."\n"),
             static fn() => null,
         );
