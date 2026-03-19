@@ -1,5 +1,11 @@
 # Changelog
 
+## 9.1.0 - 2026-03-19
+
+### Added
+
+- `Innmind\Xml\Node::raw()`
+
 ## 9.0.0 - 2026-01-25
 
 ### Changed

@@ -10,6 +10,7 @@ use Innmind\Xml\Node\{
     EntityReference,
     ProcessingInstruction,
     Text,
+    Raw,
 };
 use Innmind\Filesystem\File\Content;
 use Innmind\Immutable\{
@@ -43,6 +44,17 @@ final class Node
     public static function text(string $data): self
     {
         return new self(Text::of($data));
+    }
+
+    /**
+     * @psalm-pure
+     *
+     * Use this method to output trusted node written by hand
+     */
+    #[\NoDiscard]
+    public static function raw(string $data): self
+    {
+        return new self(Raw::of($data));
     }
 
     /**
