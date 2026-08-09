@@ -2,7 +2,9 @@
     "name": "innmind/xml",
     "type": "library",
     "description": "Library to abstract xml manipulation",
-    "keywords": ["xml"],
+    "keywords": [
+        "xml"
+    ],
     "homepage": "http://github.com/Innmind/XML",
     "license": "MIT",
     "authors": [
