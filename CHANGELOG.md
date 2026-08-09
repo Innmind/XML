@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unrleased]
+
+### Changed
+
+- Requires PHP `8.5`
+
 ## 9.1.0 - 2026-03-19
 
 ### Added
